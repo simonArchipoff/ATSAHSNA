@@ -1,0 +1,58 @@
+#pragma once
+
+#include <complex>
+#include <vector>
+#include <cassert>
+
+using std::complex;
+using std::vector;
+
+#ifndef ZEROISH
+#define ZEROISH (1e-20)
+#endif
+
+//Frequency Domain Function
+//map frequency to complex
+class FDF
+{
+public:
+    FDF();
+    FDF(const FDF&) = default;
+    FDF(const vector<complex<double>> &v, int sampleRate):response(v),
+                                                          sampleRate(sampleRate)
+    {}
+    //DTF(const DTF&&) = default;
+
+    FDF operator+(const FDF &a) const;
+    FDF operator-(const FDF &a) const;
+    FDF operator/(const FDF &a) const ;
+    FDF operator-() const;
+    FDF neutralAdd() const ;
+    FDF neutralMult() const;
+
+    const vector<complex<double>> & getResponse() const;
+
+    void setSampleRate(uint sr);
+    uint getSampleRate() const;
+
+    vector <double> getAmplitude() const;
+
+    vector <double> getAmplitude20log10() const;
+
+    //when prettified = true it tries to remove the mess when amplitude is very low
+    //it also tries to make the phase continuous when it's only a matter of adding PI
+    vector <double> getPhase(bool prettified=false) const;
+
+    vector <double> getFrequency() const;
+
+    double getMaxAmplitude() const;
+    double getMinAmplitude() const;
+    double getMaxAmplitude20log10() const ;
+    double getMinAmplitude20log10() const;
+
+protected:
+    vector<complex<double>> response;
+    uint sampleRate;
+};
+
+
