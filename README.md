@@ -5,7 +5,7 @@ It's licenced under GPLv3.
 
 What's already implemented:
 - two backend (faust and jackd)
-- impulse response and THD spectrum and THD+N computation
+- impulse response and harmonic spectrum and THD+N computation
 - a very poor UI, sorry
 
 Soon :
