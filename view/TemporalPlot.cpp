@@ -1,11 +1,13 @@
 #include "TemporalPlot.h"
+#include "qboxlayout.h"
+#include "qwt_axis.h"
 #include <QVBoxLayout>
 #include <QFormLayout>
 
 TemporalPlot::TemporalPlot(QWidget * parent)
   : QWidget{parent}
-  , start{new QSlider{this}}
-  , len{new QSlider{this}}
+  , start{new QSlider{Qt::Horizontal,this}}
+  , len{new QSlider{Qt::Horizontal, this}}
   , input_data{}
   , output_data{}
   , plot{new QwtPlot{this}}
@@ -20,5 +22,46 @@ TemporalPlot::TemporalPlot(QWidget * parent)
   form->addWidget(plot.data());
   form->addRow(tr("start"),start.data());
   form->addRow(tr("size"),len.data());
+
+  plot->setAxisAutoScale(QwtAxis::YLeft);
+  plot->setAxisAutoScale(QwtAxis::YRight);
+  plot->enableAxis(QwtAxis::YRight);
+  connect(start.data(),&QSlider::valueChanged, this,[this](auto i){
+      plot->setAxisScale(QwtAxis::XBottom, i, i+ len->value());
+    });
+  connect(len.data(), &QSlider::valueChanged, this, [this](auto l){
+      plot->setAxisScale(QwtAxis::XBottom, start->value(), start->value()+l);
+    });
 }
+
+
+
+
+
+void TemporalPlot::setInput(const VD &in){
+  plot->setAutoReplot(false);
+  input_curve->setRenderHint(QwtPlotItem::RenderAntialiased);
+  input_curve->setPen(Qt::blue,1,Qt::SolidLine);
+  input_curve->setStyle(QwtPlotCurve::Dots);
+  input_curve->setYAxis(QwtAxis::YLeft);
+  input_curve->setSamples(in.data(), in.size());
+  plot->setAutoReplot(true);
+  plot->replot();
+}
+void TemporalPlot::setOutput(const VD &out){
+  plot->setAutoReplot(false);
+  output_curve->setRenderHint(QwtPlotItem::RenderAntialiased);
+  output_curve->setPen(Qt::red,1,Qt::SolidLine);
+  output_curve->setStyle(QwtPlotCurve::Lines);
+  output_curve->setYAxis(QwtAxis::YRight);
+  output_curve->setSamples(out.data(), out.size());
+  plot->setAutoReplot(true);
+  plot->replot();
+  start->setRange(0,out.size());
+  len->setRange(1,out.size());
+  len->setValue(out.size());
+}
+
+
+
 

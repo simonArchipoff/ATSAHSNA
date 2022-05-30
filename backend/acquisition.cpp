@@ -45,7 +45,9 @@ vector<struct ResultResponse> compute_response(Backend *b, const struct ParamRes
 
   vector<struct ResultResponse> res;
   for(auto &o : output){
-      res.push_back(ResultResponse{compute_TF_FFT(in,o,b->getSampleRate()),p});
+      res.push_back(ResultResponse{compute_TF_FFT(in,o,b->getSampleRate())
+                                   ,p
+                                   ,MeasureData{vector({in}),vector({o})}});
     }
   return res;
 }

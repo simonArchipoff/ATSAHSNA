@@ -23,43 +23,47 @@ struct ParamTHD {
   double gain = 1;
 };
 
-struct ResultTHD {
-  FDF harmonicSpectrum;
-  double thdRate;
-  vector<double> harmonicsLevel;
-  vector<double> harmonicsPhases;
-  ParamTHD params;
-};
-
-struct ResultResponse{
-  FDF response;
-  ParamResponse params;
-};
-
 struct MeasureData{
-  MeasureData(int size,int nbInput, int nbOutput):size{size}{
+  /*
+  MeasureData(){}
+  MeasureData(int nbInput, int nbOutput){
     for(int i = 0; i < nbInput; i++){
-        inputs.push_back(VD(size));
+        inputs.push_back(VD());
       }
     for(int i = 0; i < nbOutput; i++){
-        outputs.push_back(VD(size));
+        outputs.push_back(VD());
       }
-  }
+  }*/
   int numberInput(){
     return inputs.size();
   }
   int numberOutput(){
     return outputs.size();
   }
-  int size;
+
   vector<VD> inputs;
   vector<VD> outputs;
 };
 
+struct ResultTHD {
+  FDF harmonicSpectrum;
+  double thdRate;
+  vector<double> harmonicsLevel;
+  vector<double> harmonicsPhases;
+  ParamTHD params;
+  MeasureData raw_data;
+};
+
+struct ResultResponse{
+  FDF response;
+  ParamResponse params;
+  MeasureData raw_data;
+};
+
+
 
 VD sweep_angular(double f1, double f2, int duration);
 VD sweep(double f1, double f2, double duration, uint sampleRate);
-
 
 VD impulse(double freqMin, uint sampleRate=DEFAULTSR);
 
@@ -67,5 +71,5 @@ FDF compute_TF_FFT(const VD  &input, const VD  &output,int sampleRate);
 FDF compute_TF_FFT(const VCD &input, const VCD &output,int sampleRate);
 FDF compute_TF_FFT(const VCD &output, int sampleRate);
 
-ResultTHD computeTHDNsimple(const ParamTHD p, const VD&,int sampleRate);
+ResultTHD computeTHDNsimple(const ParamTHD p, const VD&, int sampleRate);
 

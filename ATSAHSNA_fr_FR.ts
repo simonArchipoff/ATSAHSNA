@@ -88,12 +88,12 @@
 <context>
     <name>TemporalPlot</name>
     <message>
-        <location filename="view/TemporalPlot.cpp" line="21"/>
+        <location filename="view/TemporalPlot.cpp" line="23"/>
         <source>start</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view/TemporalPlot.cpp" line="22"/>
+        <location filename="view/TemporalPlot.cpp" line="24"/>
         <source>size</source>
         <translation type="unfinished"></translation>
     </message>

@@ -1,11 +1,8 @@
 #pragma once
 
-#include "qobjectdefs.h"
-#include "qpushbutton.h"
-#include "qspinbox.h"
-#include "qsplitter.h"
-#include "qwidget.h"
+
 #include "BodePlot.h"
+#include "TemporalPlot.h"
 #include <QDockWidget>
 #include <QSplitter>
 #include <QScopedPointer>
@@ -17,6 +14,7 @@
 
 #include "backend/measure.h"
 #include "constants.h"
+
 
 
 class QParamResponse : public QWidget {
@@ -81,7 +79,6 @@ class QResult : public QWidget {
 public:
   QResult():QWidget(){
     auto * l = new QVBoxLayout;
-
     auto s = new QSplitter(this);
     l->addWidget(s);
     setLayout(l);
@@ -89,8 +86,10 @@ public:
     s->setOrientation(Qt::Horizontal);
     qcontrol.reset(new QPARAM{s});
     qplot.reset(new QRESULT{s});
+    temporalPlot.reset(new TemporalPlot());
     s->addWidget(qcontrol.data());
     s->addWidget(qplot.data());
+    l->addWidget(temporalPlot.data());
 
   }
 
@@ -98,10 +97,13 @@ public:
     return qcontrol->getParam();
   }
 
-  void setCurve(const typename QRESULT::Result &r, QColor c){
-    qplot->setCurve(r,c);
+  void setResult(const typename QRESULT::Result &r, QColor c){
+    qplot->setResult(r,c);
+    temporalPlot->setInput(r.raw_data.inputs[0]);
+    temporalPlot->setOutput(r.raw_data.outputs[0]);
   }
 
+  QScopedPointer<TemporalPlot> temporalPlot;
   QScopedPointer<QPARAM> qcontrol;
   QScopedPointer<QRESULT> qplot;
 };
