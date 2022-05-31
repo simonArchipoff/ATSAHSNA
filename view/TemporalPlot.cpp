@@ -1,5 +1,6 @@
 #include "TemporalPlot.h"
 #include "qboxlayout.h"
+#include "qnamespace.h"
 #include "qwt_axis.h"
 #include <QVBoxLayout>
 #include <QFormLayout>
@@ -32,16 +33,14 @@ TemporalPlot::TemporalPlot(QWidget * parent)
   connect(len.data(), &QSlider::valueChanged, this, [this](auto l){
       plot->setAxisScale(QwtAxis::XBottom, start->value(), start->value()+l);
     });
+  setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
 }
-
-
-
 
 
 void TemporalPlot::setInput(const VD &in){
   plot->setAutoReplot(false);
   input_curve->setRenderHint(QwtPlotItem::RenderAntialiased);
-  input_curve->setPen(Qt::blue,1,Qt::SolidLine);
+  input_curve->setPen(Qt::blue,2,Qt::SolidLine);
   input_curve->setStyle(QwtPlotCurve::Dots);
   input_curve->setYAxis(QwtAxis::YLeft);
   input_curve->setSamples(in.data(), in.size());
@@ -51,15 +50,15 @@ void TemporalPlot::setInput(const VD &in){
 void TemporalPlot::setOutput(const VD &out){
   plot->setAutoReplot(false);
   output_curve->setRenderHint(QwtPlotItem::RenderAntialiased);
-  output_curve->setPen(Qt::red,1,Qt::SolidLine);
-  output_curve->setStyle(QwtPlotCurve::Lines);
+  output_curve->setPen(Qt::red,2,Qt::SolidLine);
+  output_curve->setStyle(QwtPlotCurve::Dots);
   output_curve->setYAxis(QwtAxis::YRight);
   output_curve->setSamples(out.data(), out.size());
   plot->setAutoReplot(true);
   plot->replot();
   start->setRange(0,out.size());
-  len->setRange(1,out.size());
-  len->setValue(out.size());
+  len->setRange(1,10000);
+  len->setValue(5000);//out.size());
 }
 
 

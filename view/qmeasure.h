@@ -80,17 +80,18 @@ public:
   QResult():QWidget(){
     auto * l = new QVBoxLayout;
     auto s = new QSplitter(this);
+
     l->addWidget(s);
     setLayout(l);
-    //s->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-    s->setOrientation(Qt::Horizontal);
+
+    s->setOrientation(Qt::Vertical);
     qcontrol.reset(new QPARAM{s});
     qplot.reset(new QRESULT{s});
     temporalPlot.reset(new TemporalPlot());
     s->addWidget(qcontrol.data());
     s->addWidget(qplot.data());
-    l->addWidget(temporalPlot.data());
-
+    s->addWidget(temporalPlot.data());
+    setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
   }
 
   typename QPARAM::Param getParam(){

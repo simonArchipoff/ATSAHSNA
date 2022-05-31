@@ -38,7 +38,7 @@ QParamResponse::QParamResponse(QWidget * parent)
     connect(b,&StartMesure::start_measure, this,[this](auto b){
         emit start_measure_response(this->getParam(),b);
     });
-    setMaximumWidth(minimumSizeHint().width());
+//    setMaximumWidth(minimumSizeHint().width());
 }
 
 
@@ -59,7 +59,7 @@ StartMesure::StartMesure(QWidget * parent)
       emit start_measure((backend_type) backends->currentIndex());
     });
   setLayout(l);
-  setMaximumSize(minimumSizeHint());
+//  setMaximumSize(minimumSizeHint());
 }
 
 
@@ -82,7 +82,7 @@ QParamDistortion::QParamDistortion(QWidget * parent):QWidget{parent}{
   for(auto * i : {frequency, freq_min, freq_max}){
       i->setRange(1,20000);
     }
-  duration->setRange(0.5,10);
+  duration->setRange(0.1,10);
   freq_min->setValue(10);
   freq_max->setValue(20000);
   frequency->setValue(1000);
@@ -99,7 +99,7 @@ QParamDistortion::QParamDistortion(QWidget * parent):QWidget{parent}{
   l->addLayout(form);
   setLayout(l);
   connect(b,&StartMesure::start_measure, this,[this](auto b){emit start_measure_distortion(this->getParam(),b);});
-  setMaximumWidth(minimumSizeHint().width());
+//  setMaximumWidth(minimumSizeHint().width());
 }
 
 struct ParamTHD QParamDistortion::getParam(){

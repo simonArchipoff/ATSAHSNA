@@ -137,7 +137,9 @@ ResultTHD computeTHDNsimple(const ParamTHD p, const VD&signal, int sampleRate){
   return ResultTHD {
       .harmonicSpectrum = FDF(signalfft,sampleRate),
       .thdRate = sqrt(e_tot_wo_h1) / eh1,
-      .params = p
+      .params = p,
+      .raw_data = MeasureData { .inputs = vector<VD>({}),
+                                .outputs = vector({signal})}
     };
   //return sqrt(e_tot_wo_h1) / sqrt(e_tot_wo_h1 + eh1 * eh1);
 }
