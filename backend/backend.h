@@ -68,7 +68,7 @@ public:
   uint getLatencySample(){
     return latency;
   }
-
+  std::mutex lock;
 protected:
   int latency = 0;
   virtual void notify(){}

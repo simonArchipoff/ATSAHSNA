@@ -3,7 +3,6 @@
 #include <algorithm>
 
 void pad_right_0(uint n, vector<VD> & in){
-
   for(auto &i : in){
       i.resize(i.size()+n,0.0);
     }
@@ -18,6 +17,7 @@ void remove_left(uint n, vector<VD> & in){
 
 
 vector<VD> acquire_output(Backend *b,const vector<VD> &input){
+  b->lock.lock();
   auto in = vector{input};
   auto l = b->getLatencySample();
   pad_right_0(l,in);
@@ -29,6 +29,7 @@ vector<VD> acquire_output(Backend *b,const vector<VD> &input){
       if(r.has_value()){
           auto out = r.value();
           remove_left(l,out);
+          b->lock.unlock();
           return out;
         }
     }while(true);
@@ -42,7 +43,6 @@ vector<struct ResultResponse> compute_response(Backend *b, const struct ParamRes
     input.push_back(in);
     }
   auto output = acquire_output(b,input);
-
   vector<struct ResultResponse> res;
   for(auto &o : output){
       res.push_back(ResultResponse{compute_TF_FFT(in,o,b->getSampleRate())
@@ -64,6 +64,7 @@ vector<struct ResultTHD> compute_distortion(Backend *b, const struct ParamTHD p)
 
   vector<struct ResultTHD> res;
   for(auto &o : output){
+      assert(input[0].size() == o.size());
       auto tmp = computeTHDNsimple(p,o,b->getSampleRate());
       tmp.raw_data.inputs=vector({in});
       res.push_back(tmp);
