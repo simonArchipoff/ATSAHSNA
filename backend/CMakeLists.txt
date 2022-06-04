@@ -17,6 +17,8 @@ set(BACKEND_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/measure.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/acquisition.h
     ${CMAKE_CURRENT_SOURCE_DIR}/acquisition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/spectrogram.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/spectrogram.cpp
     PARENT_SCOPE)
 #cmake_print_variables(BACKEND_SOURCES)
 

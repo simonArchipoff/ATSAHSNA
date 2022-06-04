@@ -1,5 +1,6 @@
 #pragma once
 
+#include "qlineedit.h"
 #include "qwidget.h"
 #include <QWidget>
 #include <QGroupBox>
@@ -50,11 +51,12 @@ public:
   QBackendJack(QWidget * parent=nullptr);
 
 signals:
-  void newInputPort();
-  void newOutputPort();
+  void newInputPort(QString);
+  void newOutputPort(QString);
   void newLatency(uint i);
 protected:
   QPushButton * inputButton, * outputButton;
+  QLineEdit * inputName, *outputName;
   QSpinBox * latency;
 };
 

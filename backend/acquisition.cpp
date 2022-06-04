@@ -30,6 +30,7 @@ vector<VD> acquire_output(Backend *b,const vector<VD> &input){
           auto out = r.value();
           remove_left(l,out);
           b->lock.unlock();
+          qDebug() << out;
           return out;
         }
     }while(true);

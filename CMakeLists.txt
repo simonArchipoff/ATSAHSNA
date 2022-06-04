@@ -28,6 +28,7 @@ find_package(PkgConfig)
 pkg_check_modules(JACK REQUIRED jack)
 
 add_subdirectory(backend)
+add_subdirectory(third_party/wavelib)
 
 set(TS_FILES ATSAHSNA_fr_FR.ts)
 
@@ -46,6 +47,8 @@ set(PROJECT_SOURCES
         view/qmeasure.cpp
         view/qresults.h
         view/qresults.cpp
+        view/qspectrogram.h
+        view/qspectrogram.cpp
         ${BACKEND_SOURCES}
         ${TF_SOURCES}
         ${TS_FILES}
@@ -78,7 +81,7 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(ATSAHSNA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets QCoro::Core Qwt::Qwt fftw3 faust jack)
+target_link_libraries(ATSAHSNA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets QCoro::Core Qwt::Qwt fftw3 faust jack wavelib)
 
 
 set_target_properties(ATSAHSNA PROPERTIES

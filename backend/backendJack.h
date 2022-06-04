@@ -9,7 +9,7 @@ class BackendJack : public Backend
 {
 public:
     BackendJack();
-    ~BackendJack();
+    virtual ~BackendJack();
 
     uint numberInput() const override {
         return inputPorts.size();

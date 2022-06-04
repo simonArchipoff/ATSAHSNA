@@ -1,0 +1,3 @@
+[submodule "third_party/wavelib"]
+	path = third_party/wavelib
+	url = git@github.com:simonArchipoff/wavelib.git

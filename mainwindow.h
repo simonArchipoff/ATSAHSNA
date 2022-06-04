@@ -60,8 +60,8 @@ public:
     :backendJack{new BackendJack}
     ,viewJack{new QBackendJack}
   {
-    connect(viewJack.data(),&QBackendJack::newInputPort, this,[this](){backendJack->addInputPort();});
-    connect(viewJack.data(),&QBackendJack::newOutputPort,this,[this](){backendJack->addOutputPort();});
+    connect(viewJack.data(),&QBackendJack::newInputPort, this,[this](auto name){backendJack->addInputPort(name.toStdString());});
+    connect(viewJack.data(),&QBackendJack::newOutputPort,this,[this](auto name){backendJack->addOutputPort(name.toStdString());});
   }
 
   QScopedPointer<BackendJack> backendJack;

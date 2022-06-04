@@ -29,7 +29,6 @@ if (status & JackNameNotUnique) {
 	client_name = jack_get_client_name(client);
 	fprintf (stderr, "unique name `%s' assigned\n", client_name);
 }
-
 */
 
 BackendJack::BackendJack()

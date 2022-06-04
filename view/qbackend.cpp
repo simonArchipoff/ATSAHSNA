@@ -71,15 +71,19 @@ void QFaustDsp::setErrorMessage(QString s)
 
 
 
+
 QBackendJack::QBackendJack(QWidget * parent)
   : QGroupBox{"jack",parent}
   ,inputButton{new QPushButton{tr("new input"),this}}
   ,outputButton{new QPushButton{tr("new output"),this}}
+  ,inputName{new QLineEdit{this}}
+  ,outputName{new QLineEdit{this}}
 {
   QFormLayout * l = new QFormLayout{this};
-  l->addWidget(inputButton);
-  l->addWidget(outputButton);
-
+  l->addRow(inputButton,inputName);
+  l->addRow(outputButton,outputName);
+  inputName->setText(tr("input"));
+  outputName->setText(tr("output"));
   latency = new QSpinBox;
 
   latency->setRange(0,15000);
@@ -91,6 +95,6 @@ QBackendJack::QBackendJack(QWidget * parent)
 
   setLayout(l);
   //setMaximumWidth(minimumSizeHint().width());
-  connect(inputButton,&QPushButton::clicked,this,[this](){emit newInputPort();});
-  connect(outputButton,&QPushButton::clicked,this,[this](){emit newOutputPort();});
+  connect(inputButton,&QPushButton::clicked,this,[this](){emit newInputPort(inputName->text());});
+  connect(outputButton,&QPushButton::clicked,this,[this](){emit newOutputPort(outputName->text());});
 }

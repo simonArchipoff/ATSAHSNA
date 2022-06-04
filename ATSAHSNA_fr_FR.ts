@@ -25,17 +25,27 @@
 <context>
     <name>QBackendJack</name>
     <message>
-        <location filename="view/qbackend.cpp" line="76"/>
+        <location filename="view/qbackend.cpp" line="77"/>
         <source>new input</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view/qbackend.cpp" line="77"/>
+        <location filename="view/qbackend.cpp" line="78"/>
         <source>new output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="view/qbackend.cpp" line="88"/>
+        <location filename="view/qbackend.cpp" line="85"/>
+        <source>input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="view/qbackend.cpp" line="86"/>
+        <source>output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="view/qbackend.cpp" line="92"/>
         <source>latency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -63,7 +73,6 @@
     <message>
         <location filename="view/qmeasure.cpp" line="95"/>
         <source>minimal frequency (Hz)</source>
-        <oldsource>maximal frequency</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
