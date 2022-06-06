@@ -21,7 +21,6 @@ find_package(QCoro5 REQUIRED COMPONENTS Core)
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 #set(CMAKE_FIND_DEBUG_MODE TRUE)
 find_package(Qwt REQUIRED)
-find_package(FFTW REQUIRED)
 find_package(Faust REQUIRED)
 
 find_package(PkgConfig)
