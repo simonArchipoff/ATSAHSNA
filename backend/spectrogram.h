@@ -2,14 +2,18 @@
 
 #include <vector>
 
-/*
-struct Spectrogram{
 
-  double duration;
-  double frequency;
 
-  std::vector<std::vector<double>> data;
+struct SpectrogramData{
+  int duration;
+
+  std::vector<float> data;
+  std::vector<float> time;
+  std::vector<float> frequency;
 };
-*/
 
-std::vector<double> spectrogram(const std::vector<double> &data);
+
+SpectrogramData spectrogram(const std::vector<double> &data,
+                            int nb_octave,
+                            int resolution,
+                            unsigned int sampleRate);

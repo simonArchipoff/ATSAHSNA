@@ -21,16 +21,17 @@ find_package(QCoro5 REQUIRED COMPONENTS Core)
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 #set(CMAKE_FIND_DEBUG_MODE TRUE)
 find_package(Qwt REQUIRED)
-
+find_package(FFTW REQUIRED)
 find_package(Faust REQUIRED)
 
 find_package(PkgConfig)
 pkg_check_modules(JACK REQUIRED jack)
+pkg_search_module(FFTW REQUIRED fftw3 IMPORTED_TARGET)
 
 add_subdirectory(backend)
-add_subdirectory(third_party/wavelib)
+#add_subdirectory(third_party/wavelib)
+add_subdirectory(third_party/fCWT)
 
-set(TS_FILES ATSAHSNA_fr_FR.ts)
 
 set(PROJECT_SOURCES
         constants.h
@@ -81,8 +82,8 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(ATSAHSNA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets QCoro::Core Qwt::Qwt fftw3 faust jack wavelib)
-
+target_link_libraries(ATSAHSNA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets QCoro::Core Qwt::Qwt fftw3 faust jack fCWT)
+#target_include_directories(ATSAHSNA PRIVATE third_party/wavelib/header) #eventually I'll learn how to do this properly
 
 set_target_properties(ATSAHSNA PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

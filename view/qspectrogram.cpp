@@ -15,6 +15,19 @@ qSpectrogram::qSpectrogram(QWidget * parent)
 
 }
 
+class LinearColorMap : public QwtLinearColorMap
+{
+  public:
+    LinearColorMap()
+        : QwtLinearColorMap( Qt::darkCyan, Qt::red )
+    {
+        setFormat( ( QwtColorMap::Format ) QwtColorMap::RGB);
+
+        addColorStop( 0.1, Qt::cyan );
+        addColorStop( 0.6, Qt::green );
+        addColorStop( 0.95, Qt::yellow );
+    }
+};
 
 void qSpectrogram::setSpectrogram(std::vector<double> &s){
   int n = s.size();
@@ -24,16 +37,19 @@ void qSpectrogram::setSpectrogram(std::vector<double> &s){
     while (tmp >>= 1) ++log_n;
   }
   auto m = new QwtMatrixRasterData;
-  for(auto & i : s){
-      i = 20*log10(i);
-}
-  m->setValueMatrix(QVector<double>(s.begin(),s.end()),log_n);
-  m->setInterval( Qt::XAxis, QwtInterval(0, log_n) );
-  m->setInterval( Qt::YAxis, QwtInterval(0, n/log_n) );
 
   double minValue = *std::min_element( std::begin(s), std::end(s) );
   double maxValue = *std::max_element( std::begin(s), std::end(s) );
-  m->setInterval( Qt::ZAxis, QwtInterval(0, maxValue) );
+  for(auto & i : s){
+      i = 20*log10(i);
+}
+
+  m->setValueMatrix(QVector<double>(s.begin(),s.end()),10000);
+  m->setInterval( Qt::XAxis, QwtInterval(0, 10000) );
+  m->setInterval( Qt::YAxis, QwtInterval(0, 72) );
+
+
+  m->setInterval( Qt::ZAxis, QwtInterval(minValue, maxValue) );
 
   auto spect = new QwtPlotSpectrogram("foo");
 
@@ -43,15 +59,14 @@ void qSpectrogram::setSpectrogram(std::vector<double> &s){
 
   spect->setRenderThreadCount( 0 );
   spect->setData(m);
-  spect->setDisplayMode( QwtPlotSpectrogram::ImageMode, true);
-  spect->setDefaultContourPen( QPen( Qt::black, 0 ));
-  QwtLinearColorMap * colorMap = new QwtLinearColorMap(Qt::white, Qt::black);
-  spect->setColorMap(colorMap);
+  //spect->setDisplayMode( QwtPlotSpectrogram::ImageMode, true);
+  //spect->setDefaultContourPen( QPen( Qt::black, 0 ));
+  auto * colorMap = new LinearColorMap;
   spect->setAlpha(100);
   QRectF r = spect->boundingRect();
   qDebug() << r;
 
-    setAxisScale( QwtPlot::xBottom , r.left(), r.right(), 0.1);
+  //setAxisScale( QwtPlot::xBottom , r.left(), r.right(), 0.1);
   spect->attach(this);
   //setColorMap( Plot::RGBMap );
   replot();

@@ -23,18 +23,17 @@ int main(int argc, char *argv[])
     }
 */
 #if 0
-  std::vector<double> v(1024*1024);
+  uint sr = 10000;
+  std::vector<double> v  = sweep(100,1000,1,sr);
 
-  for(uint i = 0; i < v.size() ; i++)
-    v[i]=sin(1000*i/(2*3.14))+1;
-  auto r = v; //spectrogram(v);
+  auto r = spectrogram(v,10,5000,10,sr);
 
   qSpectrogram foo;
-  foo.setSpectrogram(r);
-  foo.show();
-#endif
+  //foo.setSpectrogram(r.data);
+  //foo.show();
+#else
   MainWindow w;
   w.show();
-
+#endif
   return a.exec();
 }

@@ -30,7 +30,6 @@ vector<VD> acquire_output(Backend *b,const vector<VD> &input){
           auto out = r.value();
           remove_left(l,out);
           b->lock.unlock();
-          qDebug() << out;
           return out;
         }
     }while(true);
@@ -46,7 +45,7 @@ vector<struct ResultResponse> compute_response(Backend *b, const struct ParamRes
   auto output = acquire_output(b,input);
   vector<struct ResultResponse> res;
   for(auto &o : output){
-      res.push_back(ResultResponse{compute_TF_FFT(in,o,b->getSampleRate())
+      res.push_back(ResultResponse{ compute_TF_FFT(in,o,b->getSampleRate())
                                    ,p
                                    ,MeasureData{vector({in}),vector({o})}});
     }
