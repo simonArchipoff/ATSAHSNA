@@ -29,7 +29,8 @@ class LinearColorMap : public QwtLinearColorMap
     }
 };
 
-void qSpectrogram::setSpectrogram(std::vector<double> &s){
+void qSpectrogram::setSpectrogram(struct SpectrogramData &spectd){
+  auto s = spectd.data;
   int n = s.size();
   int log_n = 0;
   {
@@ -41,12 +42,12 @@ void qSpectrogram::setSpectrogram(std::vector<double> &s){
   double minValue = *std::min_element( std::begin(s), std::end(s) );
   double maxValue = *std::max_element( std::begin(s), std::end(s) );
   for(auto & i : s){
-      i = 20*log10(i);
-}
+    //  i = 20*log10(i);
+    }
 
-  m->setValueMatrix(QVector<double>(s.begin(),s.end()),10000);
-  m->setInterval( Qt::XAxis, QwtInterval(0, 10000) );
-  m->setInterval( Qt::YAxis, QwtInterval(0, 72) );
+  m->setValueMatrix(QVector<double>(s.begin(),s.end()),44100);
+  m->setInterval( Qt::XAxis, QwtInterval(0, 44100) );
+  m->setInterval( Qt::YAxis, QwtInterval(0, s.size() / 44100) );
 
 
   m->setInterval( Qt::ZAxis, QwtInterval(minValue, maxValue) );

@@ -14,7 +14,7 @@ if (OPENMP_FOUND)
 endif()
 
 set(libraryheaders
-    "./src/fcwt.h"
+    "./fCWT/src/fcwt.h"
 )
 set(implementationheaders 
     "./fCWT/src/main.h" 

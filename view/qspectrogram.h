@@ -12,6 +12,6 @@ class qSpectrogram : public QwtPlot
 public:
   qSpectrogram(QWidget * parent=nullptr);
 
-  void setSpectrogram(std::vector<double > &s);
+  void setSpectrogram(struct SpectrogramData &s);
 
 };

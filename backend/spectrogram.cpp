@@ -11,26 +11,26 @@
 
 #include <fcwt.h>
 
+#include <QDebug>
+
 
 
 
 SpectrogramData spectrogram(const std::vector<double> &data,
-                            int nb_octave, int resolution, uint sampleRate){
-  struct SpectrogramData res;
-
+                            int nb_octaves, int resolution, uint sampleRate){
 
   int n = data.size(); //signal length
-//  float fs = sampleRate; //sampling frequency
-
+  float fs = sampleRate; //sampling frequency
+  int start_octave_pow = 1;
+  int stop_octave_pow = start_octave_pow + nb_octaves;
   //3000 scales spread over 5 octaves
-  const int noctaves = 5; //nb_octave;
-  const int nsuboctaves = 600;
+  const int nsuboctaves = resolution;
 
   //input: n real numbers
   std::vector<float> sig(n);
 
   //output: n x scales complex numbers
-  std::vector<float> tfm(n*noctaves*nsuboctaves*2);
+  std::vector<float> tfm(n*nb_octaves*nsuboctaves*2);
 
   for(int i = 0 ; i < n; i++){
       sig[i] = static_cast<float>(data[i]);
@@ -50,19 +50,45 @@ SpectrogramData spectrogram(const std::vector<double> &data,
   fcwt::cwt(&sig[0]
       , n
       , &tfm[0]
-      , 1
-      , noctaves
+      , start_octave_pow
+      , stop_octave_pow - 1
       , nsuboctaves
       , 2*M_PI/*I dont understand this parameter, I just cargo cult*/
       , 8
       , false);
 
-  res.data.resize(tfm.size()/2);
-  for(uint p = 0; p < tfm.size(); p += 2){
-      float r = tfm[p]
-          , i = tfm[p+1];
-      res.data[p] = sqrt(r*r + i*i);
+
+  struct SpectrogramData res{
+     .duration = static_cast<double>(n) / fs
+    ,.max_idx_time_rank = n
+    ,.max_freq_rank = nb_octaves * nsuboctaves
+    ,.data = std::vector<double>(n * nb_octaves * nsuboctaves)
+    ,.frequencies = std::vector<double>(nb_octaves * nsuboctaves)
+  };
+
+  for(int i = 0; i < nb_octaves  * nsuboctaves ; i++){
+      res.frequencies[i] = fs/pow(2, 1+double(i+start_octave_pow) / nsuboctaves);
     }
+
+  qDebug() << res.frequencies;
+  res.data.resize(tfm.size()/2);
+  for(uint p = 0; p < tfm.size()/2; p += 1){
+      float r = tfm[2*p]
+          , i = tfm[2*p+1];
+      res.data[p] = static_cast<double>(sqrt(r*r + i*i));
+    }
+
+  int tmax=0,fmax=0,max=res.at(0,0);
+  for(int t = 0; t < res.max_idx_time_rank; t++){
+      for(int f = 0; f < res.max_freq_rank; f++)
+        if(res.at(f,t) > max){
+          max=res.at(f,t);
+          fmax=f;
+          tmax=t;
+          }
+    }
+
+  qDebug() << fmax << "frequence " << res.frequencies[fmax];
 
   /*
   cwt_object wt;
@@ -72,7 +98,6 @@ SpectrogramData spectrogram(const std::vector<double> &data,
       qDebug() << wt->scale[i];
   }
   cwt(wt, data.data());
-
 
 
   res.data.resize(scale_freq);
@@ -92,12 +117,7 @@ SpectrogramData spectrogram(const std::vector<double> &data,
   return res;
 }
 
-
-
 #if 0
-
-
-
 
 inp = (double*)malloc(sizeof(double)* N);
 oup = (double*)malloc(sizeof(double)* N);

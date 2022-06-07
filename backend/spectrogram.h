@@ -5,11 +5,16 @@
 
 
 struct SpectrogramData{
-  int duration;
+  double duration;
+  int max_idx_time_rank;
+  int max_freq_rank;
 
-  std::vector<float> data;
-  std::vector<float> time;
-  std::vector<float> frequency;
+  double at(int freq_rank, int time_rank) const {
+    return data[freq_rank * max_idx_time_rank + time_rank];
+  }
+
+  std::vector<double> data;
+  std::vector<double> frequencies;
 };
 
 

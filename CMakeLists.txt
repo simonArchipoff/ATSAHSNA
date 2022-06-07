@@ -29,7 +29,7 @@ pkg_search_module(FFTW REQUIRED fftw3 IMPORTED_TARGET)
 
 add_subdirectory(backend)
 #add_subdirectory(third_party/wavelib)
-add_subdirectory(third_party/fCWT)
+add_subdirectory(third_party/fCWT_wrapper)
 
 
 set(PROJECT_SOURCES
