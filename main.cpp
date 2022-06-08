@@ -24,12 +24,12 @@ int main(int argc, char *argv[])
 */
 #if 0
   uint sr = 44100;
-  std::vector<double> v  = sweep(10,10,2,sr);
+  std::vector<double> v  = sweep(150,150,2,sr);
   std::vector<double> v1 = sweep(100,100,2,sr);
   std::vector<double> v2 = sweep(10000,10000,2,sr);
 
   for(int i = 0; i < v.size() ; i++){
-      v[i] = 0 * v[i] +  0.5*v1[i] + 0 *v2[i];
+      v[i] = 0.5 * v[i] +  0.5*v1[i] + 1 *v2[i];
     }
 
   auto r = spectrogram(v,10,64,sr);

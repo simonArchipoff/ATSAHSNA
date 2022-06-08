@@ -25,12 +25,12 @@ SpectrogramData spectrogram(const std::vector<double> &data,
   int stop_octave_pow = start_octave_pow + nb_octaves;
   //3000 scales spread over 5 octaves
   const int nsuboctaves = resolution;
-
+  const int f = nb_octaves*nsuboctaves;
   //input: n real numbers
   std::vector<float> sig(n);
 
   //output: n x scales complex numbers
-  std::vector<float> tfm(n*nb_octaves*nsuboctaves*2);
+  std::vector<float> tfm(n*f*2);
 
   for(int i = 0 ; i < n; i++){
       sig[i] = static_cast<float>(data[i]);
@@ -53,7 +53,7 @@ SpectrogramData spectrogram(const std::vector<double> &data,
       , start_octave_pow
       , stop_octave_pow - 1
       , nsuboctaves
-      , 2*M_PI/*I dont understand this parameter, I just cargo cult*/
+      , 10*M_PI/*I dont understand this parameter, I just cargo cult*/
       , 8
       , false);
 
@@ -61,23 +61,26 @@ SpectrogramData spectrogram(const std::vector<double> &data,
   struct SpectrogramData res{
      .duration = static_cast<double>(n) / fs
     ,.max_idx_time_rank = n
-    ,.max_freq_rank = nb_octaves * nsuboctaves
-    ,.data = std::vector<double>(n * nb_octaves * nsuboctaves)
-    ,.frequencies = std::vector<double>(nb_octaves * nsuboctaves)
+    ,.max_freq_rank = f
+    ,.data = std::vector<double>(n * f)
+    ,.frequencies = std::vector<double>(f)
   };
 
-  for(int i = 0; i < nb_octaves  * nsuboctaves ; i++){
-      res.frequencies[i] = fs/pow(2, 1+double(i+start_octave_pow) / nsuboctaves);
+  for(int i = 0; i < f ; i++){
+      res.frequencies[ (f - 1) - i] = fs/pow(2, 1+double(i+start_octave_pow) / nsuboctaves);
     }
 
-  qDebug() << res.frequencies;
+//  qDebug() << res.frequencies;
   res.data.resize(tfm.size()/2);
   for(uint p = 0; p < tfm.size()/2; p += 1){
       float r = tfm[2*p]
           , i = tfm[2*p+1];
-      res.data[p] = static_cast<double>(sqrt(r*r + i*i));
+      auto row = ((f-1) - (p / n))*n;
+      auto col = p % n;
+      res.data[row + col/*(f-1) - (p / n) + (p % n)*/] = static_cast<double>(sqrt(r*r + i*i));
     }
 
+#if 0
   int tmax=0,fmax=0,max=res.at(0,0);
   for(int t = 0; t < res.max_idx_time_rank; t++){
       for(int f = 0; f < res.max_freq_rank; f++)
@@ -89,7 +92,7 @@ SpectrogramData spectrogram(const std::vector<double> &data,
     }
 
   qDebug() << fmax << "frequence " << res.frequencies[fmax];
-
+#endif
   /*
   cwt_object wt;
   wt = cwt_init("morlet", 4, data.size(), 1.0/sampleRate , scale_freq);
