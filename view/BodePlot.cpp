@@ -1,5 +1,5 @@
 #include "BodePlot.h"
-
+#include "qwtthings.h"
 #include <cmath>
 
 #include <QwtMath>
@@ -93,18 +93,8 @@ FrequencyPlot::FrequencyPlot(QWidget * parent) : QwtPlot{parent}
   setCanvas(canvas);
 
   // grid
-  QwtPlotGrid* grid = new QwtPlotGrid;
-  grid->enableXMin( true );
-  grid->enableYMin(false);
-  grid->setMajorPen(Qt::black, 0, Qt::DotLine);
-  grid->setMinorPen(Qt::gray,  0, Qt::DotLine);
-  grid->attach(this);
-  auto log_scale = new QwtLogScaleEngine(10);
-  QwtScaleDiv xDiv = log_scale->divideScale(10.0, 1000.0, 2, 10, 1.0);
-  setAxisScaleEngine(QwtPlot::xBottom, log_scale);
 
-  setAxisMaxMajor(QwtAxis::XBottom, 6);
-  setAxisMaxMinor(QwtAxis::XBottom, 9);
+  qwtThingsSetFrequencyLogAxis(this,QwtAxis::XBottom);
 
 
   // axes

@@ -54,7 +54,7 @@ SpectrogramData spectrogram(const std::vector<double> &data,
       , stop_octave_pow - 1
       , nsuboctaves
       , 10*M_PI/*I dont understand this parameter, I just cargo cult*/
-      , 8
+      , 4
       , false);
 
 

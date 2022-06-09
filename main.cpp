@@ -22,17 +22,17 @@ int main(int argc, char *argv[])
         }
     }
 */
-#if 0
+#if 1
   uint sr = 44100;
-  std::vector<double> v  = sweep(150,150,2,sr);
-  std::vector<double> v1 = sweep(100,100,2,sr);
-  std::vector<double> v2 = sweep(10000,10000,2,sr);
-
-  for(int i = 0; i < v.size() ; i++){
-      v[i] = 0.5 * v[i] +  0.5*v1[i] + 1 *v2[i];
+  std::vector<double> v  = sweep(16000,16000,2,sr);
+  std::vector<double> v1 = sweep(50,10000,2,sr);
+  std::vector<double> v2 = sweep(4410,4410,0.1,sr);
+  for(int i = 0; i < v2.size() ; i++) {
+      v[i+sr] += sin(M_PI * i/v2.size()) * v2[i] ;
     }
+  v[sr/2] = 100;
 
-  auto r = spectrogram(v,10,64,sr);
+  auto r = spectrogram(v,10,128,sr);
 
   qSpectrogram foo;
 

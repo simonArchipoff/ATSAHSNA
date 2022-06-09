@@ -49,6 +49,8 @@ set(PROJECT_SOURCES
         view/qresults.cpp
         view/qspectrogram.h
         view/qspectrogram.cpp
+        view/qwtthings.h
+        view/qwtthings.cpp
         ${BACKEND_SOURCES}
         ${TF_SOURCES}
         ${TS_FILES}
