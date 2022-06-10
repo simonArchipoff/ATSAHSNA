@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
         }
     }
 */
-#if 1
+#if 0
   uint sr = 44100;
   std::vector<double> v  = sweep(16000,16000,2,sr);
   std::vector<double> v1 = sweep(50,10000,2,sr);
