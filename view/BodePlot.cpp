@@ -87,24 +87,6 @@ void BodeCurve::setCurve(const FDF &c){
 }
 
 
-FrequencyPlot::FrequencyPlot(QWidget * parent) : QwtPlot{parent}
-{
-  QwtPlotCanvas * canvas = new QwtPlotCanvas();
-  setCanvas(canvas);
-
-  // grid
-
-  qwtThingsSetFrequencyLogAxis(this,QwtAxis::XBottom);
-
-
-  // axes
-  setAxisScale(QwtAxis::XBottom,20,20000);
-  setAxisScale(QwtAxis::YLeft,-150,50);
-  setAxisTitle(QwtAxis::XBottom, tr("fréquence"));
-
-  (void) new QwtPlotPanner(canvas);
-}
-
 
 BodePlot::BodePlot(QWidget* parent) : FrequencyPlot{parent}
 {

@@ -9,6 +9,7 @@
 
 
 
+
 struct RequestMeasure{vector<VD> input;};
 struct RequestPartialOutput{};
 //struct RequestOutput{};

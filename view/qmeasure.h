@@ -13,7 +13,9 @@
 #include <QBoxLayout>
 
 #include "backend/measure.h"
+#include "qspectrogram.h"
 #include "constants.h"
+
 
 
 
@@ -33,7 +35,7 @@ class QDisplayResponse : public BodePlot {
   Q_OBJECT
 public:
   typedef ResultResponse Result;
-  QDisplayResponse(QWidget * parent):BodePlot{parent}{
+  QDisplayResponse(QWidget * parent=nullptr):BodePlot{parent}{
   };
 
   void setResult(const Result &r, QColor c);
@@ -100,8 +102,8 @@ public:
 
   void setResult(const typename QRESULT::Result &r, QColor c){
     qplot->setResult(r,c);
-    temporalPlot->setInput(r.raw_data.inputs[0]);
-    temporalPlot->setOutput(r.raw_data.outputs[0]);
+    //temporalPlot->setInput(r.raw_data.inputs[0]);
+    //temporalPlot->setOutput(r.raw_data.outputs[0]);
   }
 
   QScopedPointer<TemporalPlot> temporalPlot;
@@ -111,5 +113,5 @@ public:
 
 typedef class QResult<QParamResponse,QDisplayResponse> QResponse;
 typedef class QResult<QParamDistortion,QDisplayDistortion> QDistortion;
-
+typedef class QResult<QParamSpectrogram,QDisplaySpectrogram> QSpectrogram;
 

@@ -56,7 +56,9 @@ MainWindow::MainWindow(QWidget *parent)
   s->setStretchFactor(1,0);
   connect(qResults.data(), &QResults::request_response, this, [this](auto p,auto b){this->measure(getBackend(b),p);});
   connect(qResults.data(), &QResults::request_distortion, this,[this](auto p,auto b){this->measure(getBackend(b),p);});
+  connect(qResults.data(), &QResults::request_spectrogram,this,[this](auto p, auto b){this->measure(getBackend(b),p);});
   connect(jackThings->viewJack.data(), &QBackendJack::newLatency,this,[this](int i){ jackThings->backendJack->setLatency(i);});
+
   faustThings->viewFaust->compile();
 }
 
@@ -78,6 +80,11 @@ QCoro::Task<void> MainWindow::measure(Backend * b, ParamResponse p){
 QCoro::Task<void> MainWindow::measure(Backend * b,ParamTHD p){
  auto r = co_await QtConcurrent::run(compute_distortion,b,p);
  co_return this->qResults->setResult(r[0],Qt::red);
+}
+
+QCoro::Task<void> MainWindow::measure(Backend * b, ParamSpectrogram p){
+  auto r = co_await QtConcurrent::run(compute_spectrogram,b,p);
+  co_return this->qResults->setResult(r[0],Qt::red);
 }
 
 #if 0

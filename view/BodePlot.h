@@ -13,6 +13,8 @@
 #include "qscopedpointer.h"
 #include "qwt_plot_curve.h"
 
+#include "qwtthings.h"
+
 class BodeCurve{
 public:
   //BodeCurve(const BodeCurve&) = default;
@@ -27,15 +29,6 @@ public:
   double maxAmplitude,minAmplitude;
   bool displayed;
 };
-
-
-class FrequencyPlot : public QwtPlot
-{
-  Q_OBJECT
-public:
-  FrequencyPlot(QWidget * parent);
-};
-
 class BodePlot : public FrequencyPlot
 {
   Q_OBJECT
@@ -48,6 +41,7 @@ public:
 
   double maxAmplitude = 10, minAmplitude=-100;
 };
+
 
 class THDPlot : public FrequencyPlot
 {

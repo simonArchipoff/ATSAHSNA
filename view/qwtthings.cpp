@@ -3,7 +3,8 @@
 #include <QwtPlot>
 #include <QwtPlotGrid>
 #include <QwtLogScaleEngine>
-
+#include <QwtPlotPanner>
+#include <QwtPlotCanvas>
 
 void qwtThingsSetFrequencyLogAxis(QwtPlot * plot,QwtAxisId axis){
   QwtPlotGrid* grid = new QwtPlotGrid;
@@ -17,4 +18,22 @@ void qwtThingsSetFrequencyLogAxis(QwtPlot * plot,QwtAxisId axis){
   plot->setAxisScaleEngine(axis, log_scale);
   plot->setAxisMaxMajor(axis, 6);
   plot->setAxisMaxMinor(axis, 9);
+}
+
+FrequencyPlot::FrequencyPlot(QWidget * parent) : QwtPlot{parent}
+{
+  QwtPlotCanvas * canvas = new QwtPlotCanvas();
+  setCanvas(canvas);
+
+  // grid
+
+  qwtThingsSetFrequencyLogAxis(this,QwtAxis::XBottom);
+
+
+  // axes
+  setAxisScale(QwtAxis::XBottom,20,20000);
+  setAxisScale(QwtAxis::YLeft,-150,50);
+  setAxisTitle(QwtAxis::XBottom, tr("fréquence"));
+
+  (void) new QwtPlotPanner(canvas);
 }

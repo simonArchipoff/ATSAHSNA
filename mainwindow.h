@@ -76,6 +76,7 @@ public:
     void setFaustDsp(QString code);
     QCoro::Task<void> measure(Backend * b, ParamResponse p);
     QCoro::Task<void> measure(Backend * b, ParamTHD p);
+    QCoro::Task<void> measure(Backend * b, ParamSpectrogram p);
 
     void measureResponse();
     void measureTHD();

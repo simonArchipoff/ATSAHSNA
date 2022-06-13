@@ -1,4 +1,5 @@
 #include "acquisition.h"
+#include "backend/spectrogram.h"
 #include <QDebug>
 #include <algorithm>
 
@@ -48,6 +49,20 @@ vector<struct ResultResponse> compute_response(Backend *b, const struct ParamRes
       res.push_back(ResultResponse{ compute_TF_FFT(in,o,b->getSampleRate())
                                    ,p
                                    ,MeasureData{vector({in}),vector({o})}});
+    }
+  return res;
+}
+
+vector<struct ResultSpectrogram> compute_spectrogram(Backend *b, const struct ParamSpectrogram p){
+  const auto in = impulse(1,b->getSampleRate());
+  vector<VD> input;
+  for(uint i = 0; i<b->numberInput(); i++){
+    input.push_back(in);
+    }
+  auto output = acquire_output(b,input);
+  vector<struct ResultSpectrogram> res;
+  for(auto &o : output){
+      res.push_back(spectrogram(o,p.nb_octave,p.resolution,b->getSampleRate()));
     }
   return res;
 }

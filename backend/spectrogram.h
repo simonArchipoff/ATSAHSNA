@@ -3,8 +3,14 @@
 #include <vector>
 
 
+struct ParamSpectrogram {
+  int nb_octave;
+  int resolution;
+};
 
-struct SpectrogramData{
+
+
+struct ResultSpectrogram{
   double duration;
   int max_idx_time_rank;
   int max_freq_rank;
@@ -18,7 +24,7 @@ struct SpectrogramData{
 };
 
 
-SpectrogramData spectrogram(const std::vector<double> &data,
+ResultSpectrogram spectrogram(const std::vector<double> &data,
                             int nb_octave,
                             int resolution,
                             unsigned int sampleRate);
