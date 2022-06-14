@@ -3,7 +3,8 @@
 #include <QWidget>
 #include <QwtPlotSpectrogram>
 #include <QwtPlot>
-
+#include <QwtMatrixRasterData>
+#include <QwtInterval>
 #include <QSpinBox>
 
 #include "backend/spectrogram.h"
@@ -23,7 +24,20 @@ private:
 };
 
 
+class RasterSpectro : public QwtRasterData {
+public:
+  RasterSpectro();
 
+  void setSpectrogramData(const struct ResultSpectrogram &s);
+  double value(double t, double f) const  QWT_OVERRIDE;
+  QwtInterval interval (Qt::Axis axis) const QWT_OVERRIDE;
+
+protected:
+  std::vector<double> freq;
+  double duration;
+  int max_duration;
+  QwtMatrixRasterData matrix;
+};
 
 class QDisplaySpectrogram : public QwtPlot
 {
@@ -32,4 +46,7 @@ public:
   QDisplaySpectrogram(QWidget * parent=nullptr);
   typedef ResultSpectrogram Result;
   void setResult(const Result &s,QColor &c);
+protected:
+  QScopedPointer<RasterSpectro> rasterspectro;
+  QScopedPointer<QwtPlotSpectrogram> qwtplotspectrogram;
 };
