@@ -102,8 +102,11 @@ public:
 
   void setResult(const typename QRESULT::Result &r, QColor c){
     qplot->setResult(r,c);
-    //temporalPlot->setInput(r.raw_data.inputs[0]);
-    //temporalPlot->setOutput(r.raw_data.outputs[0]);
+    if constexpr (requires{r.raw_data;}){
+      temporalPlot->setInput(r.raw_data.inputs[0]);
+      temporalPlot->setOutput(r.raw_data.outputs[0]);
+    }
+
   }
 
   QScopedPointer<TemporalPlot> temporalPlot;

@@ -6,11 +6,11 @@ It's licenced under GPLv3. For now it's under heavy development, you can play wi
 What's already implemented:
 - two backend (faust and jackd)
 - impulse response, harmonic spectrum and THD+N computation (in temporal domain as well)
+- wavelet waterfall measures
 - a very poor UI, sorry
 
 Soon :
 - something to deal with the latency more easily
-- wavelet waterfall measures
 - export measurements in a bunch of standards files
 - better UI
 - less franglish and proper translations
@@ -22,8 +22,17 @@ Later :
 - a full laplace transform backend, with physical measures (?)
 - Some kind of knob-turning algorithm to create model of a measured function (eg, turning a faust equalizer's knobs to flatten a response).
 
-I'll try not to spread qt things all around so that it'll be easy to make a script friendly measure tool.
-I hope I'll be able to propose a headless system able to compute data such as THD against power or THD against freqency
+Sooner or later :
+- I hope I'll be able to propose a headless system able to compute data such as THD against power or THD against freqency
+
+
+to install and try :
+```
+git submodule init
+git submodule update
+cmake -S . -B build && make -j 8 -C build
+./build ./build/ATSAHSNA 
+```
 
 Dependancy:
 * Qt
@@ -32,7 +41,4 @@ Dependancy:
 * fCWT (wavelet lib, in a git submodule)
 * Faust
 * Jack
-* doctest 
 * moodycamel lockfree queue (already in the repository)
-
-
