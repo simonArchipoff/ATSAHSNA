@@ -122,20 +122,7 @@ QDisplaySpectrogram::QDisplaySpectrogram(QWidget * parent)
 
 }
 
-class LinearColorMap : public QwtLinearColorMap
-{
-  public:
-    LinearColorMap()
-        : QwtLinearColorMap(Qt::darkBlue, Qt::darkRed)
-    {
-        setFormat((QwtColorMap::Format) QwtColorMap::RGB);
-        addColorStop(0.15,Qt::blue);
-        addColorStop(0.33,Qt::green);
-        addColorStop(0.80, Qt::red );
-        addColorStop(0.95,Qt::yellow);
-        setMode(ScaledColors);
-    }
-};
+
 
 
 void QDisplaySpectrogram::setResult(const QDisplaySpectrogram::Result &s,QColor &c){
@@ -155,7 +142,7 @@ void QDisplaySpectrogram::setResult(const QDisplaySpectrogram::Result &s,QColor 
   qwtplotspectrogram->setData(rasterspectro.data());
   //spect->setDisplayMode( QwtPlotSpectrogram::ImageMode, true);
   //spect->setDefaultContourPen( QPen( Qt::black, 0 ));
-  auto * colorMap = new LinearColorMap;
+  auto * colorMap = new ColorMapViridis;
   //spect->setAlpha();
   //QRectF r = qwtplotspectrogram->boundingRect();
 //  qDebug() << r;

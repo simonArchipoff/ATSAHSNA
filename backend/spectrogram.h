@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-
+#include "measure.h"
 
 struct ParamSpectrogram {
   int nb_octave;
@@ -19,6 +19,7 @@ struct ResultSpectrogram{
     return data[freq_rank * max_idx_time_rank + time_rank];
   }
 
+  MeasureData raw_data;
   std::vector<double> data;
   std::vector<double> frequencies;
 };

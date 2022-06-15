@@ -62,7 +62,10 @@ vector<struct ResultSpectrogram> compute_spectrogram(Backend *b, const struct Pa
   auto output = acquire_output(b,input);
   vector<struct ResultSpectrogram> res;
   for(auto &o : output){
-      res.push_back(spectrogram(o,p.nb_octave,p.resolution,b->getSampleRate()));
+      auto tmp = spectrogram(o,p.nb_octave,p.resolution,b->getSampleRate());
+      tmp.raw_data.inputs=vector({in});
+      tmp.raw_data.outputs=vector({o});
+      res.push_back(tmp);
     }
   return res;
 }
