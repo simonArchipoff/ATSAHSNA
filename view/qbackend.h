@@ -14,7 +14,7 @@
 #include "backend/backendJack.h"
 
 
-class QFaustDsp : public QGroupBox
+class QFaustDsp : public QWidget
 {
     Q_OBJECT
 public:
@@ -45,7 +45,7 @@ protected:
 };
 */
 
-class QBackendJack : public QGroupBox{
+class QBackendJack : public QWidget{
   Q_OBJECT
 public:
   QBackendJack(QWidget * parent=nullptr);

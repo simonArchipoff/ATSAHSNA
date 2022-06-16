@@ -7,8 +7,8 @@
 QResults::QResults(QWidget * parent)
   :
   QTabWidget{parent}
-  ,qdistortion{new QDistortion}
   ,qresponse{new QResponse}
+  ,qdistortion{new QDistortion}
   ,qspectrogram{new QSpectrogram}
 {
   this->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
@@ -16,7 +16,6 @@ QResults::QResults(QWidget * parent)
   addTab(qresponse.data(),tr("response"));
   addTab(qdistortion.data(),tr("distortion"));  
   addTab(qspectrogram.data(),tr("spectrogram"));
-
 
 
   connect(qresponse->qcontrol.data(),&QParamResponse::start_measure_response,this,

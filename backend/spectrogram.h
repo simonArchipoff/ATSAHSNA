@@ -26,6 +26,6 @@ struct ResultSpectrogram{
 
 
 ResultSpectrogram spectrogram(const std::vector<double> &data,
-                            int nb_octave,
-                            int resolution,
-                            unsigned int sampleRate);
+                              int nb_octave,
+                              int resolution,
+                              unsigned int sampleRate);

@@ -71,14 +71,19 @@ ResultSpectrogram spectrogram(const std::vector<double> &data,
     }
 
 //  qDebug() << res.frequencies;
-  res.data.resize(tfm.size()/2);
-  for(uint p = 0; p < tfm.size()/2; p += 1){
-      float r = tfm[2*p]
-          , i = tfm[2*p+1];
-      auto row = ((f-1) - (p / n))*n;
+  assert(tfm.size() / 2 == n*f);
+  res.data.resize(n*f);
+
+
+  for(int p = 0; p < n * f; p += 1){
+      auto row =  (f-1) - (p / n);
       auto col = p % n;
-      res.data[row + col/*(f-1) - (p / n) + (p % n)*/] = static_cast<double>(sqrt(r*r + i*i));
+      float r = tfm[2* p]
+          , i = tfm[(2* p) +1];
+      res.data[n*row + col] = static_cast<double>(sqrt(r*r + i*i));
     }
+
+
 
   return res;
 }

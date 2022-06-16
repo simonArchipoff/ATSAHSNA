@@ -7,7 +7,7 @@
 
 #include <QObject>
 #include <QTabWidget>
-#include <QScopedPointer>
+#include <QPointer>
 #include <QSplitter>
 
 
@@ -22,13 +22,13 @@ public:
   void setResult(const struct ResultResponse&, QColor c);
   void setResult(const struct ResultSpectrogram&, QColor c);
 signals:
-    void request_response   (ParamResponse p,     backend_type);
-    void request_distortion (ParamTHD p,          backend_type);
-    void request_spectrogram(ParamSpectrogram p, backend_type);
+  void request_response   (ParamResponse p,     backend_type);
+  void request_distortion (ParamTHD p,          backend_type);
+  void request_spectrogram(ParamSpectrogram p, backend_type);
 protected:
-  QScopedPointer<QDistortion> qdistortion;
-  QScopedPointer<QResponse> qresponse;
-  QScopedPointer<QSpectrogram> qspectrogram;
+  QPointer<QResponse> qresponse;
+  QPointer<QDistortion> qdistortion;
+  QPointer<QSpectrogram> qspectrogram;
 };
 
 

@@ -10,7 +10,7 @@ void qwtThingsSetFrequencyLogAxis(QwtPlot * plot,QwtAxisId axis){
   QwtPlotGrid* grid = new QwtPlotGrid;
   grid->enableXMin(true);
   grid->enableYMin(false);
-  grid->setMajorPen(Qt::black, 0, Qt::DotLine);
+  grid->setMajorPen(Qt::gray, 0, Qt::DotLine);
   grid->setMinorPen(Qt::gray,  0, Qt::DotLine);
   grid->attach(plot);
   auto log_scale = new QwtLogScaleEngine(10);

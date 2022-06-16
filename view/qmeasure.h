@@ -93,6 +93,8 @@ public:
     s->addWidget(qcontrol.data());
     s->addWidget(qplot.data());
     s->addWidget(temporalPlot.data());
+
+    s->setSizes({1,3,1});
     setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
   }
 

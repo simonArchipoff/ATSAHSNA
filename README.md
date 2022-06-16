@@ -10,11 +10,12 @@ What's already implemented:
 - a very poor UI, sorry
 
 Soon :
-- something to deal with the latency more easily
+- something to deal with latency more easily
 - export measurements in a bunch of standards files
 - better UI
 - less franglish and proper translations
 - dealing with several input/output (to measure two channels at once for instance)
+- having several measure displayed at once
 - simpler code (I am tâtonning)
 
 Later :
@@ -31,14 +32,14 @@ to install and try :
 git submodule init
 git submodule update
 cmake -S . -B build && make -j 8 -C build
-./build ./build/ATSAHSNA 
+./build/ATSAHSNA 
 ```
 
 Dependancy:
 * Qt
 * QCoro
 * FFTW
-* fCWT (wavelet lib, in a git submodule)
+* fCWT (wavelet lib, in a git submodule, it also depends on FFTW)
 * Faust
 * Jack
 * moodycamel lockfree queue (already in the repository)

@@ -28,8 +28,8 @@ QParamSpectrogram::QParamSpectrogram(QWidget * parent)
   ,nb_octaves{new QSpinBox}
   ,resolution{new QSpinBox}
 {
-  resolution->setRange(1,512);
-  resolution->setValue(64);
+  resolution->setRange(1,256);
+  resolution->setValue(16);
   nb_octaves->setRange(1,15);
   nb_octaves->setValue(10);
   auto b = new StartMesure{this};
@@ -89,9 +89,9 @@ double RasterSpectro::value(double t, double f) const {
     return qQNaN();
 
   double ti = (t/duration) * max_duration;
-  for(uint i = 1; i < freq.size(); i++){
+  for(uint i = 0; i < freq.size(); i++){
       if(f < freq[i]){
-          auto foo = matrix.value(ti,i-1);
+          auto foo = matrix.value(ti,i);
           return foo;
         }
     }
@@ -118,28 +118,24 @@ QDisplaySpectrogram::QDisplaySpectrogram(QWidget * parent)
   :QwtPlot{parent}
   , rasterspectro{new RasterSpectro}//RasterSpectro(s);
   , qwtplotspectrogram{new QwtPlotSpectrogram}
-{    qwtThingsSetFrequencyLogAxis(this,QwtAxis::YLeft);
+{
+  qwtThingsSetFrequencyLogAxis(this,QwtAxis::YLeft);
 
 }
 
 
 
 
-void QDisplaySpectrogram::setResult(const QDisplaySpectrogram::Result &s,QColor &c){
-
+void QDisplaySpectrogram::setResult(const QDisplaySpectrogram::Result &s,QColor &c) {
   Result copy_s{s};
   for(auto & i : copy_s.data){
       i = 20*log10(i);
     }
-
   rasterspectro->setSpectrogramData(copy_s);
-
   setAxisScaleEngine(QwtPlot::yLeft, new QwtLogScaleEngine(10));
-
 //m.setValueMatrix(QVector<double>::fromStdVector(s),log_n);
-
   qwtplotspectrogram->setRenderThreadCount(4);
-  qwtplotspectrogram->setData(rasterspectro.data());
+  qwtplotspectrogram->setData(rasterspectro);
   //spect->setDisplayMode( QwtPlotSpectrogram::ImageMode, true);
   //spect->setDefaultContourPen( QPen( Qt::black, 0 ));
   auto * colorMap = new ColorMapViridis;
@@ -150,7 +146,6 @@ void QDisplaySpectrogram::setResult(const QDisplaySpectrogram::Result &s,QColor 
   //setAxisScale( QwtPlot::xBottom , r.left(), r.right(), 0.1);
   qwtplotspectrogram->attach(this);
   qwtplotspectrogram->setColorMap(colorMap);
-
 
   replot();
 }

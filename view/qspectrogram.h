@@ -47,6 +47,6 @@ public:
   typedef ResultSpectrogram Result;
   void setResult(const Result &s,QColor &c);
 protected:
-  QScopedPointer<RasterSpectro> rasterspectro;
-  QScopedPointer<QwtPlotSpectrogram> qwtplotspectrogram;
+  RasterSpectro * rasterspectro;
+  QwtPlotSpectrogram * qwtplotspectrogram;
 };

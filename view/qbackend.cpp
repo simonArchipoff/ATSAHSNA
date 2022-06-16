@@ -8,7 +8,7 @@
 #include <QFormLayout>
 
 QFaustDsp::QFaustDsp(QWidget *parent)
-    : QGroupBox{"faust",parent},
+    : QWidget{parent},
       dspUi{nullptr},
       codeEdit{new QTextEdit{this}},
       errorLabel{new QLabel{this}},
@@ -42,7 +42,7 @@ QFaustDsp::QFaustDsp(QWidget *parent)
     connect(compile_button,&QPushButton::clicked,this, &QFaustDsp::compile);
     connect(codeEdit,&QTextEdit::textChanged, this, [this](){compile_button->setDisabled(false);});
     connect(sr,&QLineEdit::textChanged, this, [this](){compile_button->setDisabled(false);});
-    setMaximumWidth(minimumSizeHint().width());
+    //setMaximumWidth(minimumSizeHint().width());
 }
 
 void QFaustDsp::compile(){
@@ -60,7 +60,7 @@ void QFaustDsp::setUI(QWidget * ui)
     }
     layout->addWidget(ui,5);
     compile_button->setDisabled(true);
-    setMaximumWidth(minimumSizeHint().width());
+//setMaximumWidth(minimumSizeHint().width());
 }
 
 void QFaustDsp::setErrorMessage(QString s)
@@ -73,7 +73,7 @@ void QFaustDsp::setErrorMessage(QString s)
 
 
 QBackendJack::QBackendJack(QWidget * parent)
-  : QGroupBox{"jack",parent}
+  : QWidget{parent}
   ,inputButton{new QPushButton{tr("new input"),this}}
   ,outputButton{new QPushButton{tr("new output"),this}}
   ,inputName{new QLineEdit{this}}

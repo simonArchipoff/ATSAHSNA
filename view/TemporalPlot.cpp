@@ -33,7 +33,7 @@ TemporalPlot::TemporalPlot(QWidget * parent)
   connect(len.data(), &QSlider::valueChanged, this, [this](auto l){
       plot->setAxisScale(QwtAxis::XBottom, start->value(), start->value()+l);
     });
-  setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+  plot->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
 }
 
 
