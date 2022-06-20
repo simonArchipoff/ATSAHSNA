@@ -37,7 +37,6 @@ cmake -S . -B build && make -j 8 -C build
 
 Dependancy:
 * Qt
-* QCoro
 * FFTW
 * fCWT (wavelet lib, in a git submodule, it also depends on FFTW)
 * Faust
