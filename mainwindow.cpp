@@ -71,16 +71,15 @@ Backend * MainWindow::getBackend(backend_type b){
 
 void MainWindow::measure(Backend * b, ParamResponse p){
   auto r = QtConcurrent::run(compute_response,b,p);
-  QtConcurrent::run([r,this](){this->qResults->setResult(r.result()[0],Qt::red);});
+  this->qResults->setResult(r.result()[0],Qt::red);
 }
 
 void MainWindow::measure(Backend * b,ParamTHD p){
  auto r = QtConcurrent::run(compute_distortion,b,p);
- QtConcurrent::run([r,this](){this->qResults->setResult(r.result()[0],Qt::red);});
- //this->qResults->setResult(r[0],Qt::red);
+ this->qResults->setResult(r.result()[0],Qt::red);
 }
 
 void MainWindow::measure(Backend * b, ParamSpectrogram p){
   auto r = QtConcurrent::run(compute_spectrogram,b,p);
-  QtConcurrent::run([r,this](){this->qResults->setResult(r.result()[0],Qt::red);});
+  this->qResults->setResult(r.result()[0],Qt::red);
 }

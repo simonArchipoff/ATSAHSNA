@@ -87,13 +87,7 @@ endif()
 target_link_libraries(ATSAHSNA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qwt::Qwt fftw3 faust jack fCWT tbb) #I dont know what uses tbb, fcwt probably
 #target_include_directories(ATSAHSNA PRIVATE third_party/wavelib/header) #eventually I'll learn how to do this properly
 
-set_target_properties(ATSAHSNA PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
-)
+
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(ATSAHSNA)
