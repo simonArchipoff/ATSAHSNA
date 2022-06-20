@@ -11,7 +11,7 @@
 #include "view/qresults.h"
 #include "backend/backendFaust.h"
 #include "backend/backendJack.h"
-#include <QCoroFuture>
+
 
 
 /*
@@ -74,9 +74,9 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     void setFaustDsp(QString code);
-    QCoro::Task<void> measure(Backend * b, ParamResponse p);
-    QCoro::Task<void> measure(Backend * b, ParamTHD p);
-    QCoro::Task<void> measure(Backend * b, ParamSpectrogram p);
+    void measure(Backend * b, ParamResponse p);
+    void measure(Backend * b, ParamTHD p);
+    void measure(Backend * b, ParamSpectrogram p);
 
     void measureResponse();
     void measureTHD();

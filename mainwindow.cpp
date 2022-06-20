@@ -15,12 +15,11 @@
 #include "backend/acquisition.h"
 
 #include "qnamespace.h"
-#include "task.h"
+//#include "task.h"
 #include "view/qbackend.h"
 
 #include "backend/measure.h"
 
-#include <QCoroFuture>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -70,17 +69,18 @@ Backend * MainWindow::getBackend(backend_type b){
   exit(1);
 }
 
-QCoro::Task<void> MainWindow::measure(Backend * b, ParamResponse p){
-  auto r = co_await QtConcurrent::run(compute_response,b,p);
-  co_return this->qResults->setResult(r[0],Qt::red);
+void MainWindow::measure(Backend * b, ParamResponse p){
+  auto r = QtConcurrent::run(compute_response,b,p);
+  QtConcurrent::run([r,this](){this->qResults->setResult(r.result()[0],Qt::red);});
 }
 
-QCoro::Task<void> MainWindow::measure(Backend * b,ParamTHD p){
- auto r = co_await QtConcurrent::run(compute_distortion,b,p);
- co_return this->qResults->setResult(r[0],Qt::red);
+void MainWindow::measure(Backend * b,ParamTHD p){
+ auto r = QtConcurrent::run(compute_distortion,b,p);
+ QtConcurrent::run([r,this](){this->qResults->setResult(r.result()[0],Qt::red);});
+ //this->qResults->setResult(r[0],Qt::red);
 }
 
-QCoro::Task<void> MainWindow::measure(Backend * b, ParamSpectrogram p){
-  auto r = co_await QtConcurrent::run(compute_spectrogram,b,p);
-  co_return this->qResults->setResult(r[0],Qt::red);
+void MainWindow::measure(Backend * b, ParamSpectrogram p){
+  auto r = QtConcurrent::run(compute_spectrogram,b,p);
+  QtConcurrent::run([r,this](){this->qResults->setResult(r.result()[0],Qt::red);});
 }

@@ -16,7 +16,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra")
 find_package(QT NAMES Qt5 COMPONENTS Core Widgets  LinguistTools REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 include(CMakePrintHelpers)
-find_package(QCoro5 REQUIRED COMPONENTS Core)
+#find_package(QCoro5 REQUIRED COMPONENTS Core)
 
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 #set(CMAKE_FIND_DEBUG_MODE TRUE)
@@ -83,7 +83,8 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(ATSAHSNA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets QCoro::Core Qwt::Qwt fftw3 faust jack fCWT)
+
+target_link_libraries(ATSAHSNA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qwt::Qwt fftw3 faust jack fCWT tbb) #I dont know what uses tbb, fcwt probably
 #target_include_directories(ATSAHSNA PRIVATE third_party/wavelib/header) #eventually I'll learn how to do this properly
 
 set_target_properties(ATSAHSNA PROPERTIES

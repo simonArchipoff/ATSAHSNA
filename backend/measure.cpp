@@ -1,3 +1,5 @@
+#include <numeric>
+#include <pstl/glue_execution_defs.h>
 #define _USE_MATH_DEFINES
 
 #include "measure.h"
@@ -8,6 +10,7 @@
 #include <fftw3.h>
 #include <vector>
 #include <algorithm>
+//#include <execution>
 
 VD sweep_angular(double f1, double f2, int duration){
   double ts1 = 1/f1, ts2 = 1/f2;
@@ -99,9 +102,20 @@ VCD computeDFT(const VD &input){
 }
 
 
+/*
+double mean(const std::vector<double> &v){
+  return std::reduce(std::execution::par_unseq,v.begin(),v.end())/static_cast<double>(v.size());
+}
+
+double std_dev(const std::vector<double> &v){
+  auto m=mean(v);
+  return 0;
+}
+*/
 
 ResultTHD computeTHDNsimple(const ParamTHD p, const VD&signal, int sampleRate){
   assert(signal.size() > 1);
+
   VCD signalfft = computeDFT(signal);
   signalfft[0] = signalfft[1];
   uint smin = p.freqMin *  p.duration;
@@ -125,8 +139,10 @@ ResultTHD computeTHDNsimple(const ParamTHD p, const VD&signal, int sampleRate){
     }
 
   for(uint i = 0; i < signalfft.size(); i++){
-      signalfft[i]/=eh1;
+      signalfft[i] /= eh1;
     }
+
+
   /*
   for(uint i = 0; i < smin; i++){
       signalfft[i]=1;
@@ -154,7 +170,7 @@ struct THD {
 };
 */
 
-
+//https://dsp.stackexchange.com/questions/41291/calculating-the-phase-shift-between-two-signals-based-on-samples
 double phaseShift(const VD &a, const VD &b){
   assert(a.size() == b.size());
   //compute norms and dot product of the vectors
