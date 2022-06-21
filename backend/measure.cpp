@@ -10,6 +10,10 @@
 #include <fftw3.h>
 #include <vector>
 #include <algorithm>
+#include <vector>
+#include <numeric>
+
+using std::vector;
 //#include <execution>
 
 VD sweep_angular(double f1, double f2, int duration){
@@ -159,6 +163,104 @@ ResultTHD computeTHDNsimple(const ParamTHD p, const VD&signal, int sampleRate){
     };
   //return sqrt(e_tot_wo_h1) / sqrt(e_tot_wo_h1 + eh1 * eh1);
 }
+
+
+
+
+
+
+//the slice data type and the get_harmonic function locate the harmonics
+// the function try to find the local maximum around its parameter f
+//         /\
+//        /  \
+//   \_  /    \  /\
+//     \/      \/
+//begin^    end^
+//level is the integral between begin and end included
+struct slice {
+    uint begin;
+    uint end;
+    double level;
+};
+slice get_harmonic(const uint f, const vector<double>&v){
+    struct slice s={f,f,v[f]};
+    for(uint i = f - f/10; i < f + f/10 && i >= 0 && i < v.size(); i++){ // find local maximum
+        if(v[i]> v[f])
+            s = {f,f,v[f]};
+    }
+    assert(f >= 0 && f < v.size());
+    // find local minimum left
+    while(s.begin >= 1 && v[s.begin - 1] <= v[s.begin]){
+        s.level += v[s.begin - 1];
+        s.begin--;
+    }
+    //find local minimum right
+    while(s.end < v.size() -1 &&  v[s.end] >= v[s.end + 1]){
+        s.level += v[s.end + 1];
+        s.end++;
+    }
+    return s;
+}
+
+vector<slice> find_harmonics(const vector<double> & v,uint fundamental){
+    vector<slice> res;
+    for(auto i = 1; i*fundamental < v.size(); i++){
+        res.push_back(get_harmonic(i*fundamental,v));
+    }
+    return res;
+}
+vector<slice> find_harmonics(const vector<double> &v){
+    auto f = std::distance(v.begin(),std::max_element(v.begin(),v.end()));
+    return find_harmonics(v,f);
+}
+
+double thd_ieee(const vector<slice> & slices){
+    double a = 0, b = 0;
+    vector<slice>::const_iterator  it;
+    for(it = slices.begin(), it++ ; it != slices.end(); it++){
+        a += it->level * it->level;
+    }
+    b = slices[0].level;
+    return 100*sqrt(a)/b;
+}
+
+template<typename T>
+std::pair<T,T> sum_pair(const std::pair<T,T> &a
+                                   ,const std::pair<T,T> &b){
+    return std::make_pair(a.first + b.first, a.second + b.second);
+}
+
+vector<std::pair<double,double>> decimation_log(const vector<std::pair<double,double>> & v, uint nb_points){
+    auto b = log(v.size())/nb_points;
+    vector<std::pair<double,double>> res;
+    res.resize(nb_points);
+
+    for(uint i = 0; i < nb_points; i++){
+        const uint imin = static_cast<uint>(exp(b*i));
+        const uint imax = static_cast<uint>(exp(b*(i+1)));
+        auto p = reduce(v.begin() + imin, v.begin() + imax, std::make_pair(0,0), sum_pair<double>);
+        p.first /= imax - imin;
+        p.second /= imax - imin;
+        res[i] = p;
+    }
+
+    return res;
+}
+
+/*
+int main(int argc, char ** argv){
+    auto v = vector<double>({0,1,0,2,1,0.2,0.1,0.2,0.1,5,4,2,0.1,0.2,0.1,0.2,});
+
+    for(auto s : find_harmonics(v,3)){
+        qDebug() << s.begin << s.end << s.level;
+    }
+
+
+    return 0;
+}
+*/
+
+
 
 
 /*

@@ -16,22 +16,14 @@ endif()
 set(libraryheaders
     "./fCWT/src/fcwt.h"
 )
-set(implementationheaders 
-    "./fCWT/src/main.h" 
-    "./fCWT/src/rwave.h" 
-    "./fCWT/src/wavelib.h" 
-) 
+
 set(librarysources 
     "./fCWT/src/fcwt.cpp"
 )
-set(implementationsources 
-    "./fCWT/src/main.cpp" 
-    "./fCWT/src/rwave.cpp"
-    "./fCWT/src/wavelib.cpp"
-)
 
-set(headers ${libraryheaders} ${implementationheaders})
-set(sources ${librarysources} ${implementationsources})
+
+set(headers ${libraryheaders})
+set(sources ${librarysources})
 
 # targets 
 set(fcwt_library_target "fCWT")

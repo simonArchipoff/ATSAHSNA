@@ -26,7 +26,7 @@ set(BACKEND_SOURCES
 #cmake_print_variables(BACKEND_SOURCES)
 
 
-#add_library(transfer_function DTF.h DTF.cpp measure.h measure.cpp)
+#add_library(backend DTF.h DTF.cpp measure.h measure.cpp)
 #target_include_directories(transfer_function PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 #find_package(doctest REQUIRED)
