@@ -2,7 +2,7 @@
 #include <jack/types.h>
 #include <stdio.h>
 #include <algorithm>
-#include "constants.h"
+#include "../constants.h"
 
 
 const char **ports;

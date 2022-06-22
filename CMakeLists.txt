@@ -21,37 +21,19 @@ include(CMakePrintHelpers)
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 #set(CMAKE_FIND_DEBUG_MODE TRUE)
 find_package(Qwt REQUIRED)
-find_package(Faust REQUIRED)
 
-find_package(PkgConfig)
-pkg_check_modules(JACK REQUIRED jack)
-pkg_search_module(FFTW REQUIRED fftw3 IMPORTED_TARGET)
 
-add_subdirectory(backend)
-#add_subdirectory(third_party/wavelib)
+
 add_subdirectory(third_party/fCWT_wrapper)
+add_subdirectory(backend)
 
+add_subdirectory(view)
 
 set(PROJECT_SOURCES
         constants.h
         main.cpp
         mainwindow.cpp
         mainwindow.h
-        view/BodePlot.cpp
-        view/BodePlot.h
-        view/TemporalPlot.cpp
-        view/TemporalPlot.h
-        view/qbackend.h
-        view/qbackend.cpp
-        view/qmeasure.h
-        view/qmeasure.cpp
-        view/qresults.h
-        view/qresults.cpp
-        view/qspectrogram.h
-        view/qspectrogram.cpp
-        view/qwtthings.h
-        view/qwtthings.cpp
-        ${BACKEND_SOURCES}
         ${TF_SOURCES}
         ${TS_FILES}
 )
@@ -84,7 +66,7 @@ else()
 endif()
 
 
-target_link_libraries(ATSAHSNA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qwt::Qwt fftw3 faust jack fCWT tbb) #I dont know what uses tbb, fcwt probably
+target_link_libraries(ATSAHSNA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets tbb view backend) #I dont know what uses tbb, fcwt probably
 #target_include_directories(ATSAHSNA PRIVATE third_party/wavelib/header) #eventually I'll learn how to do this properly
 
 

@@ -6,7 +6,7 @@
 #include <QwtPlotCurve>
 
 #include <QSlider>
-#include "backend/measure.h"
+#include <measure.h>
 
 
 class TemporalPlot : public QWidget

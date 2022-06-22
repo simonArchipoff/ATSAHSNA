@@ -1,6 +1,6 @@
 #include "qmeasure.h"
-#include "backend/measure.h"
-#include "constants.h"
+#include <measure.h>
+#include "../constants.h"
 #include "qcborvalue.h"
 #include "qpushbutton.h"
 #include <QDebug>

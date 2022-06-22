@@ -3,7 +3,7 @@
 
 #include "qmeasure.h"
 #include "qspectrogram.h"
-#include "backend/measure.h"
+#include <measure.h>
 
 #include <QObject>
 #include <QTabWidget>

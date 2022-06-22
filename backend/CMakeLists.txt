@@ -1,4 +1,10 @@
 
+find_package(PkgConfig)
+pkg_check_modules(JACK REQUIRED jack)
+pkg_search_module(FFTW REQUIRED fftw3 IMPORTED_TARGET)
+
+find_package(Faust REQUIRED)
+
 set(HEADER_FAUST_QTUI ${FAUST_INCLUDE_DIR}/faust/gui/QTUI.h)
 #set(HEADER_FAUST_QTUI_MOC ${CMAKE_CURRENT_BINARY_DIR}/moc_QTUI.cpp)
 
@@ -18,17 +24,16 @@ set(BACKEND_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/acquisition.h
     ${CMAKE_CURRENT_SOURCE_DIR}/acquisition.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/spectrogram.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/spectrogram.cpp
-    PARENT_SCOPE)
+    ${CMAKE_CURRENT_SOURCE_DIR}/spectrogram.cpp)
 
 
 
 #cmake_print_variables(BACKEND_SOURCES)
 
 
-#add_library(backend DTF.h DTF.cpp measure.h measure.cpp)
-#target_include_directories(transfer_function PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
+add_library(backend  ${BACKEND_SOURCES})
+target_include_directories(backend PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(backend PUBLIC Qt${QT_VERSION_MAJOR}::Widgets fftw3 faust jack fCWT)
 #find_package(doctest REQUIRED)
 #add_executable(test_signal test.cpp )
 ##signal.h signal.cpp DTF.h DTF.cpp ../constants.h )

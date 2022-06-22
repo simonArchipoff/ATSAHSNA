@@ -7,8 +7,8 @@
 #include <QwtInterval>
 #include <QSpinBox>
 
-#include "backend/spectrogram.h"
-#include <constants.h>
+#include <spectrogram.h>
+#include "../constants.h"
 
 
 class QParamSpectrogram : public QWidget {

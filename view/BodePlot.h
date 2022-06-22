@@ -8,10 +8,9 @@
 #include <QwtPlotMarker>
 #include <vector>
 #include <QwtPlotTextLabel>
-#include "backend/DTF.h"
-#include "backend/measure.h"
-#include "qscopedpointer.h"
-#include "qwt_plot_curve.h"
+
+#include <DTF.h>
+#include <measure.h>
 
 #include "qwtthings.h"
 

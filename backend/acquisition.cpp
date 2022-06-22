@@ -1,5 +1,5 @@
 #include "acquisition.h"
-#include "backend/spectrogram.h"
+#include "spectrogram.h"
 #include <QDebug>
 #include <algorithm>
 

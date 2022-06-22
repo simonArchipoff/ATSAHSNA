@@ -1,6 +1,6 @@
 #pragma once
 #include "backend.h"
-#include "backend/measure.h"
+#include "measure.h"
 
 vector<VD> acquire_output(Backend *b,const vector<VD> &input);
 

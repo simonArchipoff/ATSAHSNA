@@ -12,9 +12,9 @@
 #include <QFormLayout>
 #include <QBoxLayout>
 
-#include "backend/measure.h"
+#include <measure.h>
 #include "qspectrogram.h"
-#include "constants.h"
+#include "../constants.h"
 
 
 

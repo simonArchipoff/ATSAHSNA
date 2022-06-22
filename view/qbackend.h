@@ -11,7 +11,7 @@
 #include <QPushButton>
 #include <QSpinBox>
 
-#include "backend/backendJack.h"
+#include <backendJack.h>
 
 
 class QFaustDsp : public QWidget
