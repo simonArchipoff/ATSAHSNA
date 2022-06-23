@@ -8,8 +8,6 @@ struct ParamSpectrogram {
   int resolution;
 };
 
-
-
 struct ResultSpectrogram{
   double duration;
   int max_idx_time_rank;

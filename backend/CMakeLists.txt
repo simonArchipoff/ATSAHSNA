@@ -11,20 +11,21 @@ set(HEADER_FAUST_QTUI ${FAUST_INCLUDE_DIR}/faust/gui/QTUI.h)
 #include(CMakePrintHelpers)
 set(BACKEND_SOURCES
     ${HEADER_FAUST_QTUI}
-    ${CMAKE_CURRENT_SOURCE_DIR}/backend.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/backendFaust.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/backendFaust.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/backendJack.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/backendJack.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/concurrentqueue.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/DTF.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/DTF.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/measure.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/measure.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/acquisition.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/acquisition.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/spectrogram.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/spectrogram.cpp)
+    backend.h
+    backend.cpp
+    backendFaust.h
+    backendFaust.cpp
+    backendJack.h
+    backendJack.cpp
+    concurrentqueue.h
+    DTF.cpp
+    DTF.h
+    measure.h
+    measure.cpp
+    acquisition.h
+    acquisition.cpp
+    spectrogram.h
+    spectrogram.cpp)
 
 
 

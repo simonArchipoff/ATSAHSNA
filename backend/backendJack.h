@@ -2,6 +2,22 @@
 
 #include "backend.h"
 #include <jack/jack.h>
+#include "concurrentqueue.h"
+
+#include <variant>
+#include <optional>
+
+struct RequestMeasure{vector<VD> input;};
+struct RequestPartialOutput{};
+//struct RequestOutput{};
+struct CancelMeasure{};
+typedef std::variant<RequestMeasure,
+                     RequestPartialOutput,
+                     CancelMeasure> request;
+struct PartialOutput{vector<VD> output;};
+struct Output {vector<VD> output;};
+typedef std::variant<PartialOutput,Output> response;
+
 
 using std::vector;
 
@@ -11,22 +27,72 @@ public:
     BackendJack();
     virtual ~BackendJack();
 
-    uint numberInput() const override {
+    uint numberInput() const  {
         return inputPorts.size();
     }
-    uint numberOutput() const override {
+    uint numberOutput() const  {
         return outputPorts.size();
     }
-    uint getSampleRate() const override {
+    uint getSampleRate() const  {
       return jack_get_sample_rate(client);
     }
-    bool isReady() const override{
+    bool isReady() const {
       return ready;
     }
+    void requestMeasure(vector<VD> input){
+      assert(input.size() == numberInput());
+      requests.enqueue(RequestMeasure{input});
+    }
+    void requestPartialOutput(){
+      requests.enqueue(RequestPartialOutput{});
+    }
+    void cancelMeasure(){
+      requests.enqueue(CancelMeasure{});
+    }
+
+    std::optional<response> tryGetResponse(){
+      response r;
+      if(responses.try_dequeue(r)){
+          return std::optional{r};
+        } else {
+          return std::nullopt;
+        }
+    }
+
+    std::optional<vector<VD>> tryGetOutput(){
+      auto r = tryGetResponse();
+      if(r.has_value()) {
+          try{
+            return std::optional{std::get<struct Output>(r.value()).output};
+          } catch(const std::bad_variant_access& e) {
+            return std::nullopt;
+          }
+        }
+      return std::nullopt;
+    }
+
+    void setLatency(uint l){
+      latency = l;
+    }
+    uint getLatencySample(){
+      return latency;
+    }
+
+    vector<VD> aquisition(const vector<VD> &input){
+
+    };
 
     bool addInputPort(std::string name="input");
     bool addOutputPort(std::string name="output");
-protected:
+
+    std::mutex lock;
+  protected:
+    int latency = 0;
+
+    moodycamel::ConcurrentQueue<request>  requests;
+    moodycamel::ConcurrentQueue<response> responses;
+
+
     static void * audio_thread(void*);
     void treatRequest();
     void sendOutput();

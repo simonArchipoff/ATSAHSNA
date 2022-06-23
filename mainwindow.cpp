@@ -19,7 +19,7 @@
 #include "view/qbackend.h"
 
 #include "backend/measure.h"
-
+#include <QtConcurrent/QtConcurrent>
 
 
 MainWindow::MainWindow(QWidget *parent)

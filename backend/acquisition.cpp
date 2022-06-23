@@ -3,38 +3,8 @@
 #include <QDebug>
 #include <algorithm>
 
-void pad_right_0(uint n, vector<VD> & in){
-  for(auto &i : in){
-      i.resize(i.size()+n,0.0);
-    }
-}
-
-void remove_left(uint n, vector<VD> & in){
-  for(auto &i : in){
-      std::rotate(i.begin(),i.begin()+n,i.end());
-      i.resize(i.size()-n);
-    }
-}
 
 
-vector<VD> acquire_output(Backend *b,const vector<VD> &input){
-  b->lock.lock();
-  auto in = vector{input};
-  auto l = b->getLatencySample();
-  pad_right_0(l,in);
-
-  b->requestMeasure(in);
-  do{
-      QThread::msleep(20);
-      auto r  = b->tryGetOutput();
-      if(r.has_value()){
-          auto out = r.value();
-          remove_left(l,out);
-          b->lock.unlock();
-          return out;
-        }
-    }while(true);
-}
 
 
 vector<struct ResultResponse> compute_response(Backend *b, const struct ParamResponse p){
@@ -43,7 +13,7 @@ vector<struct ResultResponse> compute_response(Backend *b, const struct ParamRes
   for(uint i = 0; i<b->numberInput(); i++){
     input.push_back(in);
     }
-  auto output = acquire_output(b,input);
+  auto output = b->aquisition(input);
   vector<struct ResultResponse> res;
   for(auto &o : output){
       res.push_back(ResultResponse{ compute_TF_FFT(in,o,b->getSampleRate())
@@ -59,7 +29,7 @@ vector<struct ResultSpectrogram> compute_spectrogram(Backend *b, const struct Pa
   for(uint i = 0; i<b->numberInput(); i++){
     input.push_back(in);
     }
-  auto output = acquire_output(b,input);
+  auto output = b->aquisition(input);
   vector<struct ResultSpectrogram> res;
   for(auto &o : output){
       auto tmp = spectrogram(o,p.nb_octave,p.resolution,b->getSampleRate());
@@ -78,7 +48,7 @@ vector<struct ResultTHD> compute_distortion(Backend *b, const struct ParamTHD p)
   for(uint i = 0; i<b->numberInput(); i++){
       input.push_back(in);
     }
-  auto output = acquire_output(b,input);
+  auto output = b->aquisition(input);
 
   vector<struct ResultTHD> res;
   for(auto &o : output){

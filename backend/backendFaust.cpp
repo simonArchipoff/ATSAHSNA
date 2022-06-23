@@ -37,64 +37,46 @@ uint BackendFaust::numberOutput() const{
   return dspInstance->getNumOutputs();
 }
 
-void BackendFaust::notify(){
-  treatRequest();
-}
+vector<VD> BackendFaust::aquisition(const vector<VD> &in){
+   vector<VD> input{in};
+   assert(input.size() > 0);
+  uint inputSize = input[0].size();
 
-void BackendFaust::treatRequest(){
-  request r;
-  bool b = requests.try_dequeue(r);
-  struct V {
-    V(BackendFaust * b):t(b){};
-    void operator()(RequestMeasure &r){
-      assert(r.input.size() >0);
-      uint inputSize = r.input[0].size();
-      vector<double*> inputs{t->numberInput()};
-      for(uint i = 0; i < inputs.size(); i++){
-          inputs[i] = r.input[i].data();
-        }
-      vector<double*> outputs{t->numberOutput()};
-      vector<vector<double>> out{t->numberOutput()};
-
-      for(uint i = 0; i < outputs.size(); i++){
-          out[i].resize(inputSize);
-          outputs[i] = out[i].data();
-        }
-      for(uint i = 0; i < outputs.size(); i++){
-          for(uint j = 0; j < inputSize; j++){
-              outputs[i][j] = ~0;
-            }
-        }
-
-      uint block = 4*1024;
-      uint nb_block = inputSize / block;
-
-      for(uint i = 0; i < nb_block; i++){
-          t->dspInstance->compute(block,inputs.data(), outputs.data());
-          for(uint j = 0; j < outputs.size(); j++){
-              outputs[j] = outputs[j] + block;
-            }
-          for(uint j = 0; j < inputs.size(); j++){
-              inputs[j] = inputs[j] + block;
-            }
-        }
-
-      t->dspInstance->compute(inputSize % block,inputs.data(), outputs.data());
-
-      t->responses.enqueue(Output{out});
-    };
-    void operator()(RequestPartialOutput &){
-      qDebug("RequestPartialOutput called on faust backend");
-    };
-    void operator()(CancelMeasure &){
-      qDebug("CancelMeasure called on faust backend");
-    };
-    BackendFaust *t;
-  };
-  if(b){
-      std::visit(V(this),r);
+  vector<double*> inputs{numberInput()};
+  for(uint i = 0; i < inputs.size(); i++){
+      inputs[i] = input[i].data();
     }
+  vector<double*> outputs{numberOutput()};
+  vector<vector<double>> out{numberOutput()};
+
+  for(uint i = 0; i < outputs.size(); i++){
+      out[i].resize(inputSize);
+      outputs[i] = out[i].data();
+    }
+  for(uint i = 0; i < outputs.size(); i++){
+      for(uint j = 0; j < inputSize; j++){
+          outputs[i][j] = ~0;
+        }
+    }
+
+  uint block = 4*1024;
+  uint nb_block = inputSize / block;
+
+  for(uint i = 0; i < nb_block; i++){
+      dspInstance->compute(block,inputs.data(), outputs.data());
+      for(uint j = 0; j < outputs.size(); j++){
+          outputs[j] = outputs[j] + block;
+        }
+      for(uint j = 0; j < inputs.size(); j++){
+          inputs[j] = inputs[j] + block;
+        }
+    }
+
+  dspInstance->compute(inputSize % block,inputs.data(), outputs.data());
+
+  return out;
 }
+
 
 std::list<GUI*> GUI::fGuiList;
 

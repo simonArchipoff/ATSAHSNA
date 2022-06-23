@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <algorithm>
 #include "../constants.h"
-
+#include <QThread>
 
 const char **ports;
 const char *client_name = "simple";
@@ -177,6 +177,40 @@ void BackendJack::sendOutput(){
   responses.enqueue(Output{currentOutput});
   status = Waiting;
 }
+
+void pad_right_0(uint n, vector<VD> & in){
+  for(auto &i : in){
+      i.resize(i.size()+n,0.0);
+    }
+}
+
+void remove_left(uint n, vector<VD> & in){
+  for(auto &i : in){
+      std::rotate(i.begin(),i.begin()+n,i.end());
+      i.resize(i.size()-n);
+    }
+}
+
+vector<VD> acquire_output(BackendJack *b,const vector<VD> &input){
+  b->lock.lock();
+  auto in = vector{input};
+  auto l = b->getLatencySample();
+  pad_right_0(l,in);
+
+  b->requestMeasure(in);
+  do{
+      QThread::msleep(20);
+      auto r  = b->tryGetOutput();
+      if(r.has_value()){
+          auto out = r.value();
+          remove_left(l,out);
+          b->lock.unlock();
+          return out;
+        }
+    }while(true);
+}
+
+
 
 #if 0
 

@@ -13,16 +13,15 @@ class BackendFaust : public Backend
 {
 public:
     std::string getErrorMessage();
-    uint numberInput() const override;
-    uint numberOutput() const override;
-    uint getSampleRate() const override;
-    bool isReady() const override;
+    uint numberInput() const ;
+    uint numberOutput() const ;
+    uint getSampleRate() const ;
+    bool isReady() const ;
+    vector<VD> aquisition(const vector<VD> &input);
 
 protected:
     BackendFaust() = default;
-    virtual ~BackendFaust();
-    void notify() override;
-    void treatRequest();
+    ~BackendFaust();
     bool setCode(std::string dspCode);
     dsp * dspInstance;
     std::string errorString;

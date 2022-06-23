@@ -1,7 +1,8 @@
 
 find_package(Qwt REQUIRED)
 
-add_library(view BodePlot.cpp
+add_library(view
+    BodePlot.cpp
     BodePlot.h
     TemporalPlot.cpp
     TemporalPlot.h
