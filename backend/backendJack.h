@@ -80,7 +80,7 @@ public:
       return latency;
     }
 
-    vector<VD> acquisition(const vector<VD> &input);
+    vector<VD> acquisition(const vector<VD> &input) override;
 
     QFuture<vector<VD>> acquisition_async(const vector<VD> &input);
 

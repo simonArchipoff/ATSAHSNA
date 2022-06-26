@@ -14,71 +14,24 @@ double std_dev(const std::vector<double> &v){
 }
 */
 
-ResultTHD computeTHDNsimple(const ParamTHD p, const VD&signal, int sampleRate){
-  assert(signal.size() > 1);
-
-  VCD signalfft = computeDFT(signal);
-  signalfft[0] = signalfft[1];
-  uint smin = p.freqMin *  p.duration;
-  uint smax = std::min<uint>(p.freqMax * p.duration, signal.size()/2);
-  //find fundamental (let's suppose it's the maximum)
-  uint imax=0;
-  double eh1 = 0;
-  for(uint i = 0; i < signal.size()/2; i++){
-      if(abs(signalfft[i]) > eh1){
-          eh1 = abs(signalfft[i]);
-          imax = i;
-        }
-  }
-
-  double e_tot_wo_h1 = 0;
-  for(uint i = smin; i < smax ; i++){
-      double tmp = real(signalfft[i] * conj(signalfft[i]));
-      if(i != imax){
-          e_tot_wo_h1 += tmp;
-        }
-    }
-
-  for(uint i = 0; i < signalfft.size(); i++){
-      signalfft[i] /= eh1;
-    }
 
 
-  /*
-  for(uint i = 0; i < smin; i++){
-      signalfft[i]=1;
-    }
-  for(uint i = smax; i < signalfft.size(); i++)
-    signalfft[i]=1;
+/*
+the slice data type and the get_harmonic function locate the harmonics
+the function try to find the local maximum around its parameter f
+         /\
+        /  \
+   \_  /    \    /\
+     \/      \/\/
+begin^    end^
+level is the integral between begin and end included
 */
-  return ResultTHD {
-      .harmonicSpectrum = FDF(signalfft,sampleRate),
-      .thdRate = sqrt(e_tot_wo_h1) / eh1,
-      .params = p,
-      .raw_data = MeasureData { .inputs = vector<VD>({}),
-                                .outputs = vector({signal})}
-    };
-  //return sqrt(e_tot_wo_h1) / sqrt(e_tot_wo_h1 + eh1 * eh1);
-}
-
-
-
-
-
-
-//the slice data type and the get_harmonic function locate the harmonics
-// the function try to find the local maximum around its parameter f
-//         /\
-//        /  \
-//   \_  /    \    /\
-//     \/      \/\/
-//begin^    end^
-//level is the integral between begin and end included
 struct slice {
   uint begin;
   uint end;
   double level;
 };
+
 
 slice get_harmonic(const uint f, const vector<double>&v){
   assert(f < v.size());
@@ -94,6 +47,8 @@ slice get_harmonic(const uint f, const vector<double>&v){
   else
     s = {f_r,f_r,v[f_r]};
 
+  s.begin = v[s.begin];
+
 
   // find local minimum left
   while(s.begin >= 1 && v[s.begin - 1] <= v[s.begin]){
@@ -105,30 +60,114 @@ slice get_harmonic(const uint f, const vector<double>&v){
       s.level += v[s.end + 1];
       s.end++;
     }
+
+  s.level = s.level;
   return s;
 }
 
-vector<slice> find_harmonics(const vector<double> & v,uint fundamental){
+vector<slice> find_harmonics(const vector<double> & v,uint fundamental,int smax){
   vector<slice> res;
-  for(auto i = 1; i*fundamental < v.size(); i++){
+  for(auto i = 1; i*fundamental < std::min<uint>(v.size(),smax+1); i++){
       res.push_back(get_harmonic(i*fundamental,v));
     }
   return res;
 }
-vector<slice> find_harmonics(const vector<double> &v){
+vector<slice> find_harmonics(const vector<double> &v,int smax){
   auto f = std::distance(v.begin(),std::max_element(v.begin(),v.end()));
-  return find_harmonics(v,f);
+  return find_harmonics(v,f,smax);
 }
 
+
+
 double thd_ieee(const vector<slice> & slices){
+  if(slices.size() == 0)
+    return 0;
   double a = 0, b = 0;
   vector<slice>::const_iterator  it;
   for(it = slices.begin(), it++ ; it != slices.end(); it++){
-      a += it->level * it->level;
+      a += it->level* it->level;
     }
-  b = slices[0].level;
-  return 100*sqrt(a)/b;
+  b = slices[0].level;//*slices[0].level;
+  return sqrt(a)/b;//sqrt(a)/b;
 }
+/*
+ResultTHD computeTHDsimple(const ParamTHD p, const VD&signal, int sampleRate){
+  uint freq_min = signal.size()/sampleRate;
+  uint freq_max = signal.size() * sampleRate/2.0;
+  return computeTHDsimple(p,signal,sampleRate,freq_min, freq_max);
+}
+*/
+
+ResultTHD computeTHDsimple(const ParamTHD p, const VD& signal, int sampleRate){
+  assert(signal.size() > 1);
+
+  VCD signalfft = computeDFT(signal);
+  signalfft[0] = signalfft[1];
+  uint smin = p.freqMin *  p.duration;
+  uint smax = std::min<uint>(p.freqMax * p.duration, signal.size()/2);
+
+  VD amplitude;
+  amplitude.resize(signalfft.size()/2);
+  for(uint i = 0; i < amplitude.size(); i++){
+      amplitude[i] = abs(signalfft[i]);
+    }
+
+  //find fundamental (let's suppose it's the maximum)
+  uint imax=0;
+  double eh1 = 0;
+  for(uint i = 0; i < signal.size()/2; i++){
+      if(amplitude[i] > eh1){
+          eh1 = amplitude[i]; //abs(signalfft[i]);
+          imax = i;
+        }
+  }
+
+  eh1 = get_harmonic(imax,amplitude).level;
+
+  double e_tot_wo_h1 = 0;
+  for(uint i = smin; i < smax ; i++){
+      double tmp = amplitude[i] * amplitude[i];//  real(signalfft[i] * conj(signalfft[i]));
+      if(i != imax){
+          e_tot_wo_h1 += tmp;
+        }
+    }
+
+  for(auto &i : signalfft){
+      i/=eh1;
+    }
+
+
+  auto slices = find_harmonics(amplitude,imax,smax);
+
+
+  /*
+  for(uint i = 0; i < smin; i++){
+      signalfft[i]=1;
+    }
+  for(uint i = smax; i < signalfft.size(); i++)
+    signalfft[i]=1;
+  */
+
+  vector<double> h_level;
+  for(auto & i : slices)
+    h_level.push_back(i.level);
+  return ResultTHD {
+      .harmonicSpectrum = FDF(signalfft,sampleRate)
+      ,.thdNoiseRate = sqrt(e_tot_wo_h1) / eh1
+      ,.thdRate = thd_ieee(slices)
+      ,.harmonicsLevel = h_level
+      ,.params = p
+      ,.raw_data = MeasureData { .inputs = vector<VD>({}),
+                                 .outputs = vector({signal})}
+
+    };
+  //return sqrt(e_tot_wo_h1) / sqrt(e_tot_wo_h1 + eh1 * eh1);
+}
+
+
+
+
+
 
 template<typename T>
 std::pair<T,T> sum_pair(const std::pair<T,T> &a

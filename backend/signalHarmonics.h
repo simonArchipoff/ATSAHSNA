@@ -13,6 +13,7 @@ struct ParamTHD {
 
 struct ResultTHD {
   FDF harmonicSpectrum;
+  double thdNoiseRate;
   double thdRate;
   vector<double> harmonicsLevel;
   vector<double> harmonicsPhases;
@@ -22,5 +23,7 @@ struct ResultTHD {
 
 
 
-ResultTHD computeTHDNsimple(const ParamTHD p, const VD&, int sampleRate);
+ResultTHD computeTHDsimple(const ParamTHD p, const VD&, int sampleRate);
+
+
 

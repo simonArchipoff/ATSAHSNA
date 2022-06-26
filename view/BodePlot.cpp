@@ -111,8 +111,17 @@ THDPlot::THDPlot(QWidget * parent):FrequencyPlot(parent){
 
 static QString thdResultString(const ResultTHD & r){
   const ParamTHD & p = r.params;
-  auto s = QString("THD+N@%1Hz = %2%\n(%3Hz ~ %4Hz)")
-      .arg(p.frequency).arg(QString::number(r.thdRate*100, 'f', 6) ).arg(p.freqMin).arg(p.freqMax);
+  auto s = QString("THD+N@%1Hz = %2%\n"
+                   "THD@%1Hz = %3%\n"
+                   "(%4Hz ~ %5Hz)\n")
+      .arg(p.frequency)
+      .arg(QString::number(r.thdNoiseRate*100, 'f', 6) )
+      .arg(QString::number(r.thdRate * 100,'f',6))
+      .arg(p.freqMin).arg(p.freqMax);
+  for(uint i = 0; i < r.harmonicsLevel.size(); i++){
+      auto l = 20* log10(r.harmonicsLevel[i]/r.harmonicsLevel[0]);
+      s += QString("h%1  %2db\n").arg(i).arg(QString::number(l,'f',1));
+    }
   return s;
 }
 

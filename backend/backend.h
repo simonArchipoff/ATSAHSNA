@@ -11,4 +11,3 @@ public:
   virtual bool isReady() const = 0;
   virtual vector<VD> acquisition(const vector<VD> &input) = 0;
 };
-

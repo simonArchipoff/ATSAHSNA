@@ -13,11 +13,11 @@ class BackendFaust : public Backend
 {
 public:
     std::string getErrorMessage();
-    uint numberInput() const ;
-    uint numberOutput() const ;
-    uint getSampleRate() const ;
-    bool isReady() const ;
-    vector<VD> acquisition(const vector<VD> &input);
+    uint numberInput() const  override;
+    uint numberOutput() const override ;
+    uint getSampleRate() const override ;
+    bool isReady() const override ;
+    vector<VD> acquisition(const vector<VD> &input) override;
 
 protected:
     BackendFaust() = default;

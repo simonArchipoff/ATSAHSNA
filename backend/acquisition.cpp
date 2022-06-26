@@ -49,7 +49,7 @@ vector<struct ResultTHD> compute_distortion(Backend *b, const struct ParamTHD p)
   vector<struct ResultTHD> res;
   for(auto &o : output){
       assert(input[0].size() == o.size());
-      auto tmp = computeTHDNsimple(p,o,b->getSampleRate());
+      auto tmp = computeTHDsimple(p,o,b->getSampleRate());
       tmp.raw_data.inputs=vector({in});
       res.push_back(tmp);
     }
