@@ -1,6 +1,5 @@
 #include "signalHarmonics.h"
 
-#include <numeric>
 #include <algorithm>
 
 /*
@@ -98,7 +97,7 @@ ResultTHD computeTHDsimple(const ParamTHD p, const VD&signal, int sampleRate){
 }
 */
 
-ResultTHD computeTHDsimple(const ParamTHD p, const VD& signal, int sampleRate){
+ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
   assert(signal.size() > 1);
 
   VCD signalfft = computeDFT(signal);
@@ -165,32 +164,6 @@ ResultTHD computeTHDsimple(const ParamTHD p, const VD& signal, int sampleRate){
 }
 
 
-
-
-
-
-template<typename T>
-std::pair<T,T> sum_pair(const std::pair<T,T> &a
-                        ,const std::pair<T,T> &b){
-  return std::make_pair(a.first + b.first, a.second + b.second);
-}
-
-vector<std::pair<double,double>> decimation_log(const vector<std::pair<double,double>> & v, uint nb_points){
-  auto b = log(v.size())/nb_points;
-  vector<std::pair<double,double>> res;
-  res.resize(nb_points);
-
-  for(uint i = 0; i < nb_points; i++){
-      const uint imin = static_cast<uint>(exp(b*i));
-      const uint imax = static_cast<uint>(exp(b*(i+1)));
-      auto p = reduce(v.begin() + imin, v.begin() + imax, std::make_pair(0,0), sum_pair<double>);
-      p.first /= imax - imin;
-      p.second /= imax - imin;
-      res[i] = p;
-    }
-
-  return res;
-}
 
 /*
 int main(int argc, char ** argv){

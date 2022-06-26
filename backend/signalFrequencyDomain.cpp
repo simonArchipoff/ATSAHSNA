@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cmath>
 #include <fftw3.h>
+#include <numeric>
 
 FDF FDF::operator+(const FDF &a) const{
   assert(this->sampleRate == a.sampleRate);
@@ -190,3 +191,19 @@ VCD computeDFT(const VD &input){
   return coutput;
 }
 
+
+
+vector<double> decimation_log(const vector<double> & v, uint nb_points){
+  auto b = log(v.size())/nb_points;
+  vector<double> res;
+  res.resize(nb_points);
+
+  for(uint i = 0; i < nb_points; i++){
+      const uint imin = static_cast<uint>(exp(b*i));
+      const uint imax = static_cast<uint>(exp(b*(i+1)));
+      auto p = reduce(v.begin() + imin, v.begin() + imax);
+      p /= imax - imin;
+      res[i] = p;
+    }
+  return res;
+}

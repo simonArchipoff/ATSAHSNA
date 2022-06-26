@@ -29,16 +29,16 @@ public:
     BackendJack();
     virtual ~BackendJack();
 
-    uint numberInput() const  {
+    uint numberInput() const override {
         return inputPorts.size();
     }
-    uint numberOutput() const  {
+    uint numberOutput() const  override{
         return outputPorts.size();
     }
-    uint getSampleRate() const  {
+    uint getSampleRate() const override {
       return jack_get_sample_rate(client);
     }
-    bool isReady() const {
+    bool isReady() const override {
       return ready;
     }
     void requestMeasure(vector<VD> input){

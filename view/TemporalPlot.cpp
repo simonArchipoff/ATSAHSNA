@@ -56,9 +56,9 @@ void TemporalPlot::setOutput(const VD &out){
   output_curve->setSamples(out.data(), out.size());
   plot->setAutoReplot(true);
   plot->replot();
-  start->setRange(0,out.size());
+  start->setRange(1,out.size());
   len->setRange(1,10000);
-  len->setValue(5000);//out.size());
+  len->setValue(1000);//out.size());
 }
 
 

@@ -16,14 +16,14 @@ struct ResultTHD {
   double thdNoiseRate;
   double thdRate;
   vector<double> harmonicsLevel;
-  vector<double> harmonicsPhases;
+  //vector<double> harmonicsPhases;
   ParamTHD params;
   MeasureData raw_data;
 };
 
 
 
-ResultTHD computeTHDsimple(const ParamTHD p, const VD&, int sampleRate);
+ResultTHD computeTHD(const ParamTHD p, const VD&, int sampleRate);
 
 
 
