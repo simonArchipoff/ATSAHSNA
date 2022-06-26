@@ -9,8 +9,8 @@
 #include <vector>
 #include <QwtPlotTextLabel>
 
-#include <DTF.h>
-#include <measure.h>
+#include <signalResponse.h>
+#include <signalHarmonics.h>
 
 #include "qwtthings.h"
 
@@ -28,6 +28,7 @@ public:
   double maxAmplitude,minAmplitude;
   bool displayed;
 };
+
 class BodePlot : public FrequencyPlot
 {
   Q_OBJECT

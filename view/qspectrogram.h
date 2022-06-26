@@ -7,7 +7,6 @@
 #include <QwtInterval>
 #include <QSpinBox>
 
-#include <spectrogram.h>
 #include "../constants.h"
 
 

@@ -1,11 +1,7 @@
 #include "acquisition.h"
-#include "spectrogram.h"
+#include "signalGeneration.h"
 #include <QDebug>
 #include <algorithm>
-
-
-
-
 
 vector<struct ResultResponse> compute_response(Backend *b, const struct ParamResponse p){
   const auto in = impulse(p.freqMin,b->getSampleRate());
@@ -13,7 +9,7 @@ vector<struct ResultResponse> compute_response(Backend *b, const struct ParamRes
   for(uint i = 0; i<b->numberInput(); i++){
     input.push_back(in);
     }
-  auto output = b->aquisition(input);
+  auto output = b->acquisition(input);
   vector<struct ResultResponse> res;
   for(auto &o : output){
       res.push_back(ResultResponse{ compute_TF_FFT(in,o,b->getSampleRate())
@@ -29,7 +25,7 @@ vector<struct ResultSpectrogram> compute_spectrogram(Backend *b, const struct Pa
   for(uint i = 0; i<b->numberInput(); i++){
     input.push_back(in);
     }
-  auto output = b->aquisition(input);
+  auto output = b->acquisition(input);
   vector<struct ResultSpectrogram> res;
   for(auto &o : output){
       auto tmp = spectrogram(o,p.nb_octave,p.resolution,b->getSampleRate());
@@ -48,7 +44,7 @@ vector<struct ResultTHD> compute_distortion(Backend *b, const struct ParamTHD p)
   for(uint i = 0; i<b->numberInput(); i++){
       input.push_back(in);
     }
-  auto output = b->aquisition(input);
+  auto output = b->acquisition(input);
 
   vector<struct ResultTHD> res;
   for(auto &o : output){

@@ -1,8 +1,18 @@
 #pragma once
 
+#include <vector>
+#include <complex>
+
 #define APPNAME "ATSAHSNA"
 
 typedef enum {FAUST, JACK} backend_type;
+
+
+using std::vector;
+using std::complex;
+
+typedef vector<complex<double>> VCD;
+typedef vector<double> VD;
 
 #ifndef ZEROISH
 #define ZEROISH 1e-20

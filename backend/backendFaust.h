@@ -17,7 +17,7 @@ public:
     uint numberOutput() const ;
     uint getSampleRate() const ;
     bool isReady() const ;
-    vector<VD> aquisition(const vector<VD> &input);
+    vector<VD> acquisition(const vector<VD> &input);
 
 protected:
     BackendFaust() = default;

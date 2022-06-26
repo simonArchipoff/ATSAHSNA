@@ -4,8 +4,6 @@
 #include <QLocale>
 #include <QTranslator>
 #include <QDebug>
-#include "view/qspectrogram.h"
-#include "backend/spectrogram.h"
 
 
 int main(int argc, char *argv[])

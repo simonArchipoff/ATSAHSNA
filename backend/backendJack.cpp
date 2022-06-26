@@ -1,10 +1,12 @@
 #include "backendJack.h"
+#include "../constants.h"
+
 #include <jack/types.h>
 #include <stdio.h>
 #include <algorithm>
-#include "../constants.h"
-#include <QThread>
+#include <thread>
 
+#include <QtConcurrent/QtConcurrent>
 const char **ports;
 const char *client_name = "simple";
 const char *server_name = NULL;
@@ -136,11 +138,15 @@ void BackendJack::treatRequest(){
     V(BackendJack * b):t(b){};
     void operator()(RequestMeasure &r){
       //assert(t->status == Waiting);
+
       t->idx=0;
       t->status = Measuring;
       t->currentInput = r.input;
       t->currentOutput.resize(t->numberOutput());
       assert(t->currentInput.size() == t->inputPorts.size());
+      if(t->numberInput() == 0 || t->numberOutput() == 0){
+          t->sendOutput();
+        }
 #ifndef NDEBUG
       for(auto &i : t->currentInput){
           assert(i.size() == t->currentInput[0].size());
@@ -191,7 +197,9 @@ void remove_left(uint n, vector<VD> & in){
     }
 }
 
-vector<VD> acquire_output(BackendJack *b,const vector<VD> &input){
+
+
+vector<VD> acquire_output(BackendJack *b, const vector<VD> &input){
   b->lock.lock();
   auto in = vector{input};
   auto l = b->getLatencySample();
@@ -209,7 +217,12 @@ vector<VD> acquire_output(BackendJack *b,const vector<VD> &input){
         }
     }while(true);
 }
-
+QFuture<vector<VD>> BackendJack::acquisition_async(const vector<VD> &input){
+  return QtConcurrent::run(acquire_output,this,input);
+}
+vector<VD> BackendJack::acquisition(const vector<VD> &input){
+  return acquire_output(this,input);
+}
 
 
 #if 0

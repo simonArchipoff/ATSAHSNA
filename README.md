@@ -38,7 +38,7 @@ cmake -S . -B build && make -j 8 -C build
 Dependancy:
 * Qt
 * FFTW
-* fCWT (wavelet lib, in a git submodule, it also depends on FFTW)
+* fCWT (a wavelet lib, in a git submodule, this lib also depends on FFTW in itself)
 * Faust
 * Jack
 * moodycamel lockfree queue (already in the repository)

@@ -11,6 +11,9 @@ using std::vector;
 #define ZEROISH (1e-20)
 #endif
 
+typedef vector<complex<double>> VCD;
+typedef vector<double> VD;
+
 //Frequency Domain Function
 //map frequency to complex
 class FDF
@@ -56,3 +59,8 @@ protected:
 };
 
 
+
+FDF compute_TF_FFT(const VD  &input, const VD  &output,int sampleRate);
+FDF compute_TF_FFT(const VCD &input, const VCD &output,int sampleRate);
+FDF compute_TF_FFT(const VCD &output, int sampleRate);
+VCD computeDFT(const VD &input);

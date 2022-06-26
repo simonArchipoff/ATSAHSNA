@@ -7,6 +7,8 @@
 #include <variant>
 #include <optional>
 
+#include <QFuture>
+
 struct RequestMeasure{vector<VD> input;};
 struct RequestPartialOutput{};
 //struct RequestOutput{};
@@ -78,9 +80,9 @@ public:
       return latency;
     }
 
-    vector<VD> aquisition(const vector<VD> &input){
+    vector<VD> acquisition(const vector<VD> &input);
 
-    };
+    QFuture<vector<VD>> acquisition_async(const vector<VD> &input);
 
     bool addInputPort(std::string name="input");
     bool addOutputPort(std::string name="output");

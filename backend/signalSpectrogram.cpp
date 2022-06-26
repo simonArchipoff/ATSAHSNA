@@ -1,13 +1,4 @@
-#include "spectrogram.h"
-
-#include "measure.h"
-//#include <wavelib.h>
-
-
-
-#include <iostream>
-#include <vector>
-#include <math.h>
+#include "signalSpectrogram.h"
 
 #include <fcwt.h>
 

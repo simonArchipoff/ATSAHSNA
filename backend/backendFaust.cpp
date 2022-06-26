@@ -37,7 +37,7 @@ uint BackendFaust::numberOutput() const{
   return dspInstance->getNumOutputs();
 }
 
-vector<VD> BackendFaust::aquisition(const vector<VD> &in){
+vector<VD> BackendFaust::acquisition(const vector<VD> &in){
    vector<VD> input{in};
    assert(input.size() > 0);
   uint inputSize = input[0].size();

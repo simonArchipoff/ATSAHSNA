@@ -17,15 +17,20 @@ set(BACKEND_SOURCES
     backendFaust.cpp
     backendJack.h
     backendJack.cpp
+    signalAnalysis.h
+    signalGeneration.h
+    signalGeneration.cpp
+    signalHarmonics.h
+    signalHarmonics.cpp
+    signalResponse.h
+    signalResponse.cpp
+    signalSpectrogram.h
+    signalSpectrogram.cpp
     concurrentqueue.h
-    DTF.cpp
-    DTF.h
-    measure.h
-    measure.cpp
+    signalFrequencyDomain.cpp
+    signalFrequencyDomain.h
     acquisition.h
-    acquisition.cpp
-    spectrogram.h
-    spectrogram.cpp)
+    acquisition.cpp)
 
 
 

@@ -1,11 +1,13 @@
 #pragma once
 
-#include <vector>
-#include "measure.h"
+#include "signalAnalysis.h"
+
+
 
 struct ParamSpectrogram {
   int nb_octave;
   int resolution;
+  double duration = 0;
 };
 
 struct ResultSpectrogram{

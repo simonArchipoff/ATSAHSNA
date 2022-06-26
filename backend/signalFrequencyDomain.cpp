@@ -1,6 +1,7 @@
-#include "DTF.h"
+#include "signalFrequencyDomain.h"
 #include <algorithm>
 #include <cmath>
+#include <fftw3.h>
 
 FDF FDF::operator+(const FDF &a) const{
   assert(this->sampleRate == a.sampleRate);
@@ -126,3 +127,66 @@ DTF DTF::prettify(bool zeroish, bool continuousPhase){
     }
 }
 */
+
+
+FDF compute_TF_FFT(const vector<double> &input, const vector<double> &output,int sampleRate){
+    assert(input.size() == output.size());
+    VCD in(input.size());
+    VCD out(output.size());
+    for(uint i = 0; i < input.size(); i++){
+        in[i] = complex<double>(input[i],0);
+        out[i] = complex<double>(output[i],0);
+    }
+    return compute_TF_FFT(in,out,sampleRate);
+}
+
+
+FDF compute_TF_FFT(const VCD &input, const VCD &output,int sampleRate){
+    assert(input.size() == output.size());
+
+    auto dtf_input = compute_TF_FFT(input,sampleRate);
+    auto dtf_output = compute_TF_FFT(output,sampleRate);
+
+    return dtf_output / dtf_input;
+}
+
+FDF compute_TF_FFT(const VCD &v, int sampleRate) {
+    int size = v.size();
+    VCD in_fft(v);
+    VCD out_fft(size);
+    fftw_plan p = fftw_plan_dft_1d(size,
+                                   reinterpret_cast<fftw_complex*>(in_fft.data()),
+                                   reinterpret_cast<fftw_complex*>(out_fft.data()),
+                                   FFTW_FORWARD,
+                                   FFTW_ESTIMATE);
+    fftw_execute(p);
+    /*for(int i = 0; i < size; i++){
+        out_fft[i] /= size;
+    }*/ //dont need to normalize
+    FDF dtf(out_fft,sampleRate);
+    fftw_destroy_plan(p);
+    return dtf;
+}
+
+
+VCD vdToVCD(const VD &input){
+  VCD output(input.size());
+  for(uint i = 0; i < input.size(); i++){
+      output[i] = complex<double>(input[i],0);
+    }
+  return output;
+}
+
+
+VCD computeDFT(const VD &input){
+  VCD cinput = vdToVCD(input);
+  VCD coutput(input.size());
+  fftw_plan p = fftw_plan_dft_1d(input.size(),
+                                 reinterpret_cast<fftw_complex*>(cinput.data()),
+                                 reinterpret_cast<fftw_complex*>(coutput.data()),
+                                 FFTW_FORWARD,
+                                 FFTW_ESTIMATE);
+  fftw_execute(p);
+  return coutput;
+}
+

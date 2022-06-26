@@ -12,7 +12,10 @@
 #include <QFormLayout>
 #include <QBoxLayout>
 
-#include <measure.h>
+#include <signalResponse.h>
+#include <signalHarmonics.h>
+#include <signalSpectrogram.h>
+
 #include "qspectrogram.h"
 #include "../constants.h"
 

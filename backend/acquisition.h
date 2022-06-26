@@ -1,6 +1,9 @@
 #pragma once
 #include "backend.h"
-#include "measure.h"
+
+#include "signalResponse.h"
+#include "signalHarmonics.h"
+#include "signalSpectrogram.h"
 
 
 
