@@ -78,17 +78,15 @@ vector <double> FDF::getAmplitude20log10() const {
   return res;
 }
 
-vector <double> FDF::getPhase(bool prettified) const {
+vector <double> FDF::getPhase() const {
   vector<double> res(response.size());
   for(uint i = 0; i < response.size(); i++){
-      if(prettified && abs(response[i]) < ZEROISH)
-        res[i] = i > 0 ? res[i-1] : 0 ;
-      else
         res[i] = atan2(response[i].imag(), response[i].real()) * 180/(M_PI);
     }
-
   return res;
 }
+
+
 
 vector <double> FDF::getFrequency() const {
   vector<double> res(response.size());
@@ -206,8 +204,6 @@ VD FDF::frequencyDomainTotemporal() const {
   fftw_destroy_plan(plan);
   return o;
 }
-
-
 
 vector<double> decimation_log(const vector<double> & v, uint nb_points){
   auto b = log(v.size())/nb_points;

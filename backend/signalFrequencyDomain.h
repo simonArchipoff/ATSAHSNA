@@ -42,9 +42,10 @@ public:
 
     vector <double> getAmplitude20log10() const;
 
-    //when prettified = true it tries to remove the mess when amplitude is very low
-    //it also tries to make the phase continuous when it's only a matter of adding PI
-    vector <double> getPhase(bool prettified=false) const;
+
+    vector <double> getPhase() const;
+
+
 
     vector <double> getFrequency() const;
 
@@ -53,7 +54,7 @@ public:
     double getMaxAmplitude20log10() const ;
     double getMinAmplitude20log10() const;
 
-    //basicaly a ifft
+    //inverse transform :
     VD frequencyDomainTotemporal() const;
 protected:
     vector<complex<double>> response;

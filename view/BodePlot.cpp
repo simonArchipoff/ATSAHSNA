@@ -72,7 +72,7 @@ void BodeCurve::setCurve(const FDF &c){
     const int s2 = s/2;
 
     vector<double> a = c.getAmplitude20log10();
-    vector<double> p = c.getPhase(false);
+    vector<double> p = c.getPhase();
     vector<double> f = c.getFrequency();
 #if 0
     for(uint  i = 0; i < s2 ; i++){
