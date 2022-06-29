@@ -4,11 +4,10 @@
 
 #include <QDebug>
 
-
-
-
-ResultSpectrogram spectrogram(const std::vector<double> &data,
-                            int nb_octaves, int resolution, uint sampleRate){
+ResultSpectrogram spectrogram(const std::vector<double> &data
+                              ,int nb_octaves
+                              ,int resolution
+                              , uint sampleRate){
 
   int n = data.size(); //signal length
   float fs = sampleRate; //sampling frequency
@@ -73,8 +72,6 @@ ResultSpectrogram spectrogram(const std::vector<double> &data,
           , i = tfm[(2* p) +1];
       res.data[n*row + col] = static_cast<double>(sqrt(r*r + i*i));
     }
-
-
 
   return res;
 }

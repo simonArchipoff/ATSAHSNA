@@ -188,7 +188,23 @@ VCD computeDFT(const VD &input){
                                  FFTW_FORWARD,
                                  FFTW_ESTIMATE);
   fftw_execute(p);
+  fftw_destroy_plan(p);
   return coutput;
+}
+
+
+
+VD FDF::frequencyDomainTotemporal() const {
+  vector<double> o;
+  o.resize(response.size());
+  vector<complex<double>> i{response};
+  auto plan = fftw_plan_dft_c2r_1d(response.size()
+                                   ,reinterpret_cast<fftw_complex*>(i.data())
+                                   ,o.data()
+                                   ,FFTW_ESTIMATE);
+  fftw_execute(plan);
+  fftw_destroy_plan(plan);
+  return o;
 }
 
 

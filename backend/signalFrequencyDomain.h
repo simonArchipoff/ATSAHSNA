@@ -53,6 +53,8 @@ public:
     double getMaxAmplitude20log10() const ;
     double getMinAmplitude20log10() const;
 
+    //basicaly a ifft
+    VD frequencyDomainTotemporal() const;
 protected:
     vector<complex<double>> response;
     uint sampleRate;

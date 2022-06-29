@@ -1,6 +1,7 @@
 #pragma once
 
 #include "signalAnalysis.h"
+#include "signalFrequencyDomain.h"
 
 
 
@@ -29,3 +30,9 @@ ResultSpectrogram spectrogram(const std::vector<double> &data,
                               int nb_octave,
                               int resolution,
                               unsigned int sampleRate);
+
+
+ResultSpectrogram spectrogram(const FDF & response
+                              , int nb_octave
+                              , int resolution
+                              ,unsigned int sampleRate);

@@ -5,11 +5,12 @@ It's licenced under GPLv3. For now it's under heavy development, you can play wi
 
 What's already implemented:
 - two backend (faust and jackd)
-- impulse response, harmonic spectrum and THD+N computation (in temporal domain as well)
+- impulse response, harmonic spectrum and THD+N computation (in temporal domain as well), it works great for the faust backend only, it needs more work for jack
 - wavelet waterfall measures
 - a very poor UI, sorry
 
 Soon :
+- sweeps instead of diracs for better results
 - something to deal with latency more easily
 - export measurements in a bunch of standards files
 - better UI
