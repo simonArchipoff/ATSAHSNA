@@ -43,7 +43,7 @@ void TemporalPlot::setInput(const VD &in){
   input_curve->setPen(Qt::blue,2,Qt::SolidLine);
   input_curve->setStyle(QwtPlotCurve::Dots);
   input_curve->setYAxis(QwtAxis::YLeft);
-  input_curve->setSamples(in.data(), in.size());
+    input_curve->setSamples(in.data(), in.size());
   plot->setAutoReplot(true);
   plot->replot();
 }

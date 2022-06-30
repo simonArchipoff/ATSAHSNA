@@ -16,33 +16,13 @@
 #include <signalHarmonics.h>
 #include <signalSpectrogram.h>
 
+#include "qcombobox.h"
 #include "qspectrogram.h"
+#include "qresponse.h"
+
 #include "../constants.h"
 
 
-
-
-class QParamResponse : public QWidget {
-  Q_OBJECT
-public:
-  QParamResponse(QWidget * parent);
-  typedef struct ParamResponse Param;
-  Param getParam();
-signals:
-  void start_measure_response(struct ParamResponse, backend_type);
-private:
-  QScopedPointer<QSpinBox> fmin,fmax;
-};
-
-class QDisplayResponse : public BodePlot {
-  Q_OBJECT
-public:
-  typedef ResultResponse Result;
-  QDisplayResponse(QWidget * parent=nullptr):BodePlot{parent}{
-  };
-
-  void setResult(const Result &r, QColor c);
-};
 
 
 class QParamDistortion : public QWidget{
@@ -108,8 +88,10 @@ public:
   void setResult(const typename QRESULT::Result &r, QColor c){
     qplot->setResult(r,c);
     if constexpr (requires{r.raw_data;}){
-      temporalPlot->setInput(r.raw_data.inputs[0]);
-      temporalPlot->setOutput(r.raw_data.outputs[0]);
+      if(r.raw_data.inputs.size() > 0)
+        temporalPlot->setInput(r.raw_data.inputs[0]);
+      if(r.raw_data.outputs.size() > 0)
+        temporalPlot->setOutput(r.raw_data.outputs[0]);
     }
 
   }

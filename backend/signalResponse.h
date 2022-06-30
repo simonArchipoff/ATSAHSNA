@@ -2,10 +2,11 @@
 
 #include "signalAnalysis.h"
 #include "signalFrequencyDomain.h"
-
+#include "../constants.h"
 struct ParamResponse {
-  int freqMin,freqMax;
-  enum {SWEEP, IMPULSE, NOISE} mode = IMPULSE;
+  int freqMin;
+  int freqMax;
+  signal_gen_type mode;
 };
 
 struct ResultResponse{

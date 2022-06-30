@@ -6,6 +6,9 @@
 #include <QwtMatrixRasterData>
 #include <QwtInterval>
 #include <QSpinBox>
+#include <QComboBox>
+
+#include "qresponse.h"
 
 #include "../constants.h"
 
@@ -20,6 +23,7 @@ signals:
   void start_measure_spectrogram(struct ParamSpectrogram, backend_type);
 private:
   QScopedPointer<QSpinBox> nb_octaves,resolution;
+  QScopedPointer<QParamResponse> paramResponse;
 };
 
 

@@ -6,6 +6,7 @@
 #define APPNAME "ATSAHSNA"
 
 typedef enum {FAUST, JACK} backend_type;
+typedef enum {SWEEP, IMPULSE} signal_gen_type;
 
 
 using std::vector;

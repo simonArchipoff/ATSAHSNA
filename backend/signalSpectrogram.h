@@ -2,10 +2,11 @@
 
 #include "signalAnalysis.h"
 #include "signalFrequencyDomain.h"
+#include "signalResponse.h"
 
 
 
-struct ParamSpectrogram {
+struct ParamSpectrogram : ParamResponse {
   int nb_octave;
   int resolution;
   double duration = 0;
@@ -26,13 +27,13 @@ struct ResultSpectrogram{
 };
 
 
-ResultSpectrogram spectrogram(const std::vector<double> &data,
-                              int nb_octave,
-                              int resolution,
-                              unsigned int sampleRate);
+ResultSpectrogram spectrogram(const std::vector<double> &data
+                              ,int nb_octave
+                              ,int resolution
+                              ,unsigned int sampleRate);
 
 
 ResultSpectrogram spectrogram(const FDF & response
                               , int nb_octave
                               , int resolution
-                              ,unsigned int sampleRate);
+                              , unsigned int sampleRate);

@@ -1,45 +1,10 @@
 #include "qmeasure.h"
 
 #include "../constants.h"
-#include "qcborvalue.h"
-#include "qpushbutton.h"
+//#include "qcborvalue.h"
+#include <QComboBox>
+#include <QPushButton>
 #include <QDebug>
-
-QParamResponse::QParamResponse(QWidget * parent)
-  :QWidget{parent}
-  ,fmin{new QSpinBox(this)}
-  ,fmax{new QSpinBox(this)}
-{
-    auto b = new StartMesure(this);
-    setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-    auto l = new QVBoxLayout();
-
-    setLayout(l);
-    l->addWidget(b);
-
-    QFormLayout * f = new QFormLayout;
-
-    f->addRow("fréquence min", fmin.data());
-    f->addRow("fréquence max", fmax.data());
-    fmin->show();
-    fmax->show();
-
-    fmin->setMaximum(MAXFREQ);
-    fmin->setMinimum(MINFREQ);
-    fmin->setValue(10);
-    fmax->setMaximum(MAXFREQ);
-    fmax->setMinimum(MINFREQ);
-    fmax->setValue(20000);
-
-    l->addLayout(f);
-
-    //setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-
-    connect(b,&StartMesure::start_measure, this,[this](auto b){
-        emit start_measure_response(this->getParam(),b);
-    });
-//    setMaximumWidth(minimumSizeHint().width());
-}
 
 
 StartMesure::StartMesure(QWidget * parent)
@@ -50,7 +15,6 @@ StartMesure::StartMesure(QWidget * parent)
   auto * l = new QHBoxLayout();
   l->addWidget(start_button);
   l->addWidget(backends);
-
 
   backends->insertItem(backend_type::FAUST,"faust");
   backends->insertItem(backend_type::JACK,"jack");
@@ -63,11 +27,6 @@ StartMesure::StartMesure(QWidget * parent)
 }
 
 
-QParamResponse::Param QParamResponse::getParam(){
-  return ParamResponse{ this->fmin->value(),
-          this->fmax->value(),
-          ParamResponse::IMPULSE};
-}
 
 QParamDistortion::QParamDistortion(QWidget * parent):QWidget{parent}{
   auto b = new StartMesure{this};

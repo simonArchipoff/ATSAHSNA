@@ -14,6 +14,8 @@ add_library(view
     qresults.cpp
     qspectrogram.h
     qspectrogram.cpp
+    qresponse.h
+    qresponse.cpp
     qwtthings.h
     qwtthings.cpp)
 

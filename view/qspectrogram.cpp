@@ -27,18 +27,19 @@ QParamSpectrogram::QParamSpectrogram(QWidget * parent)
   :QWidget{parent}
   ,nb_octaves{new QSpinBox}
   ,resolution{new QSpinBox}
+  ,paramResponse{new QParamResponse{this}}
 {
   resolution->setRange(1,256);
   resolution->setValue(16);
   nb_octaves->setRange(1,15);
   nb_octaves->setValue(10);
-  auto b = new StartMesure{this};
   setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
   auto l = new QVBoxLayout();
 
   setLayout(l);
-  l->addWidget(b);
+  l->addWidget(paramResponse.data());
+  //l->addWidget(b);
 
   QFormLayout * f = new QFormLayout;
   f->addRow(tr("nombre d'octaves"), nb_octaves.data());
@@ -46,8 +47,14 @@ QParamSpectrogram::QParamSpectrogram(QWidget * parent)
 
   l->addLayout(f);
 
-  connect(b,&StartMesure::start_measure, this,[this](auto b){
-      emit start_measure_spectrogram(this->getParam(),b);
+  connect(paramResponse.data(),&QParamResponse::start_measure_response
+          , this
+          , [this](auto p,auto b){
+      auto ps = this->getParam();
+      ps.freqMax = p.freqMax;
+      ps.freqMin = p.freqMin;
+      ps.mode = p.mode;
+      emit start_measure_spectrogram(ps,b);
     });
 }
 
