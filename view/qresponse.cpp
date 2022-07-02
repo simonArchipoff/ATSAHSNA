@@ -13,7 +13,7 @@ QParamResponse::QParamResponse(QWidget * parent)
     setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     auto l = new QVBoxLayout();
 
-    typeMeasure->insertItem(signal_gen_type::SWEEP,tr("sweep"));
+    typeMeasure->insertItem(signal_gen_type::CHIRP,tr("chirp"));
     typeMeasure->insertItem(signal_gen_type::IMPULSE,tr("impulse"));
 
     setLayout(l);

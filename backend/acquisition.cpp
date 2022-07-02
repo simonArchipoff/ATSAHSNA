@@ -8,8 +8,8 @@ VD signal(Backend * b, const struct ParamResponse p){
   switch(p.mode){
     case signal_gen_type::IMPULSE:
       return impulse(p.freqMin,b->getSampleRate());
-    case signal_gen_type::SWEEP:
-      return sweep(p.freqMin,p.freqMax,1,b->getSampleRate());
+    case signal_gen_type::CHIRP:
+      return chirp(p.freqMin,p.freqMax,1,b->getSampleRate());
     }
 }
 
@@ -55,15 +55,14 @@ vector<struct ResultSpectrogram> compute_spectrogram(Backend *b, const struct Pa
   for(auto &out_response : output){
       auto o = out_response.response.frequencyDomainTotemporal();
       auto tmp = spectrogram(o,p.nb_octave,p.resolution,b->getSampleRate());
-      tmp.raw_data.inputs=vector<VD>({});
-      tmp.raw_data.outputs=vector({o});
+      tmp.raw_data=out_response.raw_data;
       res.push_back(tmp);
     }
   return res;
 }
 
 vector<struct ResultTHD> compute_distortion(Backend *b, const struct ParamTHD p){
-  auto in = sweep(p.frequency,p.frequency,p.duration, b->getSampleRate());
+  auto in = chirp(p.frequency,p.frequency,p.duration, b->getSampleRate());
   for(auto &i:in)
     i/=2;
   vector<VD> input;

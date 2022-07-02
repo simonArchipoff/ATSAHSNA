@@ -24,7 +24,6 @@
 
 
 
-
 class QParamDistortion : public QWidget{
   Q_OBJECT
 public:

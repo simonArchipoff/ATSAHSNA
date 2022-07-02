@@ -1,22 +1,23 @@
 #include "signalGeneration.h"
 #include <assert.h>
+#include <QDebug>
 
-VD sweep_angular(double f1, double f2, int duration){
-  double ts1 = 1/f1, ts2 = 1/f2;
-  VD out(duration);
-  for(int frame = 0; frame<duration ; frame++){
-    double instant = (double)frame /duration;
+//I took this
+//https://www.mathcore.com/resources/documents/ie_external_functions.pdf
+VD chirp_angular(double w1, double w2, int duration, int sampleRate){
+  //on calcule les périodes
 
-    double t = instant * (ts2 - ts1) + ts1;
+  VD out(duration*sampleRate);
 
-    out[frame] = sin(2 * M_PI * frame/t);
+  for(int frame = 0; frame < duration * sampleRate ; frame++){
+    double t = frame * 1/static_cast<double>(sampleRate);
+    out[frame] = sin(w1 * t + (w2 - w1) * t * t / (2*duration));
   }
   return out;
 }
 
-VD sweep(double f1, double f2, double duration, uint sampleRate){
-  auto srd = sampleRate * duration;
-  return sweep_angular(f1/sampleRate,f2/sampleRate,srd);
+VD chirp(double f1, double f2, double duration, uint sampleRate){
+  return chirp_angular(2*M_PI * f1,2*M_PI*f2,duration,sampleRate);
 }
 
 
