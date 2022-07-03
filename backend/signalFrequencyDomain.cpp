@@ -3,7 +3,7 @@
 #include <cmath>
 #include <fftw3.h>
 #include <numeric>
-
+#include <QDebug>
 FDF FDF::operator+(const FDF &a) const{
   assert(this->sampleRate == a.sampleRate);
   FDF res(*this);
@@ -91,7 +91,9 @@ vector <double> FDF::getPhase() const {
 vector <double> FDF::getFrequency() const {
   vector<double> res(response.size());
   for(uint i = 0; i < response.size(); i++){
-      res[i] = i * sampleRate / ((double) response.size());
+      res[i] = i * static_cast<double>(sampleRate) / ((double) response.size());
+      if(i > 1)
+        assert(res[i-1] < res[i]);
     }
   return res;
 }
@@ -208,14 +210,20 @@ VD FDF::frequencyDomainTotemporal() const {
 vector<double> decimation_log(const vector<double> & v, uint nb_points){
   auto b = log(v.size())/nb_points;
   vector<double> res;
+
   res.resize(nb_points);
 
   for(uint i = 0; i < nb_points; i++){
       const uint imin = static_cast<uint>(exp(b*i));
       const uint imax = static_cast<uint>(exp(b*(i+1)));
-      auto p = reduce(v.begin() + imin, v.begin() + imax);
-      p /= imax - imin;
-      res[i] = p;
+      qDebug() << imin << imax;
+      if(imax - imin < 2)
+        res[i] = v[imin];
+      else {
+        auto p = reduce(v.begin() + imin, v.begin() + imax);
+        p /= imax - imin;
+        res[i] = p;
+        }
     }
   return res;
 }

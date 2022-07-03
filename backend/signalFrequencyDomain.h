@@ -44,15 +44,14 @@ public:
 
 
     vector <double> getPhase() const;
-
-
-
     vector <double> getFrequency() const;
 
     double getMaxAmplitude() const;
     double getMinAmplitude() const;
     double getMaxAmplitude20log10() const ;
     double getMinAmplitude20log10() const;
+
+
 
     //inverse transform :
     VD frequencyDomainTotemporal() const;

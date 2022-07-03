@@ -9,7 +9,7 @@ VD signal(Backend * b, const struct ParamResponse p){
     case signal_gen_type::IMPULSE:
       return impulse(p.freqMin,b->getSampleRate());
     case signal_gen_type::CHIRP:
-      return chirp(p.freqMin,p.freqMax,1,b->getSampleRate());
+      return chirp(p.freqMin,p.freqMax,10,b->getSampleRate());
     }
 }
 

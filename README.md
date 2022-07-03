@@ -4,13 +4,12 @@ This project aims to be a free/libre software to perform accoustical measures, s
 It's licenced under GPLv3. For now it's under heavy development, you can play with it but please dont build something with it.
 
 What's already implemented:
-- two backend (faust and jackd)
-- impulse response, harmonic spectrum and THD+N computation (in temporal domain as well), it works great for the faust backend only, it needs more work for jack
+- two backend (faust and jackd),  it works great for the faust backend only, it needs more work for jack, the physical nature of the jack data makes it less easy to deal with.
+- impulse response, harmonic spectrum, THD computation
 - wavelet waterfall measures
 - a very poor UI, sorry
 
 Soon :
-- sweeps instead of diracs for better results
 - something to deal with latency more easily
 - export measurements in a bunch of standards files
 - better UI
@@ -39,7 +38,7 @@ cmake -S . -B build && make -j 8 -C build
 Dependancy:
 * Qt
 * FFTW
-* fCWT (a wavelet lib, in a git submodule, this lib also depends on FFTW in itself)
+* fCWT (a wavelet lib, in a git submodule, this lib itself also depends on FFTW)
 * Faust
 * Jack
 * moodycamel lockfree queue (already in the repository)
