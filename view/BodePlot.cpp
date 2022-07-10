@@ -3,7 +3,6 @@
 #include <cmath>
 
 #include <QwtMath>
-#include <QwtScaleEngine>
 #include <QwtSymbol>
 #include <QwtPlotGrid>
 #include <QwtPlotMarker>
@@ -61,6 +60,7 @@ void BodePlot::setResult(const FDF &c, const QColor color){
 
     QwtPlot::setAxisScale(QwtAxis::XBottom,std::max<double>(10,bc->minFrequency()),bc->maxFrequency());
     setAxisScale(QwtAxis::YLeft,std::max(-100.,std::min(bc->minAmplitude,minAmplitude)),std::max(bc->maxAmplitude,maxAmplitude));
+
     setAutoReplot(true);
     replot();
 }
@@ -152,7 +152,7 @@ void THDPlot::setResult(const ResultTHD &r, QColor color){
   t.setColor(color);
   textResult->setText(t);
 
-  setAxisScale(QwtAxis::YLeft,r.harmonicSpectrum.getMinAmplitude20log10(), r.harmonicSpectrum.getMaxAmplitude20log10());
+  setAxisScale(QwtAxis::YLeft,std::max(-360.,r.harmonicSpectrum.getMinAmplitude20log10()), r.harmonicSpectrum.getMaxAmplitude20log10());
 
   setAutoReplot(true);
   replot();

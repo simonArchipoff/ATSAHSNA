@@ -91,7 +91,7 @@ vector <double> FDF::getPhase() const {
 vector <double> FDF::getFrequency() const {
   vector<double> res(response.size());
   for(uint i = 0; i < response.size(); i++){
-      res[i] = i * static_cast<double>(sampleRate) / ((double) response.size());
+      res[i] = i * (sampleRate / ((double) response.size()));
       if(i > 1)
         assert(res[i-1] < res[i]);
     }

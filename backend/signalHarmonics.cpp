@@ -1,6 +1,9 @@
 #include "signalHarmonics.h"
 
 #include <algorithm>
+#include <QDebug>
+#include <fstream>
+#include <iomanip>
 
 /*
 double mean(const std::vector<double> &v){
@@ -30,12 +33,11 @@ struct slice {
   uint end;
   double level;
 };
-
-
 slice get_harmonic(const uint f, const vector<double>&v){
   assert(f < v.size());
   struct slice s;
 
+  //find local maximum
   uint f_l = f, f_r=f;
   while(f_l > 1 && v[f_l - 1] > v[f_l])
     f_l--;
@@ -46,7 +48,7 @@ slice get_harmonic(const uint f, const vector<double>&v){
   else
     s = {f_r,f_r,v[f_r]};
 
-  s.begin = v[s.begin];
+  //s.begin = //;v[s.begin];
 
 
   // find local minimum left
@@ -60,7 +62,6 @@ slice get_harmonic(const uint f, const vector<double>&v){
       s.end++;
     }
 
-  s.level = s.level;
   return s;
 }
 
@@ -120,7 +121,7 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
           imax = i;
         }
   }
-
+  assert(imax > 0);
   eh1 = get_harmonic(imax,amplitude).level;
 
   double e_tot_wo_h1 = 0;
@@ -135,9 +136,7 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
       i/=eh1;
     }
 
-
   auto slices = find_harmonics(amplitude,imax,smax);
-
 
   /*
   for(uint i = 0; i < smin; i++){
@@ -146,6 +145,12 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
   for(uint i = smax; i < signalfft.size(); i++)
     signalfft[i]=1;
   */
+
+
+  std::ofstream outFile("/tmp/foo");
+  // the important part
+  for (const auto &e : signal) outFile <<  std::setprecision(17) << std::setw(25) << e << " ";
+
 
   vector<double> h_level;
   for(auto & i : slices)

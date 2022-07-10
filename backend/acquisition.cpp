@@ -63,8 +63,7 @@ vector<struct ResultSpectrogram> compute_spectrogram(Backend *b, const struct Pa
 
 vector<struct ResultTHD> compute_distortion(Backend *b, const struct ParamTHD p){
   auto in = chirp(p.frequency,p.frequency,p.duration, b->getSampleRate());
-  for(auto &i:in)
-    i/=2;
+
   vector<VD> input;
   for(uint i = 0; i<b->numberInput(); i++){
       input.push_back(in);

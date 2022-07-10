@@ -33,7 +33,7 @@ public:
   Param getParam();
 
 signals:
-  void start_measure_distortion(struct ParamTHD, backend_type);
+  void start_measure_distortion(struct ParamTHD);
 
 private:
   QDoubleSpinBox * frequency, *duration, *freq_min, *freq_max;
@@ -44,9 +44,8 @@ class StartMesure : public QWidget{
 public:
   StartMesure(QWidget * parent=nullptr);
 signals:
-  void start_measure(backend_type p);
+  void start_measure();
 public:
-  QComboBox * backends;
   QPushButton * start_button;
 };
 

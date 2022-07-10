@@ -68,4 +68,5 @@ FDF compute_TF_FFT(const VCD &output, int sampleRate);
 VCD computeDFT(const VD &input);
 
 
+
 vector<double> decimation_log(const vector<double> & v, uint nb_points);

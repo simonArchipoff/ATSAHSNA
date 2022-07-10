@@ -18,6 +18,7 @@ set(BACKEND_SOURCES
     backendJack.h
     backendJack.cpp
     signalAnalysis.h
+    signalAnalysis.cpp
     signalGeneration.h
     signalGeneration.cpp
     signalHarmonics.h

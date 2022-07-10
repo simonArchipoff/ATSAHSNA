@@ -21,10 +21,10 @@
 #include <QtConcurrent/QtConcurrent>
 
 
+
 MainWindow::MainWindow(QWidget *parent)
   :QMainWindow{parent}
-  ,faustThings{new FaustThings{this}}
-  ,jackThings{new JackThings{this}}
+  ,backends{new QBackends{this}}
   ,qResults{new QResults{this}}
   //,measures{new QMeasure{this}}
 {
@@ -34,15 +34,10 @@ MainWindow::MainWindow(QWidget *parent)
           //qDebug()<< QThread::currentThreadId();
 
   auto s = new QSplitter{this};
-  auto t = new QTabWidget;
-  t->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-  t->addTab(faustThings->viewFaust.data(),"Faust");
-  t->addTab(jackThings->viewJack.data(),"Jackd");
-
   //w->setMaximumWidth(w->minimumSizeHint().width());
 
   //auto l = new QVBoxLayout;
-  s->addWidget(t);
+  s->addWidget(backends.data());
   setCentralWidget(s);
   //setLayout(hb);
 
@@ -50,22 +45,15 @@ MainWindow::MainWindow(QWidget *parent)
   s->addWidget(qResults.data());
   //bodePlot->show();
   //s->setSizes({1,10});
-  connect(qResults.data(), &QResults::request_response, this, [this](auto p,auto b){this->measure(getBackend(b),p);});
-  connect(qResults.data(), &QResults::request_distortion, this,[this](auto p,auto b){this->measure(getBackend(b),p);});
-  connect(qResults.data(), &QResults::request_spectrogram,this,[this](auto p, auto b){this->measure(getBackend(b),p);});
-  connect(jackThings->viewJack.data(), &QBackendJack::newLatency,this,[this](int i){ jackThings->backendJack->setLatency(i);});
+  connect(qResults.data(), &QResults::request_response,   this,
+          [this](auto p){this->measure(backends->getSelectedBackend(),p);});
+  connect(qResults.data(), &QResults::request_distortion, this,
+          [this](auto p){this->measure(backends->getSelectedBackend(),p);});
+  connect(qResults.data(), &QResults::request_spectrogram,this,
+          [this](auto p){this->measure(backends->getSelectedBackend(),p);});
 
-  faustThings->viewFaust->compile();
-}
-
-
-Backend * MainWindow::getBackend(backend_type b){
-  if(b == backend_type::FAUST)
-    return faustThings->backendFaustQt.data();
-  if(b == backend_type::JACK)
-    return jackThings->backendJack.data();
-  assert(false);
-  exit(1);
+  backends->addFaustBackend();
+  backends->addJackBackend();
 }
 
 void MainWindow::measure(Backend * b, ParamResponse p){

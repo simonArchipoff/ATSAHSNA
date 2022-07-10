@@ -9,18 +9,13 @@
 
 StartMesure::StartMesure(QWidget * parent)
   :QWidget{parent}
-  ,backends{new QComboBox{this}}
   ,start_button{new QPushButton{"start",this}}
 {
   auto * l = new QHBoxLayout();
   l->addWidget(start_button);
-  l->addWidget(backends);
-
-  backends->insertItem(backend_type::FAUST,"faust");
-  backends->insertItem(backend_type::JACK,"jack");
 
   connect(start_button,&QPushButton::clicked, this,[this](){
-      emit start_measure((backend_type) backends->currentIndex());
+      emit start_measure();
     });
   setLayout(l);
 //  setMaximumSize(minimumSizeHint());
@@ -57,7 +52,7 @@ QParamDistortion::QParamDistortion(QWidget * parent):QWidget{parent}{
   l->addWidget(b);
   l->addLayout(form);
   setLayout(l);
-  connect(b,&StartMesure::start_measure, this,[this](auto b){emit start_measure_distortion(this->getParam(),b);});
+  connect(b,&StartMesure::start_measure, this,[this](){emit start_measure_distortion(this->getParam());});
 //  setMaximumWidth(minimumSizeHint().width());
 }
 

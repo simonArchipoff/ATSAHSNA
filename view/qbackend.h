@@ -12,19 +12,33 @@
 #include <QSpinBox>
 
 #include <backendJack.h>
+#include <backendFaust.h>
 
 
-class QFaustDsp : public QWidget
-{
+class QBackend {
+public:
+  QBackend(Backend * b = nullptr):backend{b}{};
+
+  void setBackend(Backend * b){
+    this->backend.reset(b);
+  }
+  Backend * getBackend(){
+    return backend.data();
+  }
+protected:
+  QScopedPointer<Backend> backend;
+};
+
+
+class QFaustDsp : public QWidget, public QBackend {
     Q_OBJECT
 public:
-    explicit QFaustDsp(QWidget *parent = nullptr);
+    explicit QFaustDsp(BackendFaustQT * b, QWidget *parent = nullptr);
 
     void setUI(QWidget * ui);
     void setErrorMessage(QString);
     void compile();
-signals:
-    void faustDspCode(QString code,uint sampleRate);
+    void setFaustCode(QString code,uint sampleRate);
 private:
     QWidget * dspUi;
     QLineEdit * sr;
@@ -33,7 +47,6 @@ private:
     QPushButton * compile_button;
     QVBoxLayout *layout;
 };
-
 
 
 /*
@@ -45,18 +58,26 @@ protected:
 };
 */
 
-class QBackendJack : public QWidget{
+class QBackendJack : public QWidget, public QBackend {
   Q_OBJECT
 public:
-  QBackendJack(QWidget * parent=nullptr);
+  QBackendJack(BackendJack * b, QWidget * parent=nullptr);
 
-signals:
-  void newInputPort(QString);
-  void newOutputPort(QString);
-  void newLatency(uint i);
 protected:
   QPushButton * inputButton, * outputButton;
   QLineEdit * inputName, *outputName;
   QSpinBox * latency;
 };
 
+
+class QBackends : public QTabWidget {
+public:
+  QBackends(QWidget * parent=nullptr);
+
+  void addFaustBackend();
+  void addJackBackend();
+
+  Backend * getSelectedBackend();
+protected:
+  vector<QBackend *> backends;
+};

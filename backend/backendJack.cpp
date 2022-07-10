@@ -43,9 +43,12 @@ BackendJack::BackendJack()
       fprintf (stderr, "jack_client_open() failed, "
                        "status = 0x%2.0x\n", status);
       exit(1);
+
+
     } else {
       jack_set_process_thread(client,audio_thread,this);
-      ready = !jack_activate(client);
+      ready = !jack_activate(client);      outputGain = -6;
+      double factor = pow(10,getOutputGain()/20);
     }
 }
 
@@ -77,8 +80,9 @@ void * BackendJack::audio_thread(void * arg){
       for(uint i = 0; i < jb->outputPorts.size(); i++){
           auto out = static_cast<jack_default_audio_sample_t*>
               (jack_port_get_buffer(jb->outputPorts[i], nframes));
+          double factor = pow(10,jb->getOutputGain()/20);
           for(uint j = 0; j < size_to_copy; j++){
-              out[j] = static_cast<jack_default_audio_sample_t>(jb->currentInput[i][jb->idx+j]);
+              out[j] = factor * static_cast<jack_default_audio_sample_t>(jb->currentInput[i][jb->idx+j]);
             }
           for(uint j = size_to_copy; j < nframes; j++){
               out[j]=0;

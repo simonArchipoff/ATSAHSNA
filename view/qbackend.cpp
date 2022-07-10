@@ -1,4 +1,5 @@
 #include "qbackend.h"
+#include "backendJack.h"
 
 #include <QDebug>
 #include <QVBoxLayout>
@@ -7,12 +8,13 @@
 #include <QSpinBox>
 #include <QFormLayout>
 
-QFaustDsp::QFaustDsp(QWidget *parent)
-    : QWidget{parent},
-      dspUi{nullptr},
-      codeEdit{new QTextEdit{this}},
-      errorLabel{new QLabel{this}},
-      layout{new QVBoxLayout{this}}
+QFaustDsp::QFaustDsp(BackendFaustQT * backend, QWidget *parent)
+    : QWidget{parent}
+      ,QBackend{backend}
+      ,dspUi{nullptr}
+      ,codeEdit{new QTextEdit{this}}
+      ,errorLabel{new QLabel{this}}
+      ,layout{new QVBoxLayout{this}}
 {
     this->setLayout(layout);
     layout->addWidget(codeEdit,5);
@@ -20,8 +22,6 @@ QFaustDsp::QFaustDsp(QWidget *parent)
     layout->addWidget(sr,1);
     sr->setValidator(new QIntValidator(1,1000000,this));
     sr->setText("44100");
-
-
 
     compile_button = new QPushButton(tr("valider"),this);
     //compile_button->isCheckable();
@@ -46,7 +46,21 @@ QFaustDsp::QFaustDsp(QWidget *parent)
 }
 
 void QFaustDsp::compile(){
-  emit faustDspCode(codeEdit->toPlainText(),sr->text().toInt());
+  setFaustCode(codeEdit->toPlainText(),sr->text().toInt());
+}
+
+
+void QFaustDsp::setFaustCode(QString code,uint sampleRate){
+    auto res = create_faust_qt(code,sampleRate,this);
+    try{
+        auto tmp = std::get<BackendFaustQT*>(res);
+        backend.reset(tmp);
+        this->setErrorMessage("");
+        this->setUI(static_cast<BackendFaustQT*>(backend.data())->getUI());
+    } catch (const std::bad_variant_access& ex) {
+        auto s = std::get<QString>(res);
+        this->setErrorMessage(s);
+    }
 }
 
 void QFaustDsp::setUI(QWidget * ui)
@@ -70,14 +84,13 @@ void QFaustDsp::setErrorMessage(QString s)
 }
 
 
-
-
-QBackendJack::QBackendJack(QWidget * parent)
+QBackendJack::QBackendJack(BackendJack * b, QWidget * parent)
   : QWidget{parent}
-  ,inputButton{new QPushButton{tr("new input"),this}}
-  ,outputButton{new QPushButton{tr("new output"),this}}
-  ,inputName{new QLineEdit{this}}
-  ,outputName{new QLineEdit{this}}
+    ,QBackend{b}
+    ,inputButton{new QPushButton{tr("new input"),this}}
+    ,outputButton{new QPushButton{tr("new output"),this}}
+    ,inputName{new QLineEdit{this}}
+    ,outputName{new QLineEdit{this}}
 {
   QFormLayout * l = new QFormLayout{this};
   l->addRow(inputButton,inputName);
@@ -91,10 +104,43 @@ QBackendJack::QBackendJack(QWidget * parent)
 
   l->addRow(tr("latency"),latency);
 
-  connect(latency,QOverload<int>::of(&QSpinBox::valueChanged),this,[this](int i){emit QBackendJack::newLatency(i);});
+  connect(latency,QOverload<int>::of(&QSpinBox::valueChanged),this,[b](int i){b->setLatency(i);});
 
   setLayout(l);
   //setMaximumWidth(minimumSizeHint().width());
-  connect(inputButton,&QPushButton::clicked,this,[this](){emit newInputPort(inputName->text());});
-  connect(outputButton,&QPushButton::clicked,this,[this](){emit newOutputPort(outputName->text());});
+  connect(inputButton,&QPushButton::clicked,this,[b,this](){b->addInputPort(inputName->text().toStdString());});
+  connect(outputButton,&QPushButton::clicked,this,[b,this](){b->addOutputPort(outputName->text().toStdString());});
+}
+
+
+
+
+
+QBackends::QBackends(QWidget * parent)
+  :QTabWidget{parent} {
+  setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+}
+
+
+void QBackends::addFaustBackend(){
+  auto b = new BackendFaustQT{this};
+  auto bv = new QFaustDsp{b};
+  addTab(bv,"faust");
+  backends.push_back(bv);
+  bv->compile();
+}
+
+void QBackends::addJackBackend(){
+  auto b = new BackendJack;
+  auto bv = new QBackendJack{b,this};
+  addTab(bv,"jack");
+  backends.push_back(bv);
+}
+
+Backend * QBackends::getSelectedBackend(){
+  auto i = this->currentIndex();
+  if(i < 0)
+    return nullptr;
+  assert(static_cast<uint>(i) < backends.size());
+  return backends[i]->getBackend();
 }

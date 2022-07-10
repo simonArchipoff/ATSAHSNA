@@ -4,7 +4,7 @@
 
 //I took this
 //https://www.mathcore.com/resources/documents/ie_external_functions.pdf
-VD chirp_angular(double w1, double w2, int duration, int sampleRate){
+VD chirp_angular(double w1, double w2, double duration, int sampleRate){
   //on calcule les périodes
 
   VD out(duration*sampleRate);

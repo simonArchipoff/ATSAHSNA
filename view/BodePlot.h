@@ -42,7 +42,6 @@ public:
   double maxAmplitude = 10, minAmplitude=-100;
 };
 
-
 class THDPlot : public FrequencyPlot
 {
 public:

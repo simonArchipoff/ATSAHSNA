@@ -86,6 +86,12 @@ public:
 
     bool addInputPort(std::string name="input");
     bool addOutputPort(std::string name="output");
+    void setOutputGain(double g){
+      outputGain = g;
+    }
+    double getOutputGain(){
+      return outputGain;
+    }
 
     std::mutex lock;
   protected:
@@ -104,6 +110,7 @@ public:
     std::vector<jack_port_t *> inputPorts,outputPorts;
     enum {Waiting, Measuring} status = Waiting;
     uint idx;
+    double outputGain;
     vector<vector<double>> currentInput;
     vector<vector<double>> currentOutput;
 };

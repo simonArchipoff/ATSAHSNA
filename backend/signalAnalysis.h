@@ -25,3 +25,6 @@ struct MeasureData{
 };
 
 
+
+//naive implementation for finding c in v
+VD convolution(const VD &v, const VD&c);

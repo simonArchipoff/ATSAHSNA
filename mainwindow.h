@@ -14,62 +14,7 @@
 
 
 
-/*
-class JackThings : public QObject {
-  Q_OBJECT
-public:
-  JackThings(QWidget * parent=nullptr):viewJack{new JackView},backendJack{new BackendJack}{
-  }
-
-
-  QScopedPointer<JackView> viewJack;
-  QScopedPointer<BackendJack> backendJack;
-};
-*/
-
-class FaustThings : public QObject {
-  Q_OBJECT
-public:
-  FaustThings(QWidget * parent)
-    :viewFaust(new QFaustDsp{parent}),
-     backendFaustQt{new BackendFaustQT{parent}}{
-     connect(viewFaust.data(), &QFaustDsp::faustDspCode,
-             this,&FaustThings::setFaustCode);
-  }
-
-  void setFaustCode(QString code,uint sampleRate){
-      auto res = create_faust_qt(code,sampleRate,viewFaust.data());
-      try{
-          auto tmp = std::get<BackendFaustQT*>(res);
-          backendFaustQt.reset(tmp);
-          viewFaust->setErrorMessage("");
-          viewFaust->setUI(backendFaustQt->getUI());
-      } catch (const std::bad_variant_access& ex) {
-          auto s = std::get<QString>(res);
-          viewFaust->setErrorMessage(s);
-      }
-  }
-  QScopedPointer<QFaustDsp> viewFaust;
-  QScopedPointer<BackendFaustQT> backendFaustQt;
-};
-
-class JackThings : public QObject{
-  Q_OBJECT
-public:
-  JackThings(QWidget * parent)
-    :backendJack{new BackendJack}
-    ,viewJack{new QBackendJack}
-  {
-    connect(viewJack.data(),&QBackendJack::newInputPort, this,[this](auto name){backendJack->addInputPort(name.toStdString());});
-    connect(viewJack.data(),&QBackendJack::newOutputPort,this,[this](auto name){backendJack->addOutputPort(name.toStdString());});
-  }
-
-  QScopedPointer<BackendJack> backendJack;
-  QScopedPointer<QBackendJack> viewJack;
-};
-
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -80,10 +25,8 @@ public:
 
     void measureResponse();
     void measureTHD();
-    Backend * getBackend(backend_type b);
 private:
 //    QScopedPointer<BodePlot> QResults;
-    QScopedPointer<FaustThings> faustThings;
-    QScopedPointer<JackThings> jackThings;
+    QScopedPointer<QBackends> backends;
     QScopedPointer<QResults> qResults;
 };

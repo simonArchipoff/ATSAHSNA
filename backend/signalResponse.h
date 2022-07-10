@@ -18,5 +18,3 @@ struct ResultResponse{
 
 FDF computeResponse(const VD & input, const VD & output, int sampleRate);
 
-FDF computeResponseWiener(const FDF & signal, const FDF & output, const FDF & noise);
-
