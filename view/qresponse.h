@@ -11,7 +11,7 @@ public:
   typedef struct ParamResponse Param;
   Param getParam();
 signals:
-  void start_measure_response(struct ParamResponse, backend_type);
+  void start_measure_response(struct ParamResponse);
 private:
   QScopedPointer<QSpinBox> fmin,fmax;
   QScopedPointer<QComboBox> typeMeasure;

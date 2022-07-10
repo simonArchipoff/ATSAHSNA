@@ -49,12 +49,12 @@ QParamSpectrogram::QParamSpectrogram(QWidget * parent)
 
   connect(paramResponse.data(),&QParamResponse::start_measure_response
           , this
-          , [this](auto p,auto b){
+          , [this](auto p){
       auto ps = this->getParam();
       ps.freqMax = p.freqMax;
       ps.freqMin = p.freqMin;
       ps.mode = p.mode;
-      emit start_measure_spectrogram(ps,b);
+      emit start_measure_spectrogram(ps);
     });
 }
 
@@ -127,7 +127,6 @@ QDisplaySpectrogram::QDisplaySpectrogram(QWidget * parent)
   , qwtplotspectrogram{new QwtPlotSpectrogram}
 {
   qwtThingsSetFrequencyLogAxis(this,QwtAxis::YLeft);
-
 }
 
 

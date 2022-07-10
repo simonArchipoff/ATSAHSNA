@@ -5,7 +5,6 @@
 
 #define APPNAME "ATSAHSNA"
 
-typedef enum {FAUST, JACK} backend_type;
 typedef enum {CHIRP, IMPULSE} signal_gen_type;
 
 

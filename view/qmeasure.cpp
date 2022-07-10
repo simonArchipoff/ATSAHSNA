@@ -52,7 +52,10 @@ QParamDistortion::QParamDistortion(QWidget * parent):QWidget{parent}{
   l->addWidget(b);
   l->addLayout(form);
   setLayout(l);
-  connect(b,&StartMesure::start_measure, this,[this](){emit start_measure_distortion(this->getParam());});
+  connect(b,&StartMesure::start_measure, this,
+          [this](){
+      emit start_measure_distortion(this->getParam());
+    });
 //  setMaximumWidth(minimumSizeHint().width());
 }
 

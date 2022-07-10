@@ -20,7 +20,7 @@ public:
   typedef struct ParamSpectrogram Param;
   Param getParam();
 signals:
-  void start_measure_spectrogram(struct ParamSpectrogram, backend_type);
+  void start_measure_spectrogram(struct ParamSpectrogram);
 private:
   QScopedPointer<QSpinBox> nb_octaves,resolution;
   QScopedPointer<QParamResponse> paramResponse;

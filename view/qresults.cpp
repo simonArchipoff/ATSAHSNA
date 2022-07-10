@@ -19,11 +19,11 @@ QResults::QResults(QWidget * parent)
 
 
   connect(qresponse->qcontrol.data(),&QParamResponse::start_measure_response,this,
-          [this](struct ParamResponse p, auto b){ emit request_response(p,b);});
+          [this](struct ParamResponse p){ emit request_response(p);});
   connect(qdistortion->qcontrol.data(),&QParamDistortion::start_measure_distortion,this,
-          [this](auto p, auto b){emit request_distortion(p,b);});
+          [this](auto p){emit request_distortion(p);});
   connect(qspectrogram->qcontrol.data(), &QParamSpectrogram::start_measure_spectrogram,this,
-          [this](struct ParamSpectrogram p, auto b){emit request_spectrogram(p,b);});
+          [this](struct ParamSpectrogram p){emit request_spectrogram(p);});
 }
 
 

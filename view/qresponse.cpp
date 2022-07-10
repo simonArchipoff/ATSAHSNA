@@ -40,8 +40,8 @@ QParamResponse::QParamResponse(QWidget * parent)
 
     //setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
 
-    connect(b,&StartMesure::start_measure, this,[this](auto b){
-        emit start_measure_response(this->getParam(),b);
+    connect(b,&StartMesure::start_measure, this,[this](){
+        emit start_measure_response(this->getParam());
     });
 //    setMaximumWidth(minimumSizeHint().width());
 }
