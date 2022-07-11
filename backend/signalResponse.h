@@ -7,6 +7,7 @@ struct ParamResponse {
   int freqMin;
   int freqMax;
   signal_gen_type mode;
+  double duration = 0.0;
 };
 
 struct ResultResponse{

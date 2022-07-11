@@ -7,6 +7,7 @@ QParamResponse::QParamResponse(QWidget * parent)
   :QWidget{parent}
   ,fmin{new QSpinBox(this)}
   ,fmax{new QSpinBox(this)}
+  ,duration{new QDoubleSpinBox(this)}
   ,typeMeasure{new QComboBox(this)}
 {
     auto b = new StartMesure(this);
@@ -24,8 +25,9 @@ QParamResponse::QParamResponse(QWidget * parent)
 
     QFormLayout * f = new QFormLayout;
 
-    f->addRow("fréquence min", fmin.data());
-    f->addRow("fréquence max", fmax.data());
+    f->addRow(tr("frequency min"), fmin.data());
+    f->addRow(tr("frequency max"), fmax.data());
+    f->addRow(tr("duration"),duration.data());
     fmin->show();
     fmax->show();
 
@@ -35,6 +37,10 @@ QParamResponse::QParamResponse(QWidget * parent)
     fmax->setMaximum(MAXFREQ);
     fmax->setMinimum(MINFREQ);
     fmax->setValue(20000);
+
+    duration->setMinimum(0.1);
+    duration->setMaximum(20);
+    duration->setValue(1);
 
     l->addLayout(f);
 
@@ -50,7 +56,9 @@ QParamResponse::QParamResponse(QWidget * parent)
 QParamResponse::Param QParamResponse::getParam(){
   auto fmin = this->fmin->value();
   auto fmax = this->fmax->value();
-  return ParamResponse{ fmin,
+  auto duration = this->duration->value();
+  return ParamResponse{fmin,
           fmax,
-          static_cast<signal_gen_type>(this->typeMeasure->currentIndex())};
+          static_cast<signal_gen_type>(this->typeMeasure->currentIndex()),
+          duration};
 }

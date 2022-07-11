@@ -1,15 +1,17 @@
 # ATSAHSNA
 
-This project aims to be a free/libre software to perform accoustical measures, some kind of REW without the "ew",
+This project aims to be a free/libre software to perform accoustical measures, some kind of REW.
 It's licenced under GPLv3. For now it's under heavy development, you can play with it but please dont build something with it.
 
 What's already implemented:
-- two backend (faust and jackd),  it works great for the faust backend only, it needs more work for jack, the physical nature of the jack data makes it less easy to deal with.
+- two backend (faust and jackd), for jackd you'll need a 96kHz sound interface to have good results above 10kHz, 48kHz isn't enough.
 - impulse response, harmonic spectrum, THD computation
 - wavelet waterfall measures
-- a very poor UI, sorry
+- temporal response
+- a very poor GUI, sorry
 
 Soon :
+- reactive interface (temporary bug)
 - something to deal with latency more easily
 - export measurements in a bunch of standards files
 - better UI

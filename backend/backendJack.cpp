@@ -43,14 +43,16 @@ BackendJack::BackendJack()
       fprintf (stderr, "jack_client_open() failed, "
                        "status = 0x%2.0x\n", status);
       exit(1);
-
-
     } else {
       jack_set_process_thread(client,audio_thread,this);
-      ready = !jack_activate(client);      outputGain = -6;
-      double factor = pow(10,getOutputGain()/20);
+      ready = !jack_activate(client);
+      outputGain = -3;
     }
 }
+
+
+
+
 
 BackendJack::~BackendJack()
 {

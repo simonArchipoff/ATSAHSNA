@@ -54,6 +54,7 @@ QParamSpectrogram::QParamSpectrogram(QWidget * parent)
       ps.freqMax = p.freqMax;
       ps.freqMin = p.freqMin;
       ps.mode = p.mode;
+      ps.duration = p.duration;
       emit start_measure_spectrogram(ps);
     });
 }

@@ -89,19 +89,21 @@ QBackendJack::QBackendJack(BackendJack * b, QWidget * parent)
     ,QBackend{b}
     ,inputButton{new QPushButton{tr("new input"),this}}
     ,outputButton{new QPushButton{tr("new output"),this}}
+    ,sampleRate{new QLabel{this}}
     ,inputName{new QLineEdit{this}}
     ,outputName{new QLineEdit{this}}
 {
   QFormLayout * l = new QFormLayout{this};
+  l->addRow(tr("sample rate"),sampleRate);
   l->addRow(inputButton,inputName);
   l->addRow(outputButton,outputName);
+
   inputName->setText(tr("input"));
   outputName->setText(tr("output"));
   latency = new QSpinBox;
 
   latency->setRange(0,15000);
   latency->setValue(0);
-
   l->addRow(tr("latency"),latency);
 
   connect(latency,QOverload<int>::of(&QSpinBox::valueChanged),this,[b](int i){b->setLatency(i);});
@@ -110,6 +112,9 @@ QBackendJack::QBackendJack(BackendJack * b, QWidget * parent)
   //setMaximumWidth(minimumSizeHint().width());
   connect(inputButton,&QPushButton::clicked,this,[b,this](){b->addInputPort(inputName->text().toStdString());});
   connect(outputButton,&QPushButton::clicked,this,[b,this](){b->addOutputPort(outputName->text().toStdString());});
+  QString str;
+  str.setNum(b->getSampleRate());
+  sampleRate->setText(str);
 }
 
 

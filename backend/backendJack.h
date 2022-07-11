@@ -38,6 +38,7 @@ public:
     uint getSampleRate() const override {
       return jack_get_sample_rate(client);
     }
+
     bool isReady() const override {
       return ready;
     }

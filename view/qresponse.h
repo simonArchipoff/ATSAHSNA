@@ -14,6 +14,7 @@ signals:
   void start_measure_response(struct ParamResponse);
 private:
   QScopedPointer<QSpinBox> fmin,fmax;
+  QScopedPointer<QDoubleSpinBox> duration;
   QScopedPointer<QComboBox> typeMeasure;
 };
 
