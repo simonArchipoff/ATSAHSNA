@@ -147,11 +147,11 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
   */
 
 
-  std::ofstream outFile("/tmp/foo");
-  // the important part
+  /*std::ofstream outFile("/tmp/foo");
+
   for (const auto &e : signal) outFile <<  std::setprecision(17) << std::setw(25) << e << " ";
-
-
+  */
+  // the important part
   vector<double> h_level;
   for(auto & i : slices)
     h_level.push_back(i.level);

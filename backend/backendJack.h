@@ -38,7 +38,9 @@ public:
     uint getSampleRate() const override {
       return jack_get_sample_rate(client);
     }
-
+    uint getBufferSize() const {
+      return jack_get_buffer_size(client);
+    }
     bool isReady() const override {
       return ready;
     }

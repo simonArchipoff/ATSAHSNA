@@ -90,11 +90,14 @@ QBackendJack::QBackendJack(BackendJack * b, QWidget * parent)
     ,inputButton{new QPushButton{tr("new input"),this}}
     ,outputButton{new QPushButton{tr("new output"),this}}
     ,sampleRate{new QLabel{this}}
+    ,bufferSize{new QLabel{this}}
     ,inputName{new QLineEdit{this}}
     ,outputName{new QLineEdit{this}}
+    ,gain{new QDoubleSpinBox{this}}
 {
   QFormLayout * l = new QFormLayout{this};
   l->addRow(tr("sample rate"),sampleRate);
+  l->addRow(tr("buffer size"),bufferSize);
   l->addRow(inputButton,inputName);
   l->addRow(outputButton,outputName);
 
@@ -105,6 +108,11 @@ QBackendJack::QBackendJack(BackendJack * b, QWidget * parent)
   latency->setRange(0,15000);
   latency->setValue(0);
   l->addRow(tr("latency"),latency);
+  l->addRow(tr("gain"),gain);
+  gain->setMaximum(20);
+  gain->setMinimum(-40);
+  gain->setValue(-3);
+  connect(gain,QOverload<double>::of(&QDoubleSpinBox::valueChanged),this,[b](auto d){b->setOutputGain(d);});
 
   connect(latency,QOverload<int>::of(&QSpinBox::valueChanged),this,[b](int i){b->setLatency(i);});
 
@@ -115,6 +123,10 @@ QBackendJack::QBackendJack(BackendJack * b, QWidget * parent)
   QString str;
   str.setNum(b->getSampleRate());
   sampleRate->setText(str);
+
+  str.setNum(b->getBufferSize());
+  bufferSize->setText(str);
+
 }
 
 

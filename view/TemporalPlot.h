@@ -2,8 +2,8 @@
 
 #include <QWidget>
 
-#include <QwtPlot>
-#include <QwtPlotCurve>
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
 
 #include <QSlider>
 #include <signalAnalysis.h>

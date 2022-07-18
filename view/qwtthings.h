@@ -1,7 +1,7 @@
 #pragma once
-#include <QwtPlot>
-#include <QwtAxis>
-#include <QwtLinearColorMap>
+#include <qwt_plot.h>
+#include <qwt_axis.h>
+#include <qwt_color_map.h>
 void qwtThingsSetFrequencyLogAxis(QwtPlot * plot,QwtAxisId axis);
 
 

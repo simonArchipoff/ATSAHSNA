@@ -1,12 +1,14 @@
 #pragma once
 
 #include <QWidget>
-#include <QwtPlotSpectrogram>
-#include <QwtPlot>
-#include <QwtMatrixRasterData>
-#include <QwtInterval>
 #include <QSpinBox>
 #include <QComboBox>
+
+#include <qwt_plot_spectrogram.h>
+#include <qwt_plot.h>
+#include <qwt_matrix_raster_data.h>
+#include <qwt_interval.h>
+
 
 #include "qresponse.h"
 

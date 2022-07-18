@@ -3,11 +3,12 @@
 #include <QMap>
 #include <QWidget>
 #include <QSlider>
-#include <QwtPlot>
-#include <QwtPlotCurve>
-#include <QwtPlotMarker>
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
+#include <qwt_plot_marker.h>
+#include <qwt_plot_textlabel.h>
+
 #include <vector>
-#include <QwtPlotTextLabel>
 
 #include <signalResponse.h>
 #include <signalHarmonics.h>

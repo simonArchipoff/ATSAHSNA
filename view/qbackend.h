@@ -65,9 +65,10 @@ public:
 
 protected:
   QPushButton * inputButton, * outputButton;
-  QLabel * sampleRate;
+  QLabel * sampleRate, *bufferSize;
   QLineEdit * inputName, *outputName;
   QSpinBox * latency;
+  QDoubleSpinBox * gain;
 };
 
 
