@@ -12,13 +12,16 @@ What's already implemented:
 
 Soon :
 - reactive interface (temporary bug)
-- something to deal with latency more easily
+- something to deal with latency more easily (automagicaly)
 - export measurements in a bunch of standards files
 - better UI
+- handling of several measures at once
 - less franglish and proper translations
 - dealing with several input/output (to measure two channels at once for instance)
+  - mixing soundcards (for instance to test the input of one against the output of an other)
 - having several measure displayed at once
 - simpler code (I am tâtonning)
+- introduce arbitrary correction from input (like the inverse of a microphone response)
 
 Later :
 - Implementing what's needed to measures an impedance and/or do computation with inputs

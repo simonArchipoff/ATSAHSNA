@@ -7,31 +7,7 @@
 #include <thread>
 
 #include <QtConcurrent/QtConcurrent>
-const char **ports;
-const char *client_name = "simple";
-const char *server_name = NULL;
-jack_options_t options = JackNullOption;
-jack_status_t status;
 
-/* open a client connection to the JACK server */
-
-/*
-client = jack_client_open (client_name, options, &status, server_name);
-if (client == NULL) {
-
-	if (status & JackServerFailed) {
-		fprintf (stderr, "Unable to connect to JACK server\n");
-	}
-	exit (1);
-}
-if (status & JackServerStarted) {
-	fprintf (stderr, "JACK server started\n");
-}
-if (status & JackNameNotUnique) {
-	client_name = jack_get_client_name(client);
-	fprintf (stderr, "unique name `%s' assigned\n", client_name);
-}
-*/
 
 BackendJack::BackendJack()
 {
@@ -230,9 +206,7 @@ vector<VD> BackendJack::acquisition(const vector<VD> &input){
   return acquire_output(this,input);
 }
 
-
 #if 0
-
 int 	jack_set_process_thread (jack_client_t *client, JackThreadCallback fun, void *arg)
 int
 main (int argc, char *argv[])
@@ -384,7 +358,4 @@ jack_shutdown (void *arg)
 {
   exit (1);
 }
-
-
-
 #endif
