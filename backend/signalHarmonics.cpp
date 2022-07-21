@@ -52,7 +52,7 @@ slice get_harmonic(const uint f, const vector<double>&v){
 
 
   // find local minimum left
-  while(s.begin >= 1 && v[s.begin - 1] <= v[s.begin]){
+ /* while(s.begin >= 1 && v[s.begin - 1] <= v[s.begin]){
       s.level += v[s.begin - 1];
       s.begin--;
     }
@@ -61,7 +61,7 @@ slice get_harmonic(const uint f, const vector<double>&v){
       s.level += v[s.end + 1];
       s.end++;
     }
-
+*/
   return s;
 }
 
@@ -83,12 +83,12 @@ double thd_ieee(const vector<slice> & slices){
   if(slices.size() == 0)
     return 0;
   double a = 0, b = 0;
-  vector<slice>::const_iterator  it;
+  vector<slice>::const_iterator it;
   for(it = slices.begin(), it++ ; it != slices.end(); it++){
-      a += it->level* it->level;
+      a += it->level * it->level;
     }
   b = slices[0].level;//*slices[0].level;
-  return sqrt(a)/b;//sqrt(a)/b;
+  return sqrt(a)/b;
 }
 /*
 ResultTHD computeTHDsimple(const ParamTHD p, const VD&signal, int sampleRate){
@@ -102,7 +102,7 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
   assert(signal.size() > 1);
 
   VCD signalfft = computeDFT(signal);
-  signalfft[0] = signalfft[1];
+  signalfft[0] = 0;//remove offset
   uint smin = p.freqMin *  p.duration;
   uint smax = std::min<uint>(p.freqMax * p.duration, signal.size()/2);
 

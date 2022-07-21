@@ -96,13 +96,22 @@ public:
       return outputGain;
     }
 
+signals:
+    void shutdown();
+    void sample_rate_change();
+    void buffer_size_change();
+    void client_registration();
+    void port_registration();
+    void port_rename();
+    void port_connect();
+
+public:
     std::mutex lock;
   protected:
     int latency = 0;
 
     moodycamel::ConcurrentQueue<request>  requests;
     moodycamel::ConcurrentQueue<response> responses;
-
 
     static void * audio_thread(void*);
     void treatRequest();
@@ -118,4 +127,38 @@ public:
     vector<vector<double>> currentOutput;
 };
 
+/*
+int 	jack_set_thread_init_callback (jack_client_t *client, JackThreadInitCallback thread_init_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
+void 	jack_on_shutdown (jack_client_t *client, JackShutdownCallback function, void *arg) JACK_OPTIONAL_WEAK_EXPORT
+void 	jack_on_info_shutdown (jack_client_t *client, JackInfoShutdownCallback function, void *arg) JACK_WEAK_EXPORT
+int 	jack_set_process_callback (jack_client_t *client, JackProcessCallback process_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
+int 	jack_set_freewheel_callback (jack_client_t *client, JackFreewheelCallback freewheel_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
+int 	jack_set_buffer_size_callback (jack_client_t *client, JackBufferSizeCallback bufsize_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
+int 	jack_set_sample_rate_callback (jack_client_t *client, JackSampleRateCallback srate_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
+int 	jack_set_client_registration_callback (jack_client_t *, JackClientRegistrationCallback registration_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
+int 	jack_set_port_registration_callback (jack_client_t *, JackPortRegistrationCallback registration_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
+int 	jack_set_port_rename_callback (jack_client_t *, JackPortRenameCallback rename_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
+int 	jack_set_port_connect_callback (jack_client_t *, JackPortConnectCallback connect_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
+int 	jack_set_graph_order_callback (jack_client_t *, JackGraphOrderCallback graph_callback, void *) JACK_OPTIONAL_WEAK_EXPORT
+int 	jack_set_xrun_callback (jack_client_t *, JackXRunCallback xrun_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
+int 	jack_set_latency_callback (jack_client_t *, JackLatencyCallback latency_callback, void *) JACK_WEAK_EXPORT
 
+
+typedef enum JackLatencyCallbackMode 	jack_latency_callback_mode_t
+typedef void(* 	JackLatencyCallback) (jack_latency_callback_mode_t mode, void *arg)
+typedef struct _jack_latency_range 	jack_latency_range_t
+typedef int(* 	JackProcessCallback) (jack_nframes_t nframes, void *arg)
+typedef void(* 	JackThreadInitCallback) (void *arg)
+typedef int(* 	JackGraphOrderCallback) (void *arg)
+typedef int(* 	JackXRunCallback) (void *arg)
+typedef int(* 	JackBufferSizeCallback) (jack_nframes_t nframes, void *arg)
+typedef int(* 	JackSampleRateCallback) (jack_nframes_t nframes, void *arg)
+typedef void(* 	JackPortRegistrationCallback) (jack_port_id_t port, int, void *arg)
+typedef void(* 	JackPortRenameCallback) (jack_port_id_t port, const char *old_name, const char *new_name, void *arg)
+typedef void(* 	JackClientRegistrationCallback) (const char *name, int, void *arg)
+typedef void(* 	JackPortConnectCallback) (jack_port_id_t a, jack_port_id_t b, int connect, void *arg)
+typedef void(* 	JackFreewheelCallback) (int starting, void *arg)
+typedef void *(* 	JackThreadCallback) (void *arg)
+typedef void(* 	JackShutdownCallback) (void *arg)
+typedef void(* 	JackInfoShutdownCallback) (jack_status_t code, const char *reason, void *arg)
+*/
