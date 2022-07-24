@@ -131,6 +131,7 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
           e_tot_wo_h1 += tmp;
         }
     }
+  e_tot_wo_h1 = sqrt(e_tot_wo_h1);
 
   for(auto &i : signalfft){
       i/=eh1;
@@ -151,13 +152,15 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
 
   for (const auto &e : signal) outFile <<  std::setprecision(17) << std::setw(25) << e << " ";
   */
+
+
   // the important part
   vector<double> h_level;
   for(auto & i : slices)
     h_level.push_back(i.level);
   return ResultTHD {
       .harmonicSpectrum = FDF(signalfft,sampleRate)
-      ,.thdNoiseRate = sqrt(e_tot_wo_h1) / eh1
+      ,.thdNoiseRate = e_tot_wo_h1 / eh1
       ,.thdRate = thd_ieee(slices)
       ,.harmonicsLevel = h_level
       ,.params = p

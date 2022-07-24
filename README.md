@@ -1,12 +1,12 @@
 # ATSAHSNA
 
 This project aims to be a free/libre software to perform accoustical measures, some kind of REW.
-It's licenced under GPLv3. For now it's under heavy development, you can play with it but please dont build something with it.
+It's licenced under GPLv3. For now it's under heavy development, you can play with it but please dont build something with it yet.
 
 What's already implemented:
 - two backend (faust and jackd), for jackd you'll need a 96kHz sound interface to have good results above 10kHz, 48kHz isn't enough.
-- impulse response, harmonic spectrum, THD computation
-- wavelet waterfall measures
+- impulse response, harmonic spectrum, THD computation.
+- wavelet waterfall measures (ongoing work, it's not convincing yet)
 - temporal response
 - a very poor GUI, sorry
 
@@ -22,6 +22,7 @@ Soon :
 - having several measure displayed at once
 - simpler code (I am tâtonning)
 - introduce arbitrary correction from input (like the inverse of a microphone response)
+- more test for more trust in the computations.
 
 Later :
 - Implementing what's needed to measures an impedance and/or do computation with inputs

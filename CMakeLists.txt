@@ -26,7 +26,6 @@ find_package(Qwt REQUIRED)
 
 add_subdirectory(third_party/fCWT_wrapper)
 add_subdirectory(backend)
-
 add_subdirectory(view)
 
 set(PROJECT_SOURCES

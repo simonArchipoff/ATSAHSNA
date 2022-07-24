@@ -2,6 +2,7 @@
 #include "../constants.h"
 
 #include <jack/types.h>
+#include <mutex>
 #include <stdio.h>
 #include <algorithm>
 #include <thread>
@@ -21,6 +22,15 @@ BackendJack::BackendJack()
       exit(1);
     } else {
       jack_set_process_thread(client,audio_thread,this);
+
+      jack_on_shutdown(client, jackShutdownCallback, this);
+      jack_on_info_shutdown (client, jackInfoShutdownCallback, this);
+      jack_set_buffer_size_callback (client, jackBufferSizeCallback, this);
+      jack_set_client_registration_callback (client, jackClientRegistrationCallback, this);
+      jack_set_port_registration_callback (client, jackPortRegistrationCallback, this);
+      jack_set_port_rename_callback (client, jackPortRenameCallback, this);
+      jack_set_port_connect_callback (client, jackPortConnectCallback, this);
+      jack_set_xrun_callback(client, jackXRunCallback,this);
       ready = !jack_activate(client);
       outputGain = -3;
     }
@@ -30,8 +40,7 @@ BackendJack::BackendJack()
 
 
 
-BackendJack::~BackendJack()
-{
+BackendJack::~BackendJack(){
   jack_client_close(client);
 }
 
@@ -44,6 +53,8 @@ void * BackendJack::audio_thread(void * arg){
       if(jb->status == Waiting){
           for(uint i = 0; i < jb->outputPorts.size(); i++){
               auto out= (float*) jack_port_get_buffer(jb->outputPorts[i], nframes);
+              if(!out)
+                continue;
               for(uint j = 0; j < nframes ; j++){
                   out[j] = 0;
                 }
@@ -69,6 +80,8 @@ void * BackendJack::audio_thread(void * arg){
       for(uint i = 0; i < jb->inputPorts.size(); i++) {
           auto in = static_cast<jack_default_audio_sample_t*>
               (jack_port_get_buffer(jb->inputPorts[i], nframes));
+          if(!in)
+            continue;
           for(uint j = 0; j < size_to_copy; j++){
               jb->currentOutput[i][jb->idx+j] = static_cast<double>(in[j]);
             }
@@ -82,9 +95,6 @@ void * BackendJack::audio_thread(void * arg){
       jack_cycle_signal(jb->client,0);
 
     }
-  //jack_nframes_t 	jack_cycle_wait (jack_client_t *client) JACK_OPTIONAL_WEAK_EXPORT
-
-  //void 	jack_cycle_signal (jack_client_t *client, int status) JACK_OPTIONAL_WEAK_EXPORT
 }
 
 bool BackendJack::addInputPort(std::string name){
@@ -163,6 +173,8 @@ void BackendJack::treatRequest(){
 
 void BackendJack::sendOutput(){
   responses.enqueue(Output{currentOutput});
+  std::unique_lock l{mut_cond};
+  cond.notify_one();
   status = Waiting;
 }
 
@@ -181,31 +193,35 @@ void remove_left(uint n, vector<VD> & in){
 
 
 
-vector<VD> acquire_output(BackendJack *b, const vector<VD> &input){
-  b->lock.lock();
+vector<VD> BackendJackQt::acquire_output(BackendJackQt *b, const vector<VD> &input){
+  return b->acquisition(input);
+}
+
+
+vector<VD> BackendJack::acquisition(const vector<VD> &input){
+  lock.lock();
   auto in = vector{input};
-  auto l = b->getLatencySample();
+  auto l = getLatencySample();
   pad_right_0(l,in);
 
-  b->requestMeasure(in);
+  requestMeasure(in);
   do{
-      QThread::msleep(20);
-      auto r  = b->tryGetOutput();
+      std::unique_lock<std::mutex> cond_lock{mut_cond};
+      qDebug("wait cond");
+      cond.wait(cond_lock);
+      auto r  = tryGetOutput();
       if(r.has_value()){
           auto out = r.value();
           remove_left(l,out);
-          b->lock.unlock();
+          lock.unlock();
           return out;
         }
     }while(true);
 }
-QFuture<vector<VD>> BackendJack::acquisition_async(const vector<VD> &input){
+
+QFuture<vector<VD>> BackendJackQt::acquisition_async(const vector<VD> &input){
   return QtConcurrent::run(acquire_output,this,input);
 }
-vector<VD> BackendJack::acquisition(const vector<VD> &input){
-  return acquire_output(this,input);
-}
-
 #if 0
 int 	jack_set_process_thread (jack_client_t *client, JackThreadCallback fun, void *arg)
 int
