@@ -1,4 +1,5 @@
 #include "qwtthings.h"
+#include "qwt_axis.h"
 
 #include <QwtPlot>
 #include <QwtPlotGrid>
@@ -32,10 +33,13 @@ FrequencyPlot::FrequencyPlot(QWidget * parent) : QwtPlot{parent}
 
   // axes
   setAxisScale(QwtAxis::XBottom,20,20000);
-  setAxisScale(QwtAxis::YLeft,-150,50);
-  setAxisTitle(QwtAxis::XBottom, tr("fréquence"));
+  setAxisScale(QwtAxis::YLeft,-50,5);
+  setAxisScale(QwtAxis::YRight,180,-180);
+  setAxisTitle(QwtAxis::XBottom, tr("frequency"));
+  setAxisTitle(QwtAxis::YRight,tr("phase"));
 
-  (void) new QwtPlotPanner(canvas);
+  auto p =  new QwtPlotPanner(canvas);
+  p->setAxisEnabled(QwtAxis::YRight,false);
 }
 
 

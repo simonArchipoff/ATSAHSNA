@@ -206,8 +206,8 @@ vector<VD> BackendJack::acquisition(const vector<VD> &input){
 
   requestMeasure(in);
   do{
+      //QThread::msleep(100);
       std::unique_lock<std::mutex> cond_lock{mut_cond};
-      qDebug("wait cond");
       cond.wait(cond_lock);
       auto r  = tryGetOutput();
       if(r.has_value()){

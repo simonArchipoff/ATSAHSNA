@@ -9,7 +9,7 @@
 
 StartMesure::StartMesure(QWidget * parent)
   :QWidget{parent}
-  ,start_button{new QPushButton{"start",this}}
+  ,start_button{new QPushButton{tr("start"),this}}
 {
   auto * l = new QHBoxLayout();
   l->addWidget(start_button);
@@ -34,7 +34,7 @@ QParamDistortion::QParamDistortion(QWidget * parent):QWidget{parent}{
   freq_max = new QDoubleSpinBox();
 
   for(auto * i : {frequency, freq_min, freq_max}){
-      i->setRange(1,20000);
+      i->setRange(1,MAXFREQ);
     }
   duration->setRange(0.1,10);
   freq_min->setValue(10);
