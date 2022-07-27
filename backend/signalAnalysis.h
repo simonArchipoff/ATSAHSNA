@@ -28,3 +28,6 @@ struct MeasureData{
 
 //naive implementation for finding c in v
 VD convolution(const VD &v, const VD&c);
+
+double mean(const VD &v);
+double stddev(const VD &v);

@@ -50,6 +50,7 @@ public:
   void setResult(const ResultTHD &, QColor c);
   //void setThdResult
 
+
   QMap<QString,QwtPlotCurve *> curves;
   QwtPlotTextLabel *textResult;
 };

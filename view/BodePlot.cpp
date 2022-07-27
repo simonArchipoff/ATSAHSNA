@@ -1,5 +1,6 @@
 #include "BodePlot.h"
 #include "qwtthings.h"
+#include "signalAnalysis.h"
 #include <cmath>
 
 #include <QwtMath>
@@ -19,6 +20,19 @@
 #include <QwtScaleMap>
 #include <algorithm>
 #include <QDebug>
+
+
+void clean_spectrum(VD &s){
+  for(int i = 0; i < s.size(); i++){
+      if(std::isnan(s[i]) || std::isinf(s[i]) || s[i] < -400){
+          if(i == 0){
+              s[i] = s[i+1];
+            } else {
+              s[i] = s[i-1];
+            }
+        }
+    }
+}
 
 
 BodeCurve::BodeCurve(const QColor c) : color(c) {
@@ -59,7 +73,6 @@ void BodePlot::setResult(const FDF &c, const QColor color){
     bc->setCurve(c);
 
     QwtPlot::setAxisScale(QwtAxis::XBottom,std::max<double>(10,bc->minFrequency()),bc->maxFrequency());
-    setAxisScale(QwtAxis::YLeft,std::max(-100.,std::min(bc->minAmplitude,minAmplitude)),std::max(bc->maxAmplitude,maxAmplitude));
 
     setAutoReplot(true);
     replot();
@@ -96,8 +109,8 @@ BodePlot::BodePlot(QWidget* parent) : FrequencyPlot{parent}
     setAxisTitle(QwtAxis::YLeft, tr("amplitude"));
     setAxisTitle(QwtAxis::YRight, tr("phase"));
     setAxisScale(QwtAxis::YRight, -180, 180);
-    QwtPlot::setAxisScale(QwtAxis::YLeft,-100,20);
-    setAxisAutoScale(QwtAxis::YLeft);
+    QwtPlot::setAxisScale(QwtAxis::YLeft,-50,6);
+    //setAxisAutoScale(QwtAxis::YLeft);
 
     setAutoReplot(true);
     this->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
@@ -106,6 +119,7 @@ BodePlot::BodePlot(QWidget* parent) : FrequencyPlot{parent}
 THDPlot::THDPlot(QWidget * parent):FrequencyPlot(parent){
   textResult = new QwtPlotTextLabel();
   textResult->attach(this);
+  setAxisAutoScale(QwtAxis::YLeft);
 }
 
 
@@ -120,8 +134,8 @@ static QString thdResultString(const ResultTHD & r){
       .arg(p.freqMin).arg(p.freqMax);
   for(uint i = 0; i < r.harmonicsLevel.size(); i++){
       auto l = 20* log10(r.harmonicsLevel[i]/r.harmonicsLevel[0]);
-        if(l > -100)
-          s += QString("h%1  %2db\n").arg(i).arg(QString::number(l,'f',1));
+        if(l > -150)
+          s += QString("h%1  %2db\n").arg(i+1).arg(QString::number(l,'f',1));
     }
   return s;
 }
@@ -152,7 +166,15 @@ void THDPlot::setResult(const ResultTHD &r, QColor color){
   t.setColor(color);
   textResult->setText(t);
 
-  setAxisScale(QwtAxis::YLeft,std::max(-360.,r.harmonicSpectrum.getMinAmplitude20log10()), r.harmonicSpectrum.getMaxAmplitude20log10());
+  auto s = r.harmonicSpectrum.getAmplitude20log10();
+  //remove problems
+  clean_spectrum(s);
+  auto m = mean(s);
+  auto d = stddev(s);
+  //qDebug() << m << d;
+  setAxisScale(QwtAxis::YLeft,std::max(-500.,m - d),r.harmonicSpectrum.getMaxAmplitude20log10()+6);
+
+  //setAxisScale(QwtAxis::YLeft,std::max(-360.,r.harmonicSpectrum.getMinAmplitude20log10()), );
 
   setAutoReplot(true);
   replot();
