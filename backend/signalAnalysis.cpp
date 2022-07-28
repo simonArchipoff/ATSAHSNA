@@ -12,11 +12,10 @@ VD convolution(const VD &v, const VD&c){
   return res;
 }
 
+
+
 //https://stackoverflow.com/questions/7616511/calculate-mean-and-standard-deviation-from-a-vector-of-samples-in-c-using-boos
 //thank you codeling
-
-
-
 double mean(const VD &v){
   return std::accumulate(v.begin(), v.end(), 0.0) / v.size();
 }
