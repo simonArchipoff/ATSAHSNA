@@ -7,20 +7,21 @@
 
 #include "qmeasure.h"
 
-#include <QwtMatrixRasterData>
-#include <QwtPlotSpectrogram>
-#include <QwtAxis>
+#include <qwt_matrix_raster_data.h>
+#include <qwt_plot_spectrogram.h>
+#include <qwt_axis.h>
 #include <QVector>
 #include <QFormLayout>
 #include <QScopedPointer>
 
 #include <cmath>
 #include <QPen>
-#include <QwtColorMap>
-#include <QwtInterval>
-#include <QwtLogScaleEngine>
+#include <qwt_color_map.h>
+#include <qwt_interval.h>
+#include <qwt_scale_engine.h>
 #include <QDebug>
 
+#include <qwt_plot_zoomer.h>
 
 
 QParamSpectrogram::QParamSpectrogram(QWidget * parent)
@@ -126,6 +127,7 @@ QDisplaySpectrogram::QDisplaySpectrogram(QWidget * parent)
   :QwtPlot{parent}
   , rasterspectro{new RasterSpectro}//RasterSpectro(s);
   , qwtplotspectrogram{new QwtPlotSpectrogram}
+  , zoomer{new QwtPlotZoomer{this->canvas()}}
 {
   qwtThingsSetFrequencyLogAxis(this,QwtAxis::YLeft);
 }
@@ -153,6 +155,7 @@ void QDisplaySpectrogram::setResult(const QDisplaySpectrogram::Result &s,QColor 
   //setAxisScale( QwtPlot::xBottom , r.left(), r.right(), 0.1);
   qwtplotspectrogram->attach(this);
   qwtplotspectrogram->setColorMap(colorMap);
+  zoomer->setZoomBase(true);
 
   replot();
 }

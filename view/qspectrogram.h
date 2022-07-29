@@ -8,7 +8,7 @@
 #include <qwt_plot.h>
 #include <qwt_matrix_raster_data.h>
 #include <qwt_interval.h>
-
+#include <qwt_plot_zoomer.h>
 
 #include "qresponse.h"
 
@@ -42,6 +42,7 @@ protected:
   double duration;
   int max_duration;
   QwtMatrixRasterData matrix;
+
 };
 
 class QDisplaySpectrogram : public QwtPlot
@@ -54,4 +55,5 @@ public:
 protected:
   RasterSpectro * rasterspectro;
   QwtPlotSpectrogram * qwtplotspectrogram;
+  QwtPlotZoomer * zoomer;
 };

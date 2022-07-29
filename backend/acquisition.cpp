@@ -7,7 +7,7 @@
 VD signal(Backend * b, const struct ParamResponse p){
   switch(p.mode){
     case signal_gen_type::IMPULSE:
-      return impulse(p.freqMin,b->getSampleRate());
+      return impulse(p.freqMin, p.duration,b->getSampleRate());
     case signal_gen_type::CHIRP:
       return chirp(p.freqMin,p.freqMax,p.duration,b->getSampleRate());
     }

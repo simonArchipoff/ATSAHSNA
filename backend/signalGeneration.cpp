@@ -21,10 +21,10 @@ VD chirp(double f1, double f2, double duration, uint sampleRate){
 }
 
 
-vector<double> impulse(double freqMin, uint sampleRate){
+vector<double> impulse(double freqMin, double duration, uint sampleRate){
   assert(freqMin > 0 && freqMin < sampleRate / 2);
-  int duration = sampleRate / freqMin;
-  vector<double> out(duration,0.0);
+  int dur = std::max(duration*sampleRate,sampleRate / freqMin);
+  vector<double> out(dur,0.0);
   out[0] = 1;//(double)duration;
   return out;
 }
