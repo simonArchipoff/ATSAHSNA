@@ -8,7 +8,6 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
                               ,int nb_octaves
                               ,int resolution
                               , uint sampleRate){
-
   int n = data.size(); //signal length
   float fs = sampleRate; //sampling frequency
   int start_octave_pow = 1;
@@ -56,16 +55,16 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
     ,.frequencies = std::vector<double>(f)
   };
 
+  //compute frequencies for each row of the matrix
+  //not sure about the off-by-one things, if there is a problem with frequencies it might be here
   for(int i = 0; i < f ; i++){
-      //not sure about the off-by-one things, if there is a problem with frequencies it might be here
-      res.frequencies[ (f - 1) - i] =  fs/pow(2, 2+(double(i+start_octave_pow-1) / nsuboctaves));
+      res.frequencies[ (f - 1) - i] =  fs/pow(2, 1+(double(i+start_octave_pow-1) / nsuboctaves));
     }
 
-//  qDebug() << res.frequencies;
   assert(tfm.size() / 2 == n*f);
   res.data.resize(n*f);
 
-
+  //flip matrix and compute abs value
   for(int p = 0; p < n * f; p += 1){
       auto row =  (f-1) - (p / n);
       auto col = p % n;

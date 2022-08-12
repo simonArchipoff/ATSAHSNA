@@ -63,8 +63,8 @@ uint FDF::getSampleRate() const{
 }
 
 vector <double> FDF::getAmplitude() const {
-  vector<double> res(response.size());
-  for(uint i = 0; i < response.size(); i++){
+  vector<double> res(response.size()/2);
+  for(uint i = 0; i < res.size(); i++){
       res[i] = abs(response[i]);
     }
   return res;
@@ -79,8 +79,8 @@ vector <double> FDF::getAmplitude20log10() const {
 }
 
 vector <double> FDF::getPhase() const {
-  vector<double> res(response.size());
-  for(uint i = 0; i < response.size(); i++){
+  vector<double> res(response.size()/2);
+  for(uint i = 0; i < res.size(); i++){
         res[i] = atan2(response[i].imag(), response[i].real()) * 180/(M_PI);
     }
   return res;
@@ -89,8 +89,8 @@ vector <double> FDF::getPhase() const {
 
 
 vector <double> FDF::getFrequency() const {
-  vector<double> res(response.size());
-  for(uint i = 0; i < response.size(); i++){
+  vector<double> res(response.size()/2);
+  for(uint i = 0; i < res.size(); i++){
       res[i] = i * f1;
       if(i > 1)
         assert(res[i-1] < res[i]);
@@ -101,12 +101,12 @@ vector <double> FDF::getFrequency() const {
 
 double FDF::getMaxAmplitude() const {
   auto r = getAmplitude();
-  return *std::max_element(r.begin(),r.begin() + r.size()/2);
+  return *std::max_element(r.begin(),r.begin() + r.size());
 }
 
 double FDF::getMinAmplitude() const {
   auto r = getAmplitude();
-  return *std::min_element(r.begin(),r.begin() + r.size()/2);
+  return *std::min_element(r.begin(),r.begin() + r.size());
 }
 
 
@@ -205,7 +205,7 @@ FDF compute_TF_FFT(const VCD &v, int sampleRate) {
     /*for(int i = 0; i < size; i++){
         out_fft[i] /= size;
     }*/ //dont need to normalize
-    out_fft.resize(out_fft.size()/2); //remove negative frequencies
+    out_fft.resize(out_fft.size());
     FDF dtf(out_fft,sampleRate);
     fftw_destroy_plan(p);
     return dtf;
@@ -238,9 +238,9 @@ VCD computeDFT(const VD &input){
 
 VD FDF::frequencyDomainTotemporal() const {
   vector<double> o;
-  o.resize(response.size()*2);
+  o.resize(response.size());
   vector<complex<double>> i{response};
-  i.resize(i.size()*2);
+  i.resize(i.size());
 
   auto plan = fftw_plan_dft_c2r_1d(response.size()
                                    ,reinterpret_cast<fftw_complex*>(i.data())

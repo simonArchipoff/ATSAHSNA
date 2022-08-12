@@ -24,7 +24,7 @@ public:
     FDF(const FDF&) = default;
     FDF(const vector<complex<double>> &v, int sampleRate):response(v),
                                                           sampleRate(sampleRate),
-                                                          f1(sampleRate / ((double) 2 * response.size())){}
+                                                          f1(sampleRate / ((double) response.size())){}
     //DTF(const DTF&&) = default;
 
     FDF operator+(const FDF &a) const;
