@@ -3,6 +3,8 @@
 #include "signalAnalysis.h"
 #include <cmath>
 
+
+
 #include <QwtMath>
 #include <QwtSymbol>
 #include <QwtPlotGrid>
@@ -18,12 +20,13 @@
 #include <QwtPlotZoomer>
 #include <QwtPlotPanner>
 #include <QwtScaleMap>
+#include <qwt_scale_engine.h>
 #include <algorithm>
 #include <QDebug>
 
 
 void clean_spectrum(VD &s){
-  for(int i = 0; i < s.size(); i++){
+  for(uint i = 0; i < s.size(); i++){
       if(std::isnan(s[i]) || std::isinf(s[i]) || s[i] < -400){
           if(i == 0){
               s[i] = s[i+1];
@@ -55,48 +58,63 @@ void BodeCurve::attach(QwtPlot * p){
     c_amplitude->attach(p);
 }
 
-double BodeCurve::maxFrequency(){
-    return c_phase->maxXValue();
-}
 
-double BodeCurve::minFrequency(){
-    return c_phase->minXValue();
-}
 
-void BodePlot::setResult(const FDF &c, const QColor color){
+void BodePlot::setResult(const FDF &c, const QColor color,double freqMin, double freqMax){
     setAutoReplot(false);
     QString colname = color.name();
     if(!curves.contains(colname))
       curves.insert(colname, new BodeCurve(color));
     BodeCurve * bc = curves[colname];
     bc->attach(this);
-    bc->setCurve(c);
+    bc->setCurve(c,freqMin,freqMax);
 
-    QwtPlot::setAxisScale(QwtAxis::XBottom,std::max<double>(10,bc->minFrequency()),bc->maxFrequency());
-
+    //QwtPlot::setAxisScale(QwtAxis::XBottom,std::max<double>(10,bc->minFrequency()),bc->maxFrequency());
+    QwtPlot::setAxisScale(QwtAxis::XBottom,bc->minFrequency,bc->maxFrequency);
+    QwtPlot::setAxisScale(QwtAxis::YLeft,bc->minAmplitude,bc->maxAmplitude);
     setAutoReplot(true);
     replot();
 }
 
 
-
-void BodeCurve::setCurve(const FDF &c){
-    const int s = c.getResponse().size();
-    const int s2 = s/2;
-
-    vector<double> a = c.getAmplitude20log10();
-    vector<double> p = c.getPhase();
-    vector<double> f = c.getFrequency();
-#if 0
-    for(uint  i = 0; i < s2 ; i++){
-        qDebug() <<  a[i] << " " << f[i];
+uint find_first_greater_than(vector<double> v, double e){
+  for(uint i = 0; i < v.size(); i++){
+      if(v[i] >= e)
+        return i;
     }
-#endif
-  c_amplitude->setSamples(f.data(), a.data(),s2);
-  c_phase->setSamples(f.data(),p.data(),s2);
+  return 0;
+}
+uint find_first_smaller_than(vector<double> v, double e){
+  for(uint i = 0; i < v.size(); i++){
+      if(v[i] <= e)
+        return i;
+    }
+  return 0;
+}
 
-  maxAmplitude = *std::max_element(a.begin(),a.end());
-  minAmplitude = *std::min_element(a.begin(),a.end());
+void BodeCurve::setCurve(const FDF &c, double minF, double maxF){
+    //auto r = c.getDecimatedAmplitude20log10PhaseFrequency(c.getFrequency().size());
+    vector<double> a = c.getAmplitude20log10();//get<0>(r);
+    vector<double> p = c.getPhase();//get<1>(r);
+    vector<double> f = c.getFrequency();// get<2>(r);
+    //p = try_make_phase_continuous(p);
+    //p = decimation_log(p,10000);
+    //a = decimation_log(a,10000);
+    //vector<double> f = c.getFrequency();
+
+    const int s = f.size();
+    //f = decimation_log(f,10000);
+
+  c_amplitude->setSamples(f.data(), a.data(),s);
+  c_phase->setSamples(f.data(),p.data(),s);
+
+  minFrequency = minF;
+  maxFrequency = maxF;
+  int min = find_first_smaller_than(f,minF);
+  int max = find_first_greater_than(f,maxF);
+
+  maxAmplitude = *std::max_element(a.begin() + min, a.begin() + max);
+  minAmplitude = *std::min_element(a.begin() + min, a.begin() + max);
 }
 
 
@@ -108,9 +126,13 @@ BodePlot::BodePlot(QWidget* parent) : FrequencyPlot{parent}
     setAxisVisible(QwtAxis::YRight);
     setAxisTitle(QwtAxis::YLeft, tr("amplitude"));
     setAxisTitle(QwtAxis::YRight, tr("phase"));
-    setAxisScale(QwtAxis::YRight, -180, 180);
+
     QwtPlot::setAxisScale(QwtAxis::YLeft,-50,6);
-    //setAxisAutoScale(QwtAxis::YLeft);
+    //setAxisScale(QwtAxis::YRight, -180, 180);
+
+    setAxisAutoScale(QwtAxis::YRight);
+    setAxisAutoScale(QwtAxis::YLeft);
+    axisScaleEngine(QwtAxis::YRight)->setAttribute(QwtScaleEngine::Attribute::Inverted,false);
 
     setAutoReplot(true);
     this->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);

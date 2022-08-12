@@ -173,8 +173,6 @@ void BackendJack::treatRequest(){
 
 void BackendJack::sendOutput(){
   responses.enqueue(Output{currentOutput});
-  std::unique_lock l{mut_cond};
-  cond.notify_one();
   status = Waiting;
 }
 
@@ -206,9 +204,7 @@ vector<VD> BackendJack::acquisition(const vector<VD> &input){
 
   requestMeasure(in);
   do{
-      //QThread::msleep(100);
-      std::unique_lock<std::mutex> cond_lock{mut_cond};
-      cond.wait(cond_lock);
+      QThread::msleep(100);
       auto r  = tryGetOutput();
       if(r.has_value()){
           auto out = r.value();

@@ -78,5 +78,5 @@ void QDisplayDistortion::setResult(const Result &r, QColor c){
 }*/
 
 void QDisplayResponse::setResult(const Result&r, QColor c){
-  BodePlot::setResult(r.response, c);
+  BodePlot::setResult(r.response, c,r.params.freqMin,r.params.freqMax);
 }

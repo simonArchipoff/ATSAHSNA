@@ -1,6 +1,6 @@
 #include "signalAnalysis.h"
 #include <numeric>
-
+#include <QDebug>
 VD convolution(const VD &v, const VD&c){
   VD res(v.size()-c.size());
   for(uint i = 0; i < v.size() - c.size(); i++){
@@ -27,3 +27,17 @@ double stddev(const VD & v){
         [m](double const & x, double const & y) { return (x - m)*(y - m); });
     return std::sqrt(sq_sum / v.size());
 }
+
+
+VD try_make_phase_continuous(const VD &v){
+  vector<double> res = VD{v};
+  for(uint i = 1; i < v.size() ; i++){
+        auto prev = res[i-1];
+        int k = static_cast<int>(std::round((prev-v[i])/360));
+        res[i] = res[i] + k * 360;
+      }
+  return res;
+}
+
+
+

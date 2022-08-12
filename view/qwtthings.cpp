@@ -39,7 +39,7 @@ FrequencyPlot::FrequencyPlot(QWidget * parent) : QwtPlot{parent}
   setAxisTitle(QwtAxis::YRight,tr("phase"));
 
   auto p =  new QwtPlotPanner(canvas);
-  p->setAxisEnabled(QwtAxis::YRight,false);
+  //p->setAxisEnabled(QwtAxis::YRight,false);
 }
 
 

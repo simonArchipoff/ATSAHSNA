@@ -107,9 +107,6 @@ protected:
 
   moodycamel::ConcurrentQueue<request>  requests;
   moodycamel::ConcurrentQueue<response> responses;
-  std::condition_variable cond;
-  std::mutex mut_cond;
-
   std::mutex lock;
   static void * audio_thread(void*);
 

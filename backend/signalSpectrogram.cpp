@@ -57,7 +57,8 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
   };
 
   for(int i = 0; i < f ; i++){
-      res.frequencies[ (f - 1) - i] = fs/pow(2, 1+double(i+start_octave_pow) / nsuboctaves);
+      //not sure about the off-by-one things, if there is a problem with frequencies it might be here
+      res.frequencies[ (f - 1) - i] =  fs/pow(2, 2+(double(i+start_octave_pow-1) / nsuboctaves));
     }
 
 //  qDebug() << res.frequencies;

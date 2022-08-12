@@ -31,3 +31,8 @@ VD convolution(const VD &v, const VD&c);
 
 double mean(const VD &v);
 double stddev(const VD &v);
+
+
+//add 2*k*pi to each sample so that it's as close as possible to the previous one
+VD try_make_phase_continuous(const VD &v);
+

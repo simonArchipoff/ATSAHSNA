@@ -19,14 +19,14 @@ class BodeCurve{
 public:
   //BodeCurve(const BodeCurve&) = default;
   BodeCurve(const QColor);
-  void setCurve(const FDF&);
+  void setCurve(const FDF&,double minFrequency, double maxFrequency);
   void attach(QwtPlot *);
-  double maxFrequency();
-  double minFrequency();
+
 
   QSharedPointer<QwtPlotCurve> c_amplitude, c_phase;
   QColor color;
   double maxAmplitude,minAmplitude;
+  double maxFrequency,minFrequency;
   bool displayed;
 };
 
@@ -35,7 +35,7 @@ class BodePlot : public FrequencyPlot
   Q_OBJECT
 public:
   BodePlot(QWidget * parent);
-  void setResult(const FDF &, QColor c);
+  void setResult(const FDF &, QColor c,double freqMin, double freqMax);
   void removeCurve(QColor c);
   //QString represent color, because they are orderer, qcolor are not, maybe I could just take a name…
   QMap<QString,BodeCurve *> curves;

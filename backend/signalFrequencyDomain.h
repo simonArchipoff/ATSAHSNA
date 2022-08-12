@@ -16,14 +16,15 @@ typedef vector<double> VD;
 
 //Frequency Domain Function
 //map frequency to complex
+
 class FDF
 {
 public:
     FDF();
     FDF(const FDF&) = default;
     FDF(const vector<complex<double>> &v, int sampleRate):response(v),
-                                                          sampleRate(sampleRate)
-    {}
+                                                          sampleRate(sampleRate),
+                                                          f1(sampleRate / ((double) 2 * response.size())){}
     //DTF(const DTF&&) = default;
 
     FDF operator+(const FDF &a) const;
@@ -39,25 +40,25 @@ public:
     uint getSampleRate() const;
 
     vector <double> getAmplitude() const;
-
     vector <double> getAmplitude20log10() const;
-
-
     vector <double> getPhase() const;
     vector <double> getFrequency() const;
 
+
+    std::tuple<VD,VD,VD> getDecimatedAmplitude20log10PhaseFrequency(int step) const;
+
+
     double getMaxAmplitude() const;
     double getMinAmplitude() const;
-    double getMaxAmplitude20log10() const ;
+    double getMaxAmplitude20log10() const;
     double getMinAmplitude20log10() const;
-
-
 
     //inverse transform :
     VD frequencyDomainTotemporal() const;
 protected:
     vector<complex<double>> response;
     uint sampleRate;
+    double f1;
 };
 
 
@@ -69,4 +70,3 @@ VCD computeDFT(const VD &input);
 
 
 
-vector<double> decimation_log(const vector<double> & v, uint nb_points);
