@@ -84,12 +84,13 @@ uint find_first_greater_than(vector<double> v, double e){
     }
   return 0;
 }
-uint find_first_smaller_than(vector<double> v, double e){
-  for(uint i = 0; i < v.size(); i++){
-      if(v[i] <= e)
-        return i;
+uint find_last_smaller_than(vector<double> v, double e){
+  for(uint i = 0 ; i < v.size(); i++){
+      auto idx = v.size() - 1 - i;
+      if(v[idx] > e)
+        return idx;
     }
-  return 0;
+  return v.size() -1;
 }
 
 void BodeCurve::setCurve(const FDF &c, double minF, double maxF){
@@ -108,10 +109,11 @@ void BodeCurve::setCurve(const FDF &c, double minF, double maxF){
   c_amplitude->setSamples(f.data(), a.data(),s);
   c_phase->setSamples(f.data(),p.data(),s);
 
-  minFrequency = minF;
-  maxFrequency = maxF;
-  int min = find_first_smaller_than(f,minF);
-  int max = find_first_greater_than(f,maxF);
+  minFrequency = f[1];
+  maxFrequency = f[f.size() - 1];
+  int min = find_first_greater_than(f,minF);
+  int max = find_last_smaller_than(f,maxF);
+  assert(min < max);
 
   maxAmplitude = *std::max_element(a.begin() + min, a.begin() + max);
   minAmplitude = *std::min_element(a.begin() + min, a.begin() + max);
