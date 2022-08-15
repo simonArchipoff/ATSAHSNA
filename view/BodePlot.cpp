@@ -106,6 +106,11 @@ void BodeCurve::setCurve(const FDF &c, double minF, double maxF){
     const int s = f.size();
     //f = decimation_log(f,10000);
 
+    for(uint i = 0; i < a.size(); i++){
+        if(a[i] < -100)
+          p[i]=NAN;
+      }
+
   c_amplitude->setSamples(f.data(), a.data(),s);
   c_phase->setSamples(f.data(),p.data(),s);
 
@@ -181,7 +186,7 @@ void THDPlot::setResult(const ResultTHD &r, QColor color){
   auto a = r.harmonicSpectrum.getAmplitude20log10();
   auto f = r.harmonicSpectrum.getFrequency();
 
-  pc->setSamples(f.data(), a.data(), f.size()/2);
+  pc->setSamples(f.data(), a.data(), f.size());
   QwtText t(thdResultString(r));
   t.setRenderFlags(Qt::AlignRight | Qt::AlignTop);
   QFont font;

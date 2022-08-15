@@ -4,7 +4,7 @@ This project aims to be a free/libre software to perform accoustical measures, s
 It's licenced under GPLv3. For now it's under heavy development, you can play with it but please dont build something with it yet.
 
 What's already implemented:
-- two backend (faust and jackd), for jackd you'll need a 96kHz sound interface to have good results above 10kHz, 48kHz isn't enough.
+- two backend (faust and jackd)
 - impulse response, harmonic spectrum, THD computation.
 - wavelet waterfall measures (ongoing work, it's not convincing yet)
 - temporal response (it work great for faust and very clean mesure, it needs more work for real world ones)

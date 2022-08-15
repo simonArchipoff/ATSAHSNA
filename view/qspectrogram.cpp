@@ -153,8 +153,11 @@ void QDisplaySpectrogram::setResult(const QDisplaySpectrogram::Result &s,QColor 
 //  qDebug() << r;
 
   //setAxisScale( QwtPlot::xBottom , r.left(), r.right(), 0.1);
+
   qwtplotspectrogram->attach(this);
   qwtplotspectrogram->setColorMap(colorMap);
+  setAxisAutoScale(QwtPlot::yLeft);
+  setAxisAutoScale(QwtPlot::xBottom);
   zoomer->setZoomBase(true);
 
   replot();

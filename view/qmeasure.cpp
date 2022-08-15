@@ -36,7 +36,8 @@ QParamDistortion::QParamDistortion(QWidget * parent):QWidget{parent}{
   for(auto * i : {frequency, freq_min, freq_max}){
       i->setRange(1,MAXFREQ);
     }
-  duration->setRange(0.1,10);
+  duration->setRange(0.001,60);
+  duration->setDecimals(6);
   freq_min->setValue(10);
   freq_max->setValue(20000);
   frequency->setValue(1000);
