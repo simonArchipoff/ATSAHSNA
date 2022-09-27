@@ -15,6 +15,7 @@ struct ResultTHD {
   FDF harmonicSpectrum;
   double thdNoiseRate;
   double thdRate;
+  double snr;
   vector<double> harmonicsLevel;
   //vector<double> harmonicsPhases;
   ParamTHD params;

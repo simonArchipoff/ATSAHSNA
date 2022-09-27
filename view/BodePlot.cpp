@@ -1,26 +1,27 @@
 #include "BodePlot.h"
 #include "qwtthings.h"
 #include "signalAnalysis.h"
+
 #include <cmath>
 
-
-
-#include <QwtMath>
-#include <QwtSymbol>
-#include <QwtPlotGrid>
-#include <QwtPlotMarker>
-#include <QwtPlotCurve>
-#include <QwtLegend>
-#include <QwtText>
-#include <QwtPlotCanvas>
-#include <QwtAxisId>
 #include <QObject>
 #include <QEvent>
 #include <QWheelEvent>
-#include <QwtPlotZoomer>
-#include <QwtPlotPanner>
-#include <QwtScaleMap>
+
+#include <qwt_math.h>
+#include <qwt_symbol.h>
+#include <qwt_plot_grid.h>
+#include <qwt_plot_marker.h>
+#include <qwt_plot_curve.h>
+#include <qwt_legend.h>
+#include <qwt_text.h>
+#include <qwt_plot_canvas.h>
+#include <qwt_axis_id.h>
+#include <qwt_plot_zoomer.h>
+#include <qwt_plot_panner.h>
+#include <qwt_scale_map.h>
 #include <qwt_scale_engine.h>
+
 #include <algorithm>
 #include <QDebug>
 
@@ -156,10 +157,12 @@ static QString thdResultString(const ResultTHD & r){
   const ParamTHD & p = r.params;
   auto s = QString("THD+N@%1Hz = %2%\n"
                    "THD@%1Hz = %3%\n"
-                   "(%4Hz ~ %5Hz)\n")
+                   "SNR = %4db\n"
+                   "(%5Hz ~ %6Hz)\n")
       .arg(p.frequency)
-      .arg(QString::number(r.thdNoiseRate*100, 'f', 6) )
-      .arg(QString::number(r.thdRate * 100,'f',6))
+      .arg(QString::number(r.thdNoiseRate, 'f', 6) )
+      .arg(QString::number(r.thdRate,'f',6))
+      .arg(QString::number(r.snr,'f',2))
       .arg(p.freqMin).arg(p.freqMax);
   for(uint i = 0; i < r.harmonicsLevel.size(); i++){
       auto l = 20* log10(r.harmonicsLevel[i]/r.harmonicsLevel[0]);

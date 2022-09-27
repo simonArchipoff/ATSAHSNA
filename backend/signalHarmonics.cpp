@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <fstream>
 #include <iomanip>
+#include <numeric>
 
 /*
 double mean(const std::vector<double> &v){
@@ -19,6 +20,8 @@ double std_dev(const std::vector<double> &v){
 
 
 /*
+ * /!\ some parts are commented because of bugs
+ *
 the slice data type and the get_harmonic function locate the harmonics
 the function try to find the local maximum around its parameter f
          /\
@@ -39,9 +42,9 @@ slice get_harmonic(const uint f, const vector<double>&v){
 
   //find local maximum
   uint f_l = f, f_r=f;
-  while(f_l > 1 && v[f_l - 1] > v[f_l])
+  while(f_l > 1 && v[f_l - 1] > v[f_l] && f - static_cast<int>(f_l)  < 10)
     f_l--;
-  while(f_r < v.size() -1 && v[f_r + 1] > v[f_r])
+  while(f_r < v.size() -1 && v[f_r + 1] > v[f_r] &&  static_cast<int>(f_r) - f < 10)
     f_r++;
   if(v[f_l] > v[f_r])
     s = {f_l,f_l,v[f_l]};
@@ -72,11 +75,56 @@ vector<slice> find_harmonics(const vector<double> & v,uint fundamental,int smax)
     }
   return res;
 }
-vector<slice> find_harmonics(const vector<double> &v,int smax){
+vector<slice> find_harmonics(const vector<double> &v, int smax){
   auto f = std::distance(v.begin(),std::max_element(v.begin(),v.end()));
   return find_harmonics(v,f,smax);
 }
 
+struct SignalNoiseHarmonics{
+public:
+  SignalNoiseHarmonics(const vector<double> &v, int smin, int smax){
+    auto f = std::distance(v.begin(),std::max_element(v.begin(),v.end()));
+    SignalNoiseHarmonics(v,f,smin,smax);
+  }
+  SignalNoiseHarmonics(const vector<double> &v, uint fundamental,int smin,int smax){
+    s = n = h = 0;
+    slices =  find_harmonics(v,fundamental,smax);
+    for(uint i = 0; i < slices.size(); i++){
+        uint begin, end;
+        if(i==0){
+            begin = 0;
+            end = slices[0].begin;
+        } else {
+            begin = slices[i-1].end + 1;
+            end = slices[i].begin;
+          }
+        n = std::transform_reduce(&v[begin], &v[end], n, std::plus<>{}, [](auto a){return a*a;});
+        if(i == 0){
+            s = slices[0].level;
+          } else {
+            h += slices[i].level * slices[i].level;
+          }
+      }
+    if(slices.back().end + 1 < static_cast<uint>(smax)){
+      n = std::transform_reduce(&v[slices.back().end+1],&v[smax], n, std::plus<>{}, [](auto a) {return a*a;});
+      }
+    n = sqrt(n);
+    h = sqrt(h);
+  }
+
+  double thd(){
+  return 100.  * h / s ;
+  }
+  double thdn(){
+    return 100. * sqrt(h * h + n * n) / s ;
+  }
+  double snr(){
+    return 20 *log10(s / n);
+}
+  double s,n,h;
+  vector<slice> slices;
+  
+};
 
 
 double thd_ieee(const vector<slice> & slices){
@@ -122,8 +170,9 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
         }
   }
   assert(imax > 0);
-  eh1 = get_harmonic(imax,amplitude).level;
 
+  eh1 = get_harmonic(imax,amplitude).level;
+/*
   double e_tot_wo_h1 = 0;
   for(uint i = smin; i < smax ; i++){
       double tmp = amplitude[i] * amplitude[i];//  real(signalfft[i] * conj(signalfft[i]));
@@ -132,7 +181,7 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
         }
     }
   e_tot_wo_h1 = sqrt(e_tot_wo_h1);
-
+*/
   for(auto &i : signalfft){
       i/=eh1;
     }
@@ -153,6 +202,11 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
   for (const auto &e : signal) outFile <<  std::setprecision(17) << std::setw(25) << e << " ";
   */
 
+  SignalNoiseHarmonics snh(amplitude,imax,smin,smax);
+
+  qDebug() << "thd" << snh.thd();
+  qDebug() << "thdn" << snh.thdn();
+  qDebug() << "snr" <<  snh.snr();
 
   // the important part
   vector<double> h_level;
@@ -160,13 +214,13 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
     h_level.push_back(i.level);
   return ResultTHD {
       .harmonicSpectrum = FDF(signalfft,sampleRate)
-      ,.thdNoiseRate = e_tot_wo_h1 / eh1
-      ,.thdRate = thd_ieee(slices)
+      ,.thdNoiseRate = snh.thdn()// e_tot_wo_h1 / eh1
+      ,.thdRate = snh.thd()//thd_ieee(slices)
+      ,.snr = snh.snr()
       ,.harmonicsLevel = h_level
       ,.params = p
-      ,.raw_data = MeasureData { .inputs = vector<VD>({}),
+      ,.raw_data = MeasureData { .inputs  = vector<VD>({}),
                                  .outputs = vector({signal})}
-
     };
   //return sqrt(e_tot_wo_h1) / sqrt(e_tot_wo_h1 + eh1 * eh1);
 }
