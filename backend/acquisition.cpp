@@ -11,6 +11,7 @@ VD signal(Backend * b, const struct ParamResponse p){
     case signal_gen_type::CHIRP:
       return chirp(p.freqMin,p.freqMax,p.duration,b->getSampleRate());
     }
+  abort();
 }
 
 
@@ -47,6 +48,7 @@ vector<struct ResultSpectrogram> compute_spectrogram(Backend *b, const struct Pa
   return res;
 }
 */
+
 
 vector<struct ResultSpectrogram> compute_spectrogram(Backend *b, const struct ParamSpectrogram p){
   auto output = compute_response(b,p);

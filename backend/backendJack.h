@@ -162,7 +162,6 @@ protected:
   virtual void jack_client_registration (const char *name, int i){}
   static void jackClientRegistrationCallback (const char *name, int i, void * b){
     BackendJack * backend = static_cast<BackendJack *>(b);
-
     return backend->jack_client_registration(name,i);
   }
 
@@ -198,7 +197,6 @@ protected:
   }
 
   
-
   //int 	jack_set_latency_callback (jack_client_t *, JackLatencyCallback latency_callback, void *) JACK_WEAK_EXPORT
   //static void jackLatencyCallback(jack_latency_callback_mode_t mode, BackendJack * backend);
 
@@ -224,14 +222,26 @@ public:
   static vector<VD> acquire_output(BackendJackQt *b, const vector<VD> &input);
   QFuture<vector<VD>> acquisition_async(const vector<VD> &input);
 
+  /*
+   * those methods are callbacks
+   */
+  void jack_shutdown() override;
+  void jack_info_shutdown(jack_status_t code, const char *reason) override;
+  int  jack_buffer_size(jack_nframes_t nframes) override;
+  int  jack_samplerate(jack_nframes_t nframes) override;
+  void jack_client_registration (const char *name, int i) override;
+  void jack_port_registration(jack_port_id_t port, int i) override;
+  void jack_port_rename(jack_port_id_t port, const char *old_name, const char *new_name) override;
+  void jack_port_connect(jack_port_id_t a, jack_port_id_t b, int connect) override;
+  int  jack_xrun() override;
 signals:
   void shutdown();
-  void shutdown_info();
-  void sample_rate_change();
-  void buffer_size_change();
-  void client_registration();
-  void port_registration();
-  void port_rename();
-  void port_connect();
-
+  void shutdown_info(QString);
+  void sample_rate_change(uint);
+  void buffer_size_change(uint);
+  void client_registration(QString, bool);
+  void port_registration(int, bool);
+  void port_rename(QString oldname, QString newname, int);
+  void port_connect(int, int, bool);
+  void xrun();
 };

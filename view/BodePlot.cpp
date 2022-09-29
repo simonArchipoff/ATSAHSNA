@@ -165,7 +165,7 @@ static QString thdResultString(const ResultTHD & r){
       .arg(QString::number(r.snr,'f',2))
       .arg(p.freqMin).arg(p.freqMax);
   for(uint i = 0; i < r.harmonicsLevel.size(); i++){
-      auto l = 20* log10(r.harmonicsLevel[i]/r.harmonicsLevel[0]);
+      auto l = 20* log10(r.harmonicsLevel[i]);
         if(l > -150)
           s += QString("h%1  %2db\n").arg(i+1).arg(QString::number(l,'f',1));
     }

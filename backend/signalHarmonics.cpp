@@ -75,24 +75,26 @@ vector<slice> find_harmonics(const vector<double> & v,uint fundamental,int smax)
     }
   return res;
 }
+/*
 vector<slice> find_harmonics(const vector<double> &v, int smax){
   auto f = std::distance(v.begin(),std::max_element(v.begin(),v.end()));
   return find_harmonics(v,f,smax);
 }
-
+*/
 struct SignalNoiseHarmonics{
 public:
-  SignalNoiseHarmonics(const vector<double> &v, int smin, int smax){
-    auto f = std::distance(v.begin(),std::max_element(v.begin(),v.end()));
+  SignalNoiseHarmonics(const vector<double> &v, uint smin, uint smax){
+    auto f = std::distance(v.begin(),std::max_element(v.begin()+smin,v.begin()+smax));
     SignalNoiseHarmonics(v,f,smin,smax);
   }
-  SignalNoiseHarmonics(const vector<double> &v, uint fundamental,int smin,int smax){
+  SignalNoiseHarmonics(const vector<double> &v, uint fundamental,uint smin,uint smax){
+    assert(smin <= fundamental && fundamental <= smax);
     s = n = h = 0;
     slices =  find_harmonics(v,fundamental,smax);
     for(uint i = 0; i < slices.size(); i++){
         uint begin, end;
         if(i==0){
-            begin = 0;
+            begin = smin;
             end = slices[0].begin;
         } else {
             begin = slices[i-1].end + 1;
@@ -119,40 +121,27 @@ public:
     return 100. * sqrt(h * h + n * n) / s ;
   }
   double snr(){
-    return 20 *log10(s / n);
-}
+    return 20 * log10(s / n);
+  }
   double s,n,h;
   vector<slice> slices;
-  
 };
 
 
-double thd_ieee(const vector<slice> & slices){
-  if(slices.size() == 0)
-    return 0;
-  double a = 0, b = 0;
-  vector<slice>::const_iterator it;
-  for(it = slices.begin(), it++ ; it != slices.end(); it++){
-      a += it->level * it->level;
-    }
-  b = slices[0].level;//*slices[0].level;
-  return sqrt(a)/b;
-}
-/*
-ResultTHD computeTHDsimple(const ParamTHD p, const VD&signal, int sampleRate){
-  uint freq_min = signal.size()/sampleRate;
-  uint freq_max = signal.size() * sampleRate/2.0;
-  return computeTHDsimple(p,signal,sampleRate,freq_min, freq_max);
-}
-*/
 
 ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
+  assert(p.duration > 0 && p.freqMin <= p.frequency && p.frequency <= p.freqMax);
   assert(signal.size() > 1);
 
   VCD signalfft = computeDFT(signal);
   signalfft[0] = 0;//remove offset
-  uint smin = p.freqMin *  p.duration;
+  uint smin = p.freqMin * p.duration;
   uint smax = std::min<uint>(p.freqMax * p.duration, signal.size()/2);
+
+  for(auto & i : signalfft){
+    i /= 0.5 * signalfft.size();
+    }
+
 
   VD amplitude;
   amplitude.resize(signalfft.size()/2);
@@ -160,41 +149,12 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
       amplitude[i] = abs(signalfft[i]);
     }
 
-  //find fundamental (let's suppose it's the maximum)
-  uint imax=0;
-  double eh1 = 0;
-  for(uint i = 0; i < signal.size()/2; i++){
-      if(amplitude[i] > eh1){
-          eh1 = amplitude[i]; //abs(signalfft[i]);
-          imax = i;
-        }
-  }
-  assert(imax > 0);
+  uint imax = std::distance(amplitude.begin(),std::max_element(amplitude.begin()+smin,amplitude.begin()+smax));
+  assert(imax == p.frequency * p.duration);
+    assert(imax > 0);
 
-  eh1 = get_harmonic(imax,amplitude).level;
-/*
-  double e_tot_wo_h1 = 0;
-  for(uint i = smin; i < smax ; i++){
-      double tmp = amplitude[i] * amplitude[i];//  real(signalfft[i] * conj(signalfft[i]));
-      if(i != imax){
-          e_tot_wo_h1 += tmp;
-        }
-    }
-  e_tot_wo_h1 = sqrt(e_tot_wo_h1);
-*/
-  for(auto &i : signalfft){
-      i/=eh1;
-    }
 
   auto slices = find_harmonics(amplitude,imax,smax);
-
-  /*
-  for(uint i = 0; i < smin; i++){
-      signalfft[i]=1;
-    }
-  for(uint i = smax; i < signalfft.size(); i++)
-    signalfft[i]=1;
-  */
 
 
   /*std::ofstream outFile("/tmp/foo");
@@ -214,8 +174,8 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
     h_level.push_back(i.level);
   return ResultTHD {
       .harmonicSpectrum = FDF(signalfft,sampleRate)
-      ,.thdNoiseRate = snh.thdn()// e_tot_wo_h1 / eh1
-      ,.thdRate = snh.thd()//thd_ieee(slices)
+      ,.thdNoiseRate = snh.thdn()
+      ,.thdRate = snh.thd()
       ,.snr = snh.snr()
       ,.harmonicsLevel = h_level
       ,.params = p

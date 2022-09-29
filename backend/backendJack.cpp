@@ -38,8 +38,6 @@ BackendJack::BackendJack()
 
 
 
-
-
 BackendJack::~BackendJack(){
   jack_client_close(client);
 }
@@ -218,6 +216,50 @@ vector<VD> BackendJack::acquisition(const vector<VD> &input){
 QFuture<vector<VD>> BackendJackQt::acquisition_async(const vector<VD> &input){
   return QtConcurrent::run(acquire_output,this,input);
 }
+
+/*
+void shutdown();
+void shutdown_info(QString);
+void sample_rate_change(uint);
+void buffer_size_change(uint);
+void client_registration(QString, bool);
+void port_registration(QString, bool);
+void port_rename(QString oldname, QString newname, int);
+void port_connect(int, int, bool);
+void xrun();
+*/
+void BackendJackQt::jack_shutdown() {
+  emit shutdown();
+}
+void BackendJackQt::jack_info_shutdown(jack_status_t code, const char *reason){
+  emit shutdown_info(QString(reason));
+}
+int  BackendJackQt::jack_buffer_size(jack_nframes_t nframes){
+  emit buffer_size_change(static_cast<uint>(nframes));
+  return 0;
+}
+int  BackendJackQt::jack_samplerate(jack_nframes_t nframes){
+  emit sample_rate_change(static_cast<uint>(nframes));
+  return 0;
+}
+void BackendJackQt::jack_client_registration (const char *name, int i){
+  emit client_registration(QString(name),i);
+}
+void BackendJackQt::jack_port_registration(jack_port_id_t port, int i){
+  emit port_registration(port,i);
+
+}
+void BackendJackQt::jack_port_rename(jack_port_id_t port, const char *old_name, const char *new_name){
+  emit port_rename(QString(old_name),QString(new_name),port);
+}
+void BackendJackQt::jack_port_connect(jack_port_id_t a, jack_port_id_t b, int connect){
+  emit port_connect(a,b,connect);
+}
+int  BackendJackQt::jack_xrun(){
+  emit xrun();
+  return 0;
+}
+
 #if 0
 int 	jack_set_process_thread (jack_client_t *client, JackThreadCallback fun, void *arg)
 int
