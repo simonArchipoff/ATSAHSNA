@@ -61,9 +61,14 @@ protected:
 class QBackendJack : public QWidget, public QBackend {
   Q_OBJECT
 public:
-  QBackendJack(BackendJack * b, QWidget * parent=nullptr);
+  QBackendJack(BackendJackQt * b, QWidget * parent=nullptr);
 
 protected:
+
+  void set_sample_rate(uint);
+  void set_buffer_size(uint);
+
+
   QPushButton * inputButton, * outputButton;
   QLabel * sampleRate, *bufferSize;
   QLineEdit * inputName, *outputName;

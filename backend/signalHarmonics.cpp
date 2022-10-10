@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iomanip>
 #include <numeric>
-
+#include <queue>
 /*
 double mean(const std::vector<double> &v){
   return std::reduce(std::execution::par_unseq,v.begin(),v.end())/static_cast<double>(v.size());
@@ -18,6 +18,45 @@ double std_dev(const std::vector<double> &v){
 */
 
 
+/*
+class PrioSum{
+public:
+  void addTerm(double num){
+    q.push(num);
+  }
+
+  double getSum(){
+    while(q.size() > 1){
+        double a = q.top();
+        q.pop();
+        double b = q.top();
+        q.pop();
+        q.push(a+b);
+      }
+    return q.top();
+  }
+
+  std::priority_queue<double,vector<double>,std::greater<double>> q;
+};
+*/
+
+class KahanSum {
+public:
+  KahanSum():sum(0.0),c(0.0){}
+  void addTerm(double num) {
+    double y = num - c;
+    double t = sum + y;
+    c = (t - sum) - y;
+    sum = t;
+  }
+
+  double getSum(){
+    return sum;
+  }
+
+  double sum = 0.0;
+  double c = 0.0;
+};
 
 /*
  * /!\ some parts are commented because of bugs
@@ -44,7 +83,7 @@ slice get_harmonic(const uint f, const vector<double>&v){
   uint f_l = f, f_r=f;
   while(f_l > 1 && v[f_l - 1] > v[f_l] && f - static_cast<int>(f_l)  < 10)
     f_l--;
-  while(f_r < v.size() -1 && v[f_r + 1] > v[f_r] &&  static_cast<int>(f_r) - f < 10)
+  while(f_r < v.size() - 1 && v[f_r + 1] > v[f_r] &&  static_cast<int>(f_r) - f < 10)
     f_r++;
   if(v[f_l] > v[f_r])
     s = {f_l,f_l,v[f_l]};
@@ -90,6 +129,8 @@ public:
   SignalNoiseHarmonics(const vector<double> &v, uint fundamental,uint smin,uint smax){
     assert(smin <= fundamental && fundamental <= smax);
     s = n = h = 0;
+    KahanSum ks;
+
     slices =  find_harmonics(v,fundamental,smax);
     for(uint i = 0; i < slices.size(); i++){
         uint begin, end;
@@ -100,7 +141,11 @@ public:
             begin = slices[i-1].end + 1;
             end = slices[i].begin;
           }
-        n = std::transform_reduce(&v[begin], &v[end], n, std::plus<>{}, [](auto a){return a*a;});
+        //n = std::transform_reduce(&v[begin], &v[end], n, std::plus<>{}, [](auto a){return a*a;});
+        for(auto i = begin; i < end; i++){
+            ks.addTerm(v[i]*v[i]);
+          }
+
         if(i == 0){
             s = slices[0].level;
           } else {
@@ -108,9 +153,13 @@ public:
           }
       }
     if(slices.back().end + 1 < static_cast<uint>(smax)){
-      n = std::transform_reduce(&v[slices.back().end+1],&v[smax], n, std::plus<>{}, [](auto a) {return a*a;});
+        //n = std::transform_reduce(&v[slices.back().end+1],&v[smax], n, std::plus<>{}, [](auto a) {return a*a;});
+        for(auto i = slices.back().end + 1; i < smax; i++ ){
+            ks.addTerm(v[i] * v[i]);
+          }
       }
-    n = sqrt(n);
+
+    n = sqrt(ks.getSum());
     h = sqrt(h);
   }
 
@@ -138,10 +187,6 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
   uint smin = p.freqMin * p.duration;
   uint smax = std::min<uint>(p.freqMax * p.duration, signal.size()/2);
 
-  for(auto & i : signalfft){
-    i /= 0.5 * signalfft.size();
-    }
-
 
   VD amplitude;
   amplitude.resize(signalfft.size()/2);
@@ -167,11 +212,13 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
   qDebug() << "thd" << snh.thd();
   qDebug() << "thdn" << snh.thdn();
   qDebug() << "snr" <<  snh.snr();
+  qDebug() << "s" << snh.s;
+  qDebug() << "n" << snh.n;
 
   // the important part
   vector<double> h_level;
   for(auto & i : slices)
-    h_level.push_back(i.level);
+    h_level.push_back(i.level / (0.5 *  signalfft.size()));
   return ResultTHD {
       .harmonicSpectrum = FDF(signalfft,sampleRate)
       ,.thdNoiseRate = snh.thdn()

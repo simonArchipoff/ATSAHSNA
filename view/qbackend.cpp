@@ -84,7 +84,7 @@ void QFaustDsp::setErrorMessage(QString s)
 }
 
 
-QBackendJack::QBackendJack(BackendJack * b, QWidget * parent)
+QBackendJack::QBackendJack(BackendJackQt * b, QWidget * parent)
   : QWidget{parent}
     ,QBackend{b}
     ,inputButton{new QPushButton{tr("new input"),this}}
@@ -127,9 +127,20 @@ QBackendJack::QBackendJack(BackendJack * b, QWidget * parent)
   str.setNum(b->getBufferSize());
   bufferSize->setText(str);
 
+  connect(b,&BackendJackQt::buffer_size_change,this,&QBackendJack::set_buffer_size);
+  connect(b,&BackendJackQt::sample_rate_change,this,&QBackendJack::set_sample_rate);
 }
 
-
+void QBackendJack::set_sample_rate(uint n){
+  QString str;
+  str.setNum(n);
+  sampleRate->setText(str);
+}
+void QBackendJack::set_buffer_size(uint n){
+  QString str;
+  str.setNum(n);
+  bufferSize->setText(str);
+}
 
 
 
@@ -148,7 +159,7 @@ void QBackends::addFaustBackend(){
 }
 
 void QBackends::addJackBackend(){
-  auto b = new BackendJack;
+  auto b = new BackendJackQt;
   auto bv = new QBackendJack{b,this};
   addTab(bv,"jack");
   backends.push_back(bv);
