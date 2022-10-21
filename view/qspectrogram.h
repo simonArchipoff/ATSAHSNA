@@ -12,7 +12,6 @@
 
 #include "qresponse.h"
 
-#include "../constants.h"
 
 
 class QParamSpectrogram : public QWidget {

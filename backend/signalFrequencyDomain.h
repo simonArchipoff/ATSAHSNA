@@ -22,7 +22,7 @@ class FDF
 public:
     FDF();
     FDF(const FDF&) = default;
-    FDF(const vector<complex<double>> &v, int sampleRate):response(v),
+    FDF(const vector<complex<double>> &v, uint sampleRate):response(v),
                                                           sampleRate(sampleRate),
                                                           f1(sampleRate / ((double) response.size())){}
     //DTF(const DTF&&) = default;
@@ -45,7 +45,7 @@ public:
     vector <double> getFrequency() const;
 
 
-    std::tuple<VD,VD,VD> getDecimatedAmplitude20log10PhaseFrequency(int step) const;
+    //std::tuple<VD,VD,VD> getDecimatedAmplitude20log10PhaseFrequency(int step) const;
 
 
     double getMaxAmplitude() const;
@@ -55,10 +55,25 @@ public:
 
     //inverse transform :
     VD frequencyDomainTotemporal() const;
+    FDF reduce(uint factor) const;
 protected:
     vector<complex<double>> response;
     uint sampleRate;
     double f1;
+};
+
+
+class FDFLOG{
+public:
+  FDFLOG(const FDFLOG &) = default;
+  FDFLOG(const FDF&,uint base = 10);
+
+  VD getAmplitude() const;
+  VD getAmplitude20log10() const;
+  VD getPhase() const;
+  VD getFrequency() const;
+protected:
+  VD amplitude,phase,frequency;
 };
 
 
@@ -67,6 +82,7 @@ FDF compute_TF_FFT(const VD  &input, const VD  &output,int sampleRate);
 FDF compute_TF_FFT(const VCD &input, const VCD &output,int sampleRate);
 FDF compute_TF_FFT(const VCD &output, int sampleRate);
 VCD computeDFT(const VD &input);
+
 
 
 

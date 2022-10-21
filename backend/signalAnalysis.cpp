@@ -1,6 +1,7 @@
 #include "signalAnalysis.h"
 #include <numeric>
 #include <QDebug>
+/*
 VD convolution(const VD &v, const VD&c){
   VD res(v.size()-c.size());
   for(uint i = 0; i < v.size() - c.size(); i++){
@@ -11,7 +12,7 @@ VD convolution(const VD &v, const VD&c){
     }
   return res;
 }
-
+*/
 
 
 //https://stackoverflow.com/questions/7616511/calculate-mean-and-standard-deviation-from-a-vector-of-samples-in-c-using-boos
@@ -19,7 +20,6 @@ VD convolution(const VD &v, const VD&c){
 double mean(const VD &v){
   return std::accumulate(v.begin(), v.end(), 0.0) / v.size();
 }
-
 double stddev(const VD & v){
     double m = mean(v);
     double sq_sum = std::inner_product(v.begin(), v.end(), v.begin(), 0.0,
@@ -33,11 +33,12 @@ VD try_make_phase_continuous(const VD &v){
   vector<double> res = VD{v};
   for(uint i = 1; i < v.size() ; i++){
         auto prev = res[i-1];
-        int k = static_cast<int>(std::round((prev-v[i])/360));
-        res[i] = res[i] + k * 360;
+        int k = static_cast<int>(std::round((prev-v[i])/360.));
+        res[i] = res[i] + k * 360.;
       }
   return res;
 }
+
 
 
 

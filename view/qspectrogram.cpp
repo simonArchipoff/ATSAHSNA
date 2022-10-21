@@ -63,8 +63,8 @@ QParamSpectrogram::QParamSpectrogram(QWidget * parent)
 
 
 ParamSpectrogram QParamSpectrogram::getParam(){
-  auto r = ParamSpectrogram{
-      .nb_octave = this->nb_octaves->value()
+  auto r = ParamSpectrogram {
+       .nb_octave = this->nb_octaves->value()
       ,.resolution = this->resolution->value()
     };
   return r;

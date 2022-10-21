@@ -6,11 +6,7 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 
-#include "backend/backendJack.h"
-#include "constants.h"
-
 #include "backend/backend.h"
-#include "backend/backendFaust.h"
 
 #include "backend/acquisition.h"
 

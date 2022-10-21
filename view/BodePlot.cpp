@@ -96,9 +96,13 @@ uint find_last_smaller_than(vector<double> v, double e){
 
 void BodeCurve::setCurve(const FDF &c, double minF, double maxF){
     //auto r = c.getDecimatedAmplitude20log10PhaseFrequency(c.getFrequency().size());
-    vector<double> a = c.getAmplitude20log10();//get<0>(r);
-    vector<double> p = c.getPhase();//get<1>(r);
-    vector<double> f = c.getFrequency();// get<2>(r);
+    FDFLOG l{c,10};
+    vector<double> a = l.getAmplitude20log10();
+      //get<0>(r);
+    vector<double> p = l.getPhase();
+      //get<1>(r);
+    vector<double> f = l.getFrequency();
+      //  get<2>(r);
     //p = try_make_phase_continuous(p);
     //p = decimation_log(p,10000);
     //a = decimation_log(a,10000);
@@ -136,7 +140,7 @@ BodePlot::BodePlot(QWidget* parent) : FrequencyPlot{parent}
     setAxisTitle(QwtAxis::YRight, tr("phase"));
 
     QwtPlot::setAxisScale(QwtAxis::YLeft,-50,6);
-    //setAxisScale(QwtAxis::YRight, -180, 180);
+    setAxisScale(QwtAxis::YRight, -185, 185);
 
     setAxisAutoScale(QwtAxis::YRight);
     setAxisAutoScale(QwtAxis::YLeft);
@@ -149,7 +153,6 @@ BodePlot::BodePlot(QWidget* parent) : FrequencyPlot{parent}
 THDPlot::THDPlot(QWidget * parent):FrequencyPlot(parent){
   textResult = new QwtPlotTextLabel();
   textResult->attach(this);
-  setAxisAutoScale(QwtAxis::YLeft);
 }
 
 

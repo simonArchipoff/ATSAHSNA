@@ -1,13 +1,14 @@
 # ATSAHSNA
 
-This project aims to be a free/libre software to perform accoustical measures, some kind of REW.
+This project aims to be a free/libre software to perform accoustical measures.
+
 It's licenced under GPLv3. For now it's under heavy development, you can play with it but please dont build something with it yet.
 
 What's already implemented:
 - two backend (faust and jackd)
-- impulse response, harmonic spectrum, THD computation.
-- wavelet waterfall measures (ongoing work, it's not convincing yet)
-- temporal response (it work great for faust and very clean mesure, it needs more work for real world ones)
+- impulse response, harmonic spectrum, THD computation. (it work great for faust and very clean mesure, it needs more work for real world ones)
+- wavelet waterfall measures
+- temporal response 
 - a very poor GUI, sorry
 
 Soon :
@@ -29,8 +30,7 @@ Regarding IO and data acquisition :
 
 Regarding treatment and analysis :
 - something to smooth data (amplitude and phase)
-- something to deal with noisy measures (a weiner filter (?))
-
+- something to deal with noisy measures (a wiener filter (?))
 
 Later :
 - Implementing what's needed to measures an impedance and/or do computation with inputs
@@ -52,7 +52,9 @@ cmake -S . -B build && make -j 8 -C build
 Dependancy:
 * Qt
 * FFTW
-* fCWT (a wavelet lib, in a git submodule, this lib itself also depends on FFTW)
+* fCWT (a continuous wavelet lib, in a git submodule, this lib itself also depends on FFTW)
 * Faust
 * Jack
 * moodycamel lockfree queue (already in the repository)
+
+When I started this project, I didn't knew that one : https://github.com/mincequi/qLouder, you should check it out as well

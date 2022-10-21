@@ -5,40 +5,7 @@
 #include <fstream>
 #include <iomanip>
 #include <numeric>
-#include <queue>
-/*
-double mean(const std::vector<double> &v){
-  return std::reduce(std::execution::par_unseq,v.begin(),v.end())/static_cast<double>(v.size());
-}
 
-double std_dev(const std::vector<double> &v){
-  auto m=mean(v);
-  return 0;
-}
-*/
-
-
-/*
-class PrioSum{
-public:
-  void addTerm(double num){
-    q.push(num);
-  }
-
-  double getSum(){
-    while(q.size() > 1){
-        double a = q.top();
-        q.pop();
-        double b = q.top();
-        q.pop();
-        q.push(a+b);
-      }
-    return q.top();
-  }
-
-  std::priority_queue<double,vector<double>,std::greater<double>> q;
-};
-*/
 
 class KahanSum {
 public:
@@ -172,6 +139,9 @@ public:
   double snr(){
     return 20 * log10(s / n);
   }
+ /* double sinad(){
+    return log2(s/(n+h));//((s+n+h)/(s+h));
+  }*/
   double s,n,h;
   vector<slice> slices;
 };
@@ -195,8 +165,8 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
     }
 
   uint imax = std::distance(amplitude.begin(),std::max_element(amplitude.begin()+smin,amplitude.begin()+smax));
-  assert(imax == p.frequency * p.duration);
-    assert(imax > 0);
+  assert(imax < amplitude.size());
+  assert(imax > 0);
 
 
   auto slices = find_harmonics(amplitude,imax,smax);
@@ -212,18 +182,25 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
   qDebug() << "thd" << snh.thd();
   qDebug() << "thdn" << snh.thdn();
   qDebug() << "snr" <<  snh.snr();
+  //  qDebug() << "sinad" << snh.sinad();
   qDebug() << "s" << snh.s;
   qDebug() << "n" << snh.n;
+  qDebug() << "h" << snh.h;
 
   // the important part
   vector<double> h_level;
   for(auto & i : slices)
-    h_level.push_back(i.level / (0.5 *  signalfft.size()));
+    h_level.push_back(i.level);
+
+  /*for(auto &i : signalfft)
+    i /= 0.5*signalfft.size();
+*/
   return ResultTHD {
       .harmonicSpectrum = FDF(signalfft,sampleRate)
       ,.thdNoiseRate = snh.thdn()
       ,.thdRate = snh.thd()
       ,.snr = snh.snr()
+//      ,.sinad = snh.sinad()
       ,.harmonicsLevel = h_level
       ,.params = p
       ,.raw_data = MeasureData { .inputs  = vector<VD>({}),

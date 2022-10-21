@@ -129,7 +129,7 @@ DTF DTF::prettify(bool zeroish, bool continuousPhase){
 }
 */
 
-
+/*
 template<class T>
 vector<T> decimate_log(const vector<T> &v, const int step=100){
     int block = 1;
@@ -155,7 +155,32 @@ vector<T> decimate_log(const vector<T> &v, const int step=100){
         block *= base;
     } while(true);
 }
+*/
 
+
+
+
+template<typename T>
+vector<T> local_sum(vector<T> const &input, uint size){
+  vector<T> out;
+  out.resize(input.size() / size);
+
+  for(uint i = 0; i < out.size(); i++){
+      out[i]=0;
+      for(uint j = 0; j < size; j++){
+          out[i] += input[i*size+j];
+        }
+    }
+  return out;
+}
+
+FDF FDF::reduce(uint factor) const {
+  FDF out{local_sum(this->response, factor),this->sampleRate};
+  return out;
+}
+
+
+/*
 std::tuple<VD,VD,VD> FDF::getDecimatedAmplitude20log10PhaseFrequency(int step) const{
   FDF f{*this};
   f.response.resize(f.response.size()/2);
@@ -169,7 +194,7 @@ std::tuple<VD,VD,VD> FDF::getDecimatedAmplitude20log10PhaseFrequency(int step) c
                    ,f.getPhase()
                    ,frequency};
 }
-
+*/
 
 FDF compute_TF_FFT(const vector<double> &input, const vector<double> &output,int sampleRate){
     assert(input.size() == output.size());
@@ -192,6 +217,8 @@ FDF compute_TF_FFT(const VCD &input, const VCD &output,int sampleRate){
     return dtf_output / dtf_input;
 }
 
+
+
 FDF compute_TF_FFT(const VCD &v, int sampleRate) {
     int size = v.size();
     VCD in_fft(v);
@@ -202,9 +229,9 @@ FDF compute_TF_FFT(const VCD &v, int sampleRate) {
                                    FFTW_FORWARD,
                                    FFTW_ESTIMATE);
     fftw_execute(p);
-    /*for(int i = 0; i < size; i++){
-        out_fft[i] /= size;
-    }*/ //dont need to normalize
+    for(int i = 0; i < size; i++){
+       out_fft[i] /= size;
+    }
     out_fft.resize(out_fft.size());
     FDF dtf(out_fft,sampleRate);
     fftw_destroy_plan(p);
@@ -229,11 +256,14 @@ VCD computeDFT(const VD &input){
                                  reinterpret_cast<fftw_complex*>(coutput.data()),
                                  FFTW_FORWARD,
                                  FFTW_ESTIMATE);
+
   fftw_execute(p);
   fftw_destroy_plan(p);
+  for(uint i = 0; i < coutput.size(); i++){
+      coutput[i] /= coutput.size()/2;
+  }
   return coutput;
 }
-
 
 
 VD FDF::frequencyDomainTotemporal() const {
@@ -248,5 +278,68 @@ VD FDF::frequencyDomainTotemporal() const {
                                    ,FFTW_ESTIMATE);
   fftw_execute(plan);
   fftw_destroy_plan(plan);
+  for(auto & i : o)
+    i *= response.size();
   return o;
 }
+
+
+/*
+class FDFLOG{
+protected:
+             VD amplitude,phase,frequency;
+           };*/
+
+
+vector<std::pair<uint,uint>> log_slices(uint base, uint size, uint start){
+  uint block = 1;
+  vector<std::pair<uint,uint>> v;
+  while(true){
+      for(uint c = 0; c < base ; c++){
+          uint end = start + block < size ? start + block : size;
+          v.push_back(std::pair{start,end});
+          start = end;
+          if(end == size)
+            return v;
+        }
+      block *= base;
+    }
+}
+
+
+
+FDFLOG::FDFLOG(const FDF& input, uint base){
+  auto r = input.getResponse();
+  double f1 = input.getSampleRate() / ((double) r.size());
+  for(auto const & p : log_slices(base, r.size()/2, 1)){
+      complex<double> b = 0;
+      for(uint i = p.first; i < p.second ; i++){
+          b += r[i];
+        }
+      double f = 0.5 * f1 * (p.first + p.second-1);
+      amplitude.push_back(abs(b/complex<double>{(double)p.second - p.first,0}));
+      phase.push_back(atan2(b.imag(), b.real()) * 180/(M_PI));
+      frequency.push_back(f);
+    }
+}
+
+
+VD FDFLOG::getAmplitude() const{
+  VD v(amplitude);
+  return v;
+}
+VD FDFLOG::getAmplitude20log10() const{
+  auto v = getAmplitude();
+  for(auto &i : v)
+    i = 20*log10(i);
+  return v;
+}
+VD FDFLOG::getPhase() const{
+  VD phase{this->phase};
+  return phase;
+}
+VD FDFLOG::getFrequency() const{
+  VD f{frequency};
+  return f;
+}
+
