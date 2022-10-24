@@ -129,33 +129,6 @@ DTF DTF::prettify(bool zeroish, bool continuousPhase){
 }
 */
 
-/*
-template<class T>
-vector<T> decimate_log(const vector<T> &v, const int step=100){
-    int block = 1;
-    const int base = 10;
-    vector<T> res;
-    if(v.size() == 0)
-        return res;
-    res.push_back(v[0]);
-    uint idx = 0;
-    do{
-        for(auto i = 0; i < step; i++){
-            T sum = 0;
-            for(auto j = 0; j < block; j++){
-                idx++;
-                if(idx >= v.size()){
-                    if(j > 0) res.push_back(sum/T(j));
-                    return res;
-                }
-                sum += v[idx];
-            }
-            res.push_back(sum/T(block));
-        }
-        block *= base;
-    } while(true);
-}
-*/
 
 
 
@@ -180,21 +153,7 @@ FDF FDF::reduce(uint factor) const {
 }
 
 
-/*
-std::tuple<VD,VD,VD> FDF::getDecimatedAmplitude20log10PhaseFrequency(int step) const{
-  FDF f{*this};
-  f.response.resize(f.response.size()/2);
-  auto response = decimate_log(f.response,step);
 
-  auto frequency = decimate_log(f.getFrequency(),step);
-  frequency.resize(response.size());
-
-  f.response = response;
-  return std::tuple{f.getAmplitude20log10()
-                   ,f.getPhase()
-                   ,frequency};
-}
-*/
 
 FDF compute_TF_FFT(const vector<double> &input, const vector<double> &output,int sampleRate){
     assert(input.size() == output.size());
@@ -284,18 +243,13 @@ VD FDF::frequencyDomainTotemporal() const {
 }
 
 
-/*
-class FDFLOG{
-protected:
-             VD amplitude,phase,frequency;
-           };*/
 
 
 vector<std::pair<uint,uint>> log_slices(uint base, uint size, uint start){
   uint block = 1;
   vector<std::pair<uint,uint>> v;
   while(true){
-      for(uint c = 0; c < base ; c++){
+      for(uint c = 0; c < base * base ; c++){
           uint end = start + block < size ? start + block : size;
           v.push_back(std::pair{start,end});
           start = end;

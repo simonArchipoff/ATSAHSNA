@@ -1,4 +1,5 @@
 #include "backendJack.h"
+#include "signalAnalysis.h"
 #include "../constants.h"
 
 #include <jack/types.h>
@@ -182,11 +183,16 @@ void pad_right_0(uint n, vector<VD> & in){
 
 void remove_left(uint n, vector<VD> & in){
   for(auto &i : in){
-      std::rotate(i.begin(),i.begin()+n,i.end());
+      std::rotate(i.begin(), i.begin() + n, i.end());
       i.resize(i.size()-n);
     }
 }
-
+void remove_right(uint n, vector<VD> & in){
+  for(auto &i : in){
+      //std::rotate(i.rbegin(), i.rbegin() + n, i.rend());
+      i.resize(i.size() - n);
+    }
+}
 
 
 vector<VD> BackendJackQt::acquire_output(BackendJackQt *b, const vector<VD> &input){
@@ -194,20 +200,37 @@ vector<VD> BackendJackQt::acquire_output(BackendJackQt *b, const vector<VD> &inp
 }
 
 
+
 vector<VD> BackendJack::acquisition(const vector<VD> &input){
   lock.lock();
   auto in = vector{input};
   auto l = getLatencySample();
-  pad_right_0(l,in);
+  auto foo = 10000;
+  if(latency_automatic){
+      pad_right_0(foo,in);
+    }else{
+      pad_right_0(l,in);
+    }
 
   requestMeasure(in);
+
   do{
       QThread::msleep(100);
       auto r  = tryGetOutput();
       if(r.has_value()){
           auto out = r.value();
-          remove_left(l,out);
+
           lock.unlock();
+          if(latency_automatic) {
+              auto delay = compute_delay(out[0],in[0],10000,1024);
+              setLatency(delay);
+              qDebug() << "computed latency" <<delay;
+              remove_left(delay,out);
+              remove_right(foo-delay,out);
+            }else {
+              remove_left(l,out);
+            }
+
           return out;
         }
     }while(true);

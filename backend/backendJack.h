@@ -90,11 +90,15 @@ public:
     return std::nullopt;
   }
 
-  void setLatency(uint l){
+  virtual void setLatency(uint l){
     latency = l;
   }
   uint getLatencySample(){
     return latency;
+  }
+
+  void setLatencyAutomatic(bool b=true){
+    latency_automatic = b;
   }
 
   vector<VD> acquisition(const vector<VD> &input) override;
@@ -102,8 +106,10 @@ public:
   QFuture<vector<VD>> acquisition_async(const vector<VD> &input);
 
 
+
 protected:
   int latency = 0;
+  bool latency_automatic = true;
 
   moodycamel::ConcurrentQueue<request>  requests;
   moodycamel::ConcurrentQueue<response> responses;
@@ -222,6 +228,11 @@ public:
   static vector<VD> acquire_output(BackendJackQt *b, const vector<VD> &input);
   QFuture<vector<VD>> acquisition_async(const vector<VD> &input);
 
+  void setLatency(uint l)  override{
+    BackendJack::setLatency(l);
+    emit new_latency(l);
+  }
+
   /*
    * those methods are callbacks
    */
@@ -237,6 +248,7 @@ public:
 signals:
   void shutdown();
   void shutdown_info(QString);
+  void new_latency(uint);
   void sample_rate_change(uint);
   void buffer_size_change(uint);
   void client_registration(QString, bool);

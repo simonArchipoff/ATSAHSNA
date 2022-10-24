@@ -105,16 +105,25 @@ QBackendJack::QBackendJack(BackendJackQt * b, QWidget * parent)
   outputName->setText(tr("output"));
   latency = new QSpinBox;
 
+  auto automatic_latency = new QCheckBox;
+
   latency->setRange(0,15000);
   latency->setValue(0);
+  l->addRow(tr("automatic latency"),automatic_latency);
   l->addRow(tr("latency"),latency);
   l->addRow(tr("gain"),gain);
   gain->setMaximum(20);
   gain->setMinimum(-40);
-  gain->setValue(-3);
+  gain->setValue(0);
   connect(gain,QOverload<double>::of(&QDoubleSpinBox::valueChanged),this,[b](auto d){b->setOutputGain(d);});
 
   connect(latency,QOverload<int>::of(&QSpinBox::valueChanged),this,[b](int i){b->setLatency(i);});
+  connect(b,&BackendJackQt::new_latency ,latency, &QSpinBox::setValue);
+
+  connect(automatic_latency,&QCheckBox::stateChanged,this,[this,b](int i){
+      latency->setDisabled(i);
+      b->setLatencyAutomatic(i);
+    });
 
   setLayout(l);
   //setMaximumWidth(minimumSizeHint().width());

@@ -16,15 +16,16 @@ VD signal(Backend * b, const struct ParamResponse p){
 
 
 vector<struct ResultResponse> compute_response(Backend *b, const struct ParamResponse p){
-  const auto in = signal(b,p);
+  const auto in = signal(b, p);
   vector<VD> input;
   for(uint i = 0; i<b->numberInput(); i++){
-    input.push_back(in);
+      auto tmp = in;
+    input.push_back(tmp);
     }
   auto output = b->acquisition(input);
   vector<struct ResultResponse> res;
   for(auto &o : output){
-      auto f = compute_TF_FFT(in,o,b->getSampleRate());
+      auto f = compute_TF_FFT(in, o, b->getSampleRate());
       res.push_back(ResultResponse{f
                                    ,p
                                    ,MeasureData{vector({in}),vector({o})}});
@@ -34,12 +35,12 @@ vector<struct ResultResponse> compute_response(Backend *b, const struct ParamRes
 
 
 vector<struct ResultSpectrogram> compute_spectrogram(Backend *b, const struct ParamSpectrogram p){
-  auto output = compute_response(b,p);
+  auto output = compute_response(b, p);
 
   vector<struct ResultSpectrogram> res;
   for(auto &out_response : output){
       auto o = out_response.response.frequencyDomainTotemporal();
-      auto tmp = spectrogram(o,p.nb_octave,p.resolution,b->getSampleRate());
+      auto tmp = spectrogram(o, p.nb_octave, p.resolution, b->getSampleRate());
       tmp.raw_data=out_response.raw_data;
       res.push_back(tmp);
     }
@@ -47,7 +48,7 @@ vector<struct ResultSpectrogram> compute_spectrogram(Backend *b, const struct Pa
 }
 
 vector<struct ResultTHD> compute_distortion(Backend *b, const struct ParamTHD p){
-  auto in = chirp(p.frequency,p.frequency,p.duration, b->getSampleRate());
+  auto in = chirp(p.frequency, p.frequency, p.duration, b->getSampleRate());
 
   vector<VD> input;
   for(uint i = 0; i<b->numberInput(); i++){
@@ -58,7 +59,7 @@ vector<struct ResultTHD> compute_distortion(Backend *b, const struct ParamTHD p)
   vector<struct ResultTHD> res;
   for(auto &o : output){
       assert(input[0].size() == o.size());
-      auto tmp = computeTHD(p,o,b->getSampleRate());
+      auto tmp = computeTHD(p, o, b->getSampleRate());
       tmp.raw_data.inputs=vector({in});
       res.push_back(tmp);
     }

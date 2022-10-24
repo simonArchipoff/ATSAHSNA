@@ -26,8 +26,10 @@ struct MeasureData{
 
 
 
-//naive implementation for finding c in v
-VD convolution(const VD &v, const VD&c);
+//naive implementation for finding k in v
+VD convolution(const VD &v, uint start, uint size,
+               const VD &k, uint kstart, uint ksize);
+int compute_delay(const VD & out, const VD & in, int maximum_delay,int size_input);
 
 double mean(const VD &v);
 double stddev(const VD &v);
