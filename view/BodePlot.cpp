@@ -97,6 +97,8 @@ uint find_last_smaller_than(vector<double> v, double e){
 void BodeCurve::setCurve(const FDF &c, double minF, double maxF){
     //auto r = c.getDecimatedAmplitude20log10PhaseFrequency(c.getFrequency().size());
     FDFLOG l{c,10};
+    l.trimHF(maxF);
+    l.trimLF(minF);
     vector<double> a = l.getAmplitude20log10();
       //get<0>(r);
     vector<double> p = l.getPhase();

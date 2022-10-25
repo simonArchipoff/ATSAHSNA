@@ -1,5 +1,6 @@
 #include "qbackend.h"
 #include "backendJack.h"
+#include "qnamespace.h"
 
 #include <QDebug>
 #include <QVBoxLayout>
@@ -106,7 +107,6 @@ QBackendJack::QBackendJack(BackendJackQt * b, QWidget * parent)
   latency = new QSpinBox;
 
   auto automatic_latency = new QCheckBox;
-
   latency->setRange(0,15000);
   latency->setValue(0);
   l->addRow(tr("automatic latency"),automatic_latency);
@@ -124,6 +124,7 @@ QBackendJack::QBackendJack(BackendJackQt * b, QWidget * parent)
       latency->setDisabled(i);
       b->setLatencyAutomatic(i);
     });
+  automatic_latency->setCheckState(Qt::CheckState::Checked);
 
   setLayout(l);
   //setMaximumWidth(minimumSizeHint().width());

@@ -72,6 +72,10 @@ public:
   VD getAmplitude20log10() const;
   VD getPhase() const;
   VD getFrequency() const;
+
+  void trimLF(double f);
+  void trimHF(double f);
+
 protected:
   VD amplitude,phase,frequency;
 };

@@ -38,7 +38,7 @@ QParamDistortion::QParamDistortion(QWidget * parent):QWidget{parent}{
     }
   duration->setRange(0.001,60);
   duration->setDecimals(6);
-  freq_min->setValue(10);
+  freq_min->setValue(20);
   freq_max->setValue(20000);
   frequency->setValue(1000);
   duration->setValue(1);

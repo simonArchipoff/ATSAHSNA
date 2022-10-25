@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cmath>
 #include <fftw3.h>
+#include <iterator>
 #include <numeric>
 #include <QDebug>
 FDF FDF::operator+(const FDF &a) const{
@@ -297,3 +298,21 @@ VD FDFLOG::getFrequency() const{
   return f;
 }
 
+
+void FDFLOG::trimLF(double f){
+  auto idx = std::distance(frequency.begin(),
+                           std::find_if(frequency.begin(),frequency.end(),[f](double s){return s > f;} )
+                           );
+  for(VD *v : { &frequency, &amplitude, &phase}){
+      std::rotate(v->begin(), v->begin() + idx, v->end());
+      v->resize(v->size() - idx);
+    }
+}
+
+void FDFLOG::trimHF(double f){
+  auto idx = std::distance(frequency.begin(),
+                           std::find_if(frequency.begin(),frequency.end(),[f](double s){return s > f;}));
+  for(VD *v : { &frequency, &amplitude, &phase}){
+      v->resize(idx);
+    }
+}

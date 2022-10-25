@@ -33,7 +33,7 @@ QParamResponse::QParamResponse(QWidget * parent)
 
     fmin->setMaximum(MAXFREQ);
     fmin->setMinimum(MINFREQ);
-    fmin->setValue(10);
+    fmin->setValue(20);
     fmax->setMaximum(MAXFREQ);
     fmax->setMinimum(MINFREQ);
     fmax->setValue(20000);
