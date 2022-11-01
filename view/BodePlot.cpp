@@ -144,7 +144,7 @@ BodePlot::BodePlot(QWidget* parent) : FrequencyPlot{parent}
     QwtPlot::setAxisScale(QwtAxis::YLeft,-50,6);
     setAxisScale(QwtAxis::YRight, -185, 185);
 
-    setAxisAutoScale(QwtAxis::YRight);
+    //setAxisAutoScale(QwtAxis::YRight);
     setAxisAutoScale(QwtAxis::YLeft);
     axisScaleEngine(QwtAxis::YRight)->setAttribute(QwtScaleEngine::Attribute::Inverted,false);
 

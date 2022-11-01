@@ -87,6 +87,7 @@ BackendFaustQT::BackendFaustQT(QWidget * parent):BackendFaust(){
 bool BackendFaustQT::setCode(QString dspCode, uint sampleRate){
   if(BackendFaust::setCode(dspCode.toStdString())){
       dspInstance->buildUserInterface(ui);
+      ui->run();
       dspInstance->init(sampleRate);
       return true;
     }
@@ -94,7 +95,8 @@ bool BackendFaustQT::setCode(QString dspCode, uint sampleRate){
 }
 
 BackendFaustQT::~BackendFaustQT(){
-    delete ui;
+  ui->stop();
+  delete ui;
 }
 
 QWidget * BackendFaustQT::getUI(){

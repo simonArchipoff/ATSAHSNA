@@ -6,16 +6,16 @@ It's licenced under GPLv3. For now it's under heavy development, you can play wi
 
 What's already implemented:
 - two backend (faust and jackd)
-- impulse response, harmonic spectrum, THD computation. (it work great for faust and very clean mesure, it needs more work for real world ones)
+- impulse response
+- harmonic spectrum, THD computation (THD, THD+N, SNR)
 - wavelet waterfall measures
-- temporal response 
+- temporal response
 - a very poor GUI, sorry
 
 Soon :
 Regarding UI :
 - better UI
 - reactive interface (temporary bug)
-- something to deal with latency more easily (automagicaly)
 - export measurements in a bunch of standards files
 - handling of several measures at once
 - less franglish and proper translations
@@ -26,7 +26,8 @@ Regarding IO and data acquisition :
   - mixing soundcards (for instance to test the input of one against the output of an other)
 - simpler code (I am tâtonning)
 - introduce arbitrary correction from input (like the inverse of a microphone response)
-- more test for more trust in the computations.
+- more backends (C, C++, Python, soundfile, something more standard like pulseaudio) 
+- some tests for more trust in the computations.
 
 Regarding treatment and analysis :
 - something to smooth data (amplitude and phase)

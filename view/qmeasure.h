@@ -16,11 +16,9 @@
 #include <signalHarmonics.h>
 #include <signalSpectrogram.h>
 
-#include "qcombobox.h"
 #include "qspectrogram.h"
 #include "qresponse.h"
 
-#include "../constants.h"
 
 
 
@@ -85,13 +83,13 @@ public:
 
   void setResult(const typename QRESULT::Result &r, QColor c){
     qplot->setResult(r,c);
+
     if constexpr (requires{r.raw_data;}){
       if(r.raw_data.inputs.size() > 0)
         temporalPlot->setInput(r.raw_data.inputs[0]);
       if(r.raw_data.outputs.size() > 0)
         temporalPlot->setOutput(r.raw_data.outputs[0]);
     }
-
   }
 
   QScopedPointer<TemporalPlot> temporalPlot;

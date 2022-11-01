@@ -3,6 +3,7 @@
 #include "../constants.h"
 
 #include <jack/types.h>
+#include <jack/jack.h>
 #include <mutex>
 #include <stdio.h>
 #include <algorithm>
@@ -202,6 +203,8 @@ vector<VD> BackendJackQt::acquire_output(BackendJackQt *b, const vector<VD> &inp
 
 
 vector<VD> BackendJack::acquisition(const vector<VD> &input){
+  if(input.size()==0)
+    return input;
   lock.lock();
   auto in = vector{input};
   auto l = getLatencySample();

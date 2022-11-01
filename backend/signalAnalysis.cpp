@@ -40,7 +40,7 @@ void find_maximums(const VD & in, vector<int> & idx, vector<double> & maxs, doub
 
 int compute_delay(const VD & out, const VD & in, int maximum_delay,int size_input){
   VD k(2*size_input);
-  for(uint i = 0; i < size_input; i++){
+  for(int i = 0; i < size_input; i++){
       k[i] = in[size_input - i - 1];
       k[size_input + i] = in[i];
     }

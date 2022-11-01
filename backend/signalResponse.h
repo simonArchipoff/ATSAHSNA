@@ -10,7 +10,7 @@ struct ParamResponse {
   double duration = 0.0;
 };
 
-struct ResultResponse{
+struct ResultResponse {
   FDF response;
   ParamResponse params;
   MeasureData raw_data;

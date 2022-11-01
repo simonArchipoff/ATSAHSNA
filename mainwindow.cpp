@@ -49,6 +49,10 @@ MainWindow::MainWindow(QWidget *parent)
           [this](auto p){this->measure(backends->getSelectedBackend(),p);});
 
   backends->addFaustBackend();
+  backends->addFaustBackend();
+  backends->addFaustBackend();
+  backends->addJackBackend();
+  backends->addJackBackend();
   backends->addJackBackend();
 }
 
@@ -56,16 +60,28 @@ void MainWindow::measure(Backend * b, ParamResponse p){
   auto r = compute_response(b,p);
   if(r.size() > 0)
     this->qResults->setResult(r[0],Qt::red);
+  if(r.size() > 1)
+    this->qResults->setResult(r[1],Qt::blue);
+  if(r.size() > 2)
+    this->qResults->setResult(r[2],Qt::green);
 }
 
 void MainWindow::measure(Backend * b,ParamTHD p){
   auto r = compute_distortion(b,p);
   if(r.size() > 0)
     this->qResults->setResult(r[0],Qt::red);
+  if(r.size() > 1)
+    this->qResults->setResult(r[1],Qt::blue);
+  if(r.size() > 2)
+    this->qResults->setResult(r[2],Qt::green);
 }
 
 void MainWindow::measure(Backend * b, ParamSpectrogram p){
   auto r = compute_spectrogram(b,p);
   if(r.size() > 0)
     this->qResults->setResult(r[0],Qt::red);
+ // if(r.size() > 1)
+ //   this->qResults->setResult(r[1],Qt::blue);
+ // if(r.size() > 2)
+ //   this->qResults->setResult(r[2],Qt::green);
 }

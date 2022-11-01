@@ -163,9 +163,10 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
   for(uint i = 0; i < amplitude.size(); i++){
       amplitude[i] = abs(signalfft[i]);
     }
-
-  uint imax = std::distance(amplitude.begin(),std::max_element(amplitude.begin()+smin,amplitude.begin()+smax));
+  uint imax = p.frequency * p.duration;
   assert(imax < amplitude.size());
+  imax = std::distance(amplitude.begin(),std::max_element(amplitude.begin()+imax-1,amplitude.begin()+imax+1));
+
   assert(imax > 0);
 
 
