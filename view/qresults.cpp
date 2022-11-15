@@ -29,8 +29,8 @@ QResults::QResults(QWidget * parent)
 
 void QResults::setResult(const struct ResultTHD &r, QColor c){
   qdistortion.data()->setResult(r,c);
-
 }
+
 void QResults::setResult(const struct ResultResponse & r, QColor c){
   qresponse.data()->setResult(r,c);
 }

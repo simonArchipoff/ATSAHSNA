@@ -1,11 +1,15 @@
 #pragma once
+#include "qobjectdefs.h"
 #define FAUSTFLOAT double
 #include <QWidget>
 
 #include <faust/dsp/llvm-dsp.h>
 #include <faust/gui/QTUI.h>
+#include <faust/gui/APIUI.h>
 
 #include "backend.h"
+
+
 
 
 
@@ -28,15 +32,52 @@ protected:
     llvm_dsp_factory * factory;
 };
 
-class BackendFaustQT : public BackendFaust{
+
+
+
+
+
+class DetectChange {
+public:
+  DetectChange(){};
+  DetectChange(APIUI*ui){
+    for(int i = 0; i < ui->getParamsCount(); i++){
+        faustZones.push_back(ui->getParamZone(i));
+        ref.push_back(ui->getParamValue(i));
+      }
+  }
+
+  bool isSomethingChanged(){
+    bool changed=false;
+    for(uint i = 0; i<faustZones.size(); i++){
+        changed |= *faustZones[i] != ref[i];
+        ref[i] = *faustZones[i];
+      }
+    return changed;
+  }
+
+private:
+  vector<double *> faustZones;
+  vector<double> ref;
+};
+
+
+class BackendFaustQT :  public QObject, public BackendFaust {
+  Q_OBJECT
 public:
     BackendFaustQT(QWidget * parent=nullptr);
     ~BackendFaustQT();
 
     bool setCode(QString dspCode, uint sampleRate);
     QWidget * getUI();
+    void timerEvent(QTimerEvent *event) override;
+signals:
+    void changed();
+
 protected:
     QTGUI * ui;
+    APIUI * apiui;
+    DetectChange detectchange;
 };
 
 

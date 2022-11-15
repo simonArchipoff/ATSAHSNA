@@ -81,8 +81,8 @@ class QBackends : public QTabWidget {
 public:
   QBackends(QWidget * parent=nullptr);
 
-  void addFaustBackend();
-  void addJackBackend();
+  BackendFaustQT * addFaustBackend();
+  BackendJackQt * addJackBackend();
 
   Backend * getSelectedBackend();
 protected:

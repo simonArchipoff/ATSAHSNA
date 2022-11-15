@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "qmeasure.h"
 #include "qspectrogram.h"
 
@@ -24,6 +23,8 @@ public:
   void setResult(const struct ResultTHD&, QColor c);
   void setResult(const struct ResultResponse&, QColor c);
   void setResult(const struct ResultSpectrogram&, QColor c);
+
+  void click_start_on_current_tab();
 signals:
   void request_response   (ParamResponse p);
   void request_distortion (ParamTHD p);

@@ -80,13 +80,24 @@ vector<VD> BackendFaust::acquisition(const vector<VD> &in){
 
 std::list<GUI*> GUI::fGuiList;
 
-BackendFaustQT::BackendFaustQT(QWidget * parent):BackendFaust(){
+BackendFaustQT::BackendFaustQT(QWidget * parent):QObject{parent}, BackendFaust(){
     ui = new QTGUI(parent);
+    apiui = new APIUI();
+    this->startTimer(200);
+}
+
+void BackendFaustQT::timerEvent(QTimerEvent *event){
+  if(detectchange.isSomethingChanged()){
+      qDebug("something changed");
+      emit changed();
+    }
 }
 
 bool BackendFaustQT::setCode(QString dspCode, uint sampleRate){
   if(BackendFaust::setCode(dspCode.toStdString())){
       dspInstance->buildUserInterface(ui);
+      dspInstance->buildUserInterface(apiui);
+      detectchange = DetectChange(apiui);
       ui->run();
       dspInstance->init(sampleRate);
       return true;
@@ -97,6 +108,7 @@ bool BackendFaustQT::setCode(QString dspCode, uint sampleRate){
 BackendFaustQT::~BackendFaustQT(){
   ui->stop();
   delete ui;
+  delete apiui;
 }
 
 QWidget * BackendFaustQT::getUI(){

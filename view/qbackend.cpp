@@ -160,19 +160,21 @@ QBackends::QBackends(QWidget * parent)
 }
 
 
-void QBackends::addFaustBackend(){
+BackendFaustQT * QBackends::addFaustBackend(){
   auto b = new BackendFaustQT{this};
   auto bv = new QFaustDsp{b};
   addTab(bv,"faust");
   backends.push_back(bv);
   bv->compile();
+  return b;
 }
 
-void QBackends::addJackBackend(){
+BackendJackQt * QBackends::addJackBackend(){
   auto b = new BackendJackQt;
   auto bv = new QBackendJack{b,this};
   addTab(bv,"jack");
   backends.push_back(bv);
+  return b;
 }
 
 Backend * QBackends::getSelectedBackend(){

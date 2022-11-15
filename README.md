@@ -12,6 +12,13 @@ What's already implemented:
 - temporal response
 - a very poor GUI, sorry
 
+![faust frequency response](./docs/screenshot/impulse_hp_reson.png)
+![distortion of my headphone](./docs/screenshot/beyerdynamics_ecm8000_distortion.png)
+![spectrogram of faust's mono_freeverb](./docs/screenshot/faust_monofreeverb_spectrogram.png)
+
+
+
+
 Soon :
 Regarding UI :
 - better UI

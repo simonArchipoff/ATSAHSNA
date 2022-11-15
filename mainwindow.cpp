@@ -48,12 +48,13 @@ MainWindow::MainWindow(QWidget *parent)
   connect(qResults.data(), &QResults::request_spectrogram,this,
           [this](auto p){this->measure(backends->getSelectedBackend(),p);});
 
-  backends->addFaustBackend();
-  backends->addFaustBackend();
-  backends->addFaustBackend();
+  auto b = backends->addFaustBackend();
   backends->addJackBackend();
-  backends->addJackBackend();
-  backends->addJackBackend();
+
+  /*connect(b,&BackendFaustQT::changed,this,[this](){
+
+    });
+*/
 }
 
 void MainWindow::measure(Backend * b, ParamResponse p){
