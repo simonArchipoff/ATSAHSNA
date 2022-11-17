@@ -2,7 +2,9 @@
 
 This project aims to be a free/libre software to perform accoustical measures.
 
-It's licenced under GPLv3. For now it's under heavy development, you can play with it but please dont build something with it yet.
+It's licenced under GPLv3.
+/!\ For now it's under heavy development, you can play with it but please dont build something with it yet.
+This development is stopped for now as I'll focus on a CLI interface.
 
 What's already implemented:
 - two backend (faust and jackd)
@@ -15,8 +17,6 @@ What's already implemented:
 ![faust frequency response](./docs/screenshot/impulse_hp_reson.png)
 ![distortion of my headphone](./docs/screenshot/beyerdynamics_ecm8000_distortion.png)
 ![spectrogram of faust's mono_freeverb](./docs/screenshot/faust_monofreeverb_spectrogram.png)
-
-
 
 
 Soon :
