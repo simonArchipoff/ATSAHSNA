@@ -1,6 +1,7 @@
 #include "signalAnalysis.h"
+#include <algorithm>
 #include <numeric>
-#include <QDebug>
+
 
 #include <fstream>
 #include <iomanip>
@@ -54,7 +55,7 @@ int compute_delay(const VD & out, const VD & in, int maximum_delay,int size_inpu
   vector<int> idx;
   vector<double> maxs;
   find_maximums(conv_out, idx, maxs,0.99*m);
-  qDebug() << idx;
+  //qDebug() << idx;
   return idx[0] + size_input;
 }
 

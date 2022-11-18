@@ -1,6 +1,6 @@
 #include "signalGeneration.h"
 #include <assert.h>
-#include <QDebug>
+
 
 //I took this
 //https://www.mathcore.com/resources/documents/ie_external_functions.pdf

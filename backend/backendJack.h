@@ -6,11 +6,11 @@
 #include <condition_variable>
 #include <variant>
 #include <optional>
-
+#if 0
 #include <QFuture>
 #include <QDebug>
 #include <QObject>
-
+#endif
 struct RequestMeasure{vector<VD> input;};
 struct RequestPartialOutput{};
 //struct RequestOutput{};
@@ -103,7 +103,7 @@ public:
 
   vector<VD> acquisition(const vector<VD> &input) override;
 
-  QFuture<vector<VD>> acquisition_async(const vector<VD> &input);
+//QFuture<vector<VD>> acquisition_async(const vector<VD> &input);
 
 
 
@@ -214,46 +214,4 @@ protected:
   double outputGain;
   vector<vector<double>> currentInput;
   vector<vector<double>> currentOutput;
-};
-
-
-
-class BackendJackQt : public QObject , public BackendJack {
-  Q_OBJECT
-public:
-  BackendJackQt(){}
-  ~BackendJackQt(){
-  }
-
-  static vector<VD> acquire_output(BackendJackQt *b, const vector<VD> &input);
-  QFuture<vector<VD>> acquisition_async(const vector<VD> &input);
-
-  void setLatency(uint l)  override{
-    BackendJack::setLatency(l);
-    emit new_latency(l);
-  }
-
-  /*
-   * those methods are callbacks
-   */
-  void jack_shutdown() override;
-  void jack_info_shutdown(jack_status_t code, const char *reason) override;
-  int  jack_buffer_size(jack_nframes_t nframes) override;
-  int  jack_samplerate(jack_nframes_t nframes) override;
-  void jack_client_registration (const char *name, int i) override;
-  void jack_port_registration(jack_port_id_t port, int i) override;
-  void jack_port_rename(jack_port_id_t port, const char *old_name, const char *new_name) override;
-  void jack_port_connect(jack_port_id_t a, jack_port_id_t b, int connect) override;
-  int  jack_xrun() override;
-signals:
-  void shutdown();
-  void shutdown_info(QString);
-  void new_latency(uint);
-  void sample_rate_change(uint);
-  void buffer_size_change(uint);
-  void client_registration(QString, bool);
-  void port_registration(int, bool);
-  void port_rename(QString oldname, QString newname, int);
-  void port_connect(int, int, bool);
-  void xrun();
 };

@@ -1,6 +1,6 @@
 #include "acquisition.h"
 #include "signalGeneration.h"
-#include <QDebug>
+
 #include <algorithm>
 
 

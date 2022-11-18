@@ -4,7 +4,7 @@
 #include <fftw3.h>
 #include <iterator>
 #include <numeric>
-#include <QDebug>
+
 FDF FDF::operator+(const FDF &a) const{
   assert(this->sampleRate == a.sampleRate);
   FDF res(*this);

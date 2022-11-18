@@ -5,7 +5,7 @@ pkg_search_module(FFTW REQUIRED fftw3 IMPORTED_TARGET)
 
 find_package(Faust REQUIRED)
 
-set(HEADER_FAUST_QTUI ${FAUST_INCLUDE_DIR}/faust/gui/QTUI.h)
+#set(HEADER_FAUST_QTUI ${FAUST_INCLUDE_DIR}/faust/gui/QTUI.h)
 #set(HEADER_FAUST_QTUI_MOC ${CMAKE_CURRENT_BINARY_DIR}/moc_QTUI.cpp)
 
 #include(CMakePrintHelpers)
@@ -38,9 +38,10 @@ set(BACKEND_SOURCES
 #cmake_print_variables(BACKEND_SOURCES)
 
 
-add_library(backend  ${BACKEND_SOURCES})
-target_include_directories(backend PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(backend PUBLIC Qt${QT_VERSION_MAJOR}::Widgets fftw3 faust jack fCWT)
+add_library(backend ${BACKEND_SOURCES})
+target_include_directories(backend PUBLIC fCWT ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(backend PUBLIC  fCWT)
+
 #find_package(doctest REQUIRED)
 #add_executable(test_signal test.cpp )
 ##signal.h signal.cpp DTF.h DTF.cpp ../constants.h )

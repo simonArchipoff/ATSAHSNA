@@ -3,8 +3,9 @@
 This project aims to be a free/libre software to perform accoustical measures.
 
 It's licenced under GPLv3.
+
 /!\ For now it's under heavy development, you can play with it but please dont build something with it yet.
-This development is stopped for now as I'll focus on a CLI interface.
+
 
 What's already implemented:
 - two backend (faust and jackd)
@@ -12,17 +13,9 @@ What's already implemented:
 - harmonic spectrum, THD computation (THD, THD+N, SNR)
 - wavelet waterfall measures
 - temporal response
-- a very poor GUI, sorry
-
-![faust frequency response](./docs/screenshot/impulse_hp_reson.png)
-![distortion of my headphone](./docs/screenshot/beyerdynamics_ecm8000_distortion.png)
-![spectrogram of faust's mono_freeverb](./docs/screenshot/faust_monofreeverb_spectrogram.png)
 
 
 Soon :
-Regarding UI :
-- better UI
-- reactive interface (temporary bug)
 - export measurements in a bunch of standards files
 - handling of several measures at once
 - less franglish and proper translations
@@ -45,10 +38,6 @@ Later :
 - a full laplace transform backend, with physical measures (?)
 - Some kind of knob-turning algorithm to create model of a measured function (eg, turning a faust equalizer's knobs to flatten a response).
 
-Sooner or later :
-- A headless system to compute data such as THD against power or THD against frequency using external tools
-
-
 to install and try (should works on Arch Linux at least) :
 ```
 git submodule init
@@ -58,7 +47,6 @@ cmake -S . -B build && make -j 8 -C build
 ```
 
 Dependancy:
-* Qt
 * FFTW
 * fCWT (a continuous wavelet lib, in a git submodule, this lib itself also depends on FFTW)
 * Faust

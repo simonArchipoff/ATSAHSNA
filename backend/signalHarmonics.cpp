@@ -1,7 +1,7 @@
 #include "signalHarmonics.h"
 
 #include <algorithm>
-#include <QDebug>
+
 #include <fstream>
 #include <iomanip>
 #include <numeric>
@@ -179,7 +179,7 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
   */
 
   SignalNoiseHarmonics snh(amplitude,imax,smin,smax);
-
+#if 0
   qDebug() << "thd" << snh.thd();
   qDebug() << "thdn" << snh.thdn();
   qDebug() << "snr" <<  snh.snr();
@@ -187,7 +187,7 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
   qDebug() << "s" << snh.s;
   qDebug() << "n" << snh.n;
   qDebug() << "h" << snh.h;
-
+#endif
   // the important part
   vector<double> h_level;
   for(auto & i : slices)

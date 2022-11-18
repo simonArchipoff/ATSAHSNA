@@ -1,20 +1,21 @@
 #include "backendFaust.h"
-
 #include <list>
-#include <QString>
-#include <QTranslator>
 
 BackendFaust::~BackendFaust(){
     delete dspInstance;
     deleteDSPFactory(factory);
 }
 
-bool BackendFaust::setCode(std::string dspCode){
+bool BackendFaust::setCode(std::string dspCode, int sampleRate=DEFAULTSR){
   const char* argv[] = {"--double-precision-floats"};
   const int argc =sizeof(argv)/sizeof(*argv);
   // compiling in memory (createDSPFactoryFromFile could be used alternatively)
   factory = createDSPFactoryFromString("UI", dspCode, argc, argv ,"", errorString,0);
   dspInstance = factory ? factory->createDSPInstance():nullptr;
+  if(dspInstance){
+      dspInstance->buildUserInterface(apiui);
+      dspInstance->init(sampleRate);
+    }
   return dspInstance;
 }
 
@@ -77,51 +78,3 @@ vector<VD> BackendFaust::acquisition(const vector<VD> &in){
   return out;
 }
 
-
-std::list<GUI*> GUI::fGuiList;
-
-BackendFaustQT::BackendFaustQT(QWidget * parent):QObject{parent}, BackendFaust(){
-    ui = new QTGUI(parent);
-    apiui = new APIUI();
-    this->startTimer(200);
-}
-
-void BackendFaustQT::timerEvent(QTimerEvent *event){
-  if(detectchange.isSomethingChanged()){
-      qDebug("something changed");
-      emit changed();
-    }
-}
-
-bool BackendFaustQT::setCode(QString dspCode, uint sampleRate){
-  if(BackendFaust::setCode(dspCode.toStdString())){
-      dspInstance->buildUserInterface(ui);
-      dspInstance->buildUserInterface(apiui);
-      detectchange = DetectChange(apiui);
-      ui->run();
-      dspInstance->init(sampleRate);
-      return true;
-    }
-  return false;
-}
-
-BackendFaustQT::~BackendFaustQT(){
-  ui->stop();
-  delete ui;
-  delete apiui;
-}
-
-QWidget * BackendFaustQT::getUI(){
-    return ui;
-}
-
-std::variant<BackendFaustQT *, QString>
-create_faust_qt(QString dspCode, int sampleRate, QWidget * parent){
-    auto tmp = new BackendFaustQT(parent);
-    tmp->setCode(dspCode, sampleRate);
-    if(tmp->isReady())
-        return dsp_or_error{tmp};
-    QString s = QString::fromStdString(tmp->getErrorMessage());
-    delete tmp;
-    return dsp_or_error{s};
-}

@@ -2,7 +2,6 @@
 
 #include <fcwt.h>
 
-#include <QDebug>
 
 ResultSpectrogram spectrogram(const std::vector<double> &data
                               ,int nb_octaves

@@ -1,16 +1,11 @@
 #pragma once
-#include "qobjectdefs.h"
-#define FAUSTFLOAT double
-#include <QWidget>
 
+#define FAUSTFLOAT double
 #include <faust/dsp/llvm-dsp.h>
-#include <faust/gui/QTUI.h>
+#include <cstring> //missing header in APIUI.h
 #include <faust/gui/APIUI.h>
 
 #include "backend.h"
-
-
-
 
 
 class BackendFaust : public Backend
@@ -23,18 +18,15 @@ public:
     bool isReady() const override;
     vector<VD> acquisition(const vector<VD> &input) override;
 
-protected:
     BackendFaust() = default;
     ~BackendFaust();
-    bool setCode(std::string dspCode);
+    bool setCode(std::string dspCode,int sampleRate);
+protected:
     dsp * dspInstance;
+    APIUI * apiui;
     std::string errorString;
     llvm_dsp_factory * factory;
 };
-
-
-
-
 
 
 class DetectChange {
@@ -61,28 +53,3 @@ private:
   vector<double> ref;
 };
 
-
-class BackendFaustQT :  public QObject, public BackendFaust {
-  Q_OBJECT
-public:
-    BackendFaustQT(QWidget * parent=nullptr);
-    ~BackendFaustQT();
-
-    bool setCode(QString dspCode, uint sampleRate);
-    QWidget * getUI();
-    void timerEvent(QTimerEvent *event) override;
-signals:
-    void changed();
-
-protected:
-    QTGUI * ui;
-    APIUI * apiui;
-    DetectChange detectchange;
-};
-
-
-
-typedef std::variant<BackendFaustQT *, QString> dsp_or_error;
-
-dsp_or_error
-create_faust_qt(QString dspCode, int sampleRate, QWidget * parent=nullptr);

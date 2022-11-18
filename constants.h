@@ -7,7 +7,6 @@
 
 typedef enum {CHIRP, IMPULSE} signal_gen_type;
 
-
 using std::vector;
 using std::complex;
 
