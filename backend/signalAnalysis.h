@@ -25,7 +25,6 @@ struct MeasureData{
 };
 
 
-
 //naive implementation for finding k in v
 VD convolution(const VD &v, uint start, uint size,
                const VD &k, uint kstart, uint ksize);

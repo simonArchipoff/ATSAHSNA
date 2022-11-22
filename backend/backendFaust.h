@@ -8,19 +8,31 @@
 #include "backend.h"
 
 
-class BackendFaust : public Backend
-{
+
+
+struct ParamFaust {
+  std::string file_or_code;
+  uint sample_rate;
+  std::vector<std::pair<std::string,double>> params;
+};
+
+
+class BackendFaust : public Backend {
 public:
     std::string getErrorMessage();
     uint numberInput()   const override;
     uint numberOutput()  const override;
     uint getSampleRate() const override;
-    bool isReady() const override;
+    bool isReady()       const override;
     vector<VD> acquisition(const vector<VD> &input) override;
 
     BackendFaust() = default;
     ~BackendFaust();
     bool setCode(std::string dspCode,int sampleRate);
+
+    //if something goes wrong APIUI write something on stderr
+    void setParamValue(std::string name, FAUSTFLOAT value);
+
 protected:
     dsp * dspInstance;
     APIUI * apiui;

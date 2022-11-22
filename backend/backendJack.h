@@ -6,11 +6,22 @@
 #include <condition_variable>
 #include <variant>
 #include <optional>
-#if 0
-#include <QFuture>
-#include <QDebug>
-#include <QObject>
-#endif
+
+
+using std::vector;
+using std::string;
+
+
+
+struct ParamJack {
+  int numberInput;
+  int numberOutput;
+  vector<string> connectInputs;
+  vector<string> connectOutputs;
+  //vector<string> outputNames;
+};
+
+
 struct RequestMeasure{vector<VD> input;};
 struct RequestPartialOutput{};
 //struct RequestOutput{};
@@ -22,8 +33,6 @@ struct PartialOutput{vector<VD> output;};
 struct Output {vector<VD> output;};
 typedef std::variant<PartialOutput,Output> response;
 
-
-using std::vector;
 
 class BackendJack : public Backend
 {

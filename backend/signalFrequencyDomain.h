@@ -44,9 +44,7 @@ public:
     vector <double> getPhase() const;
     vector <double> getFrequency() const;
 
-
     //std::tuple<VD,VD,VD> getDecimatedAmplitude20log10PhaseFrequency(int step) const;
-
 
     double getMaxAmplitude() const;
     double getMinAmplitude() const;
@@ -79,8 +77,6 @@ public:
 protected:
   VD amplitude,phase,frequency;
 };
-
-
 
 FDF compute_TF_FFT(const VD  &input, const VD  &output,int sampleRate);
 FDF compute_TF_FFT(const VCD &input, const VCD &output,int sampleRate);

@@ -9,6 +9,7 @@
 struct ParamSpectrogram : ParamResponse {
   int nb_octave;
   int resolution;
+  double duration;
 };
 
 struct ResultSpectrogram{

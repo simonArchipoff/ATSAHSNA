@@ -3,11 +3,12 @@
 #include "signalAnalysis.h"
 #include "signalFrequencyDomain.h"
 #include "../constants.h"
+
 struct ParamResponse {
-  int freqMin;
-  int freqMax;
+  int freqMin = 20;
+  int freqMax = 20000;
   signal_gen_type mode;
-  double duration = 0.0;
+  double duration=0.0;
 };
 
 struct ResultResponse {
@@ -15,7 +16,6 @@ struct ResultResponse {
   ParamResponse params;
   MeasureData raw_data;
 };
-
 
 FDF computeResponse(const VD & input, const VD & output, int sampleRate);
 

@@ -12,7 +12,6 @@ find_package(Faust REQUIRED)
 set(BACKEND_SOURCES
     ${HEADER_FAUST_QTUI}
     backend.h
-    backend.cpp
     backendFaust.h
     backendFaust.cpp
     backendJack.h

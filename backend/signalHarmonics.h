@@ -4,8 +4,8 @@
 #include "signalAnalysis.h"
 
 struct ParamTHD {
-  double frequency, duration;
-  double freqMin, freqMax;
+  double frequency = 1000, duration=1;
+  double freqMin=20, freqMax=20000;
   double gain = 1;
 };
 

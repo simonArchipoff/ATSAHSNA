@@ -4,6 +4,7 @@
 #include <complex>
 
 #define APPNAME "ATSAHSNA"
+#define APPVERS "0.0.1"
 
 typedef enum {CHIRP, IMPULSE} signal_gen_type;
 

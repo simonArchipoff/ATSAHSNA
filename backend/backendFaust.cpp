@@ -11,7 +11,7 @@ bool BackendFaust::setCode(std::string dspCode, int sampleRate=DEFAULTSR){
   const int argc =sizeof(argv)/sizeof(*argv);
   // compiling in memory (createDSPFactoryFromFile could be used alternatively)
   factory = createDSPFactoryFromString("UI", dspCode, argc, argv ,"", errorString,0);
-  dspInstance = factory ? factory->createDSPInstance():nullptr;
+  dspInstance = factory ? factory->createDSPInstance() : nullptr;
   if(dspInstance){
       dspInstance->buildUserInterface(apiui);
       dspInstance->init(sampleRate);
@@ -36,6 +36,11 @@ uint BackendFaust::numberInput()const {
 }
 uint BackendFaust::numberOutput() const{
   return dspInstance->getNumOutputs();
+}
+
+void BackendFaust::setParamValue(std::string name, FAUSTFLOAT value){
+  assert(dspInstance);
+  apiui->setParamValue(name.c_str(),value);
 }
 
 vector<VD> BackendFaust::acquisition(const vector<VD> &in){
