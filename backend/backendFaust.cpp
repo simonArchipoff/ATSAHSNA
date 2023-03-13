@@ -1,20 +1,55 @@
 #include "backendFaust.h"
+#include <faust/dsp/llvm-dsp.h>
 #include <list>
+#include <iostream>
+
 
 BackendFaust::~BackendFaust(){
     delete dspInstance;
     deleteDSPFactory(factory);
 }
 
-bool BackendFaust::setCode(std::string dspCode, int sampleRate=DEFAULTSR){
+
+inline bool file_exists (const std::string& name) {
+    if (FILE *file = fopen(name.c_str(), "r")) {
+        fclose(file);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+BackendFaust * make_faust_backend(ParamFaust p){
+  BackendFaust * f = new BackendFaust();
+  f->setCode(p.file_or_code,p.sample_rate);
+  if(f->isReady()){
+      for(auto & p : p.params){
+          f->setParamValue(p.first,p.second);
+        }
+      return f;
+    } else {
+      std::cerr << f->getErrorMessage() << std::endl;
+      delete f;
+      return nullptr;
+    }
+
+}
+
+
+
+bool BackendFaust::setCode(std::string dspCode_or_file, int sampleRate=DEFAULTSR){
   const char* argv[] = {"--double-precision-floats"};
-  const int argc =sizeof(argv)/sizeof(*argv);
+  const int argc = sizeof(argv)/sizeof(*argv);
   // compiling in memory (createDSPFactoryFromFile could be used alternatively)
-  factory = createDSPFactoryFromString("UI", dspCode, argc, argv ,"", errorString,0);
+
+  factory = file_exists(dspCode_or_file) ?
+         createDSPFactoryFromFile(dspCode_or_file, argc, argv ,"", errorString,0)
+      :  createDSPFactoryFromString("", dspCode_or_file, argc, argv ,"", errorString,0);
+
   dspInstance = factory ? factory->createDSPInstance() : nullptr;
   if(dspInstance){
-      dspInstance->buildUserInterface(apiui);
       dspInstance->init(sampleRate);
+      dspInstance->buildUserInterface(&apiui);
     }
   return dspInstance;
 }
@@ -40,7 +75,7 @@ uint BackendFaust::numberOutput() const{
 
 void BackendFaust::setParamValue(std::string name, FAUSTFLOAT value){
   assert(dspInstance);
-  apiui->setParamValue(name.c_str(),value);
+  apiui.setParamValue(name.c_str(),value);
 }
 
 vector<VD> BackendFaust::acquisition(const vector<VD> &in){

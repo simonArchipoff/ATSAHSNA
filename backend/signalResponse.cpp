@@ -1,9 +1,15 @@
 #include "signalResponse.h"
+#include "signalGeneration.h"
 
-
-
-FDF computeResponse(const VD & input, const VD & output, int sampleRate){
-  return compute_TF_FFT(input,output,sampleRate);
+VD ImpulseResponse::generate_data(Param p, uint sampleRate){
+  return chirp(p.freqMin, p.freqMax, 100./p.freqMin, sampleRate);
 }
 
 
+ResultResponse ImpulseResponse::computeResult(const VD & out ,
+                                              ParamResponse p,
+                                              uint sampleRate){
+  auto i = generate_data(p,sampleRate);
+  return {.response = compute_TF_FFT(i,out,sampleRate)
+                     ,.params = p};
+}

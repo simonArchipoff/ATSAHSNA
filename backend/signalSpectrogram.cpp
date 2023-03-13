@@ -46,7 +46,7 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
       , false);
 
 
-  struct ResultSpectrogram res{
+  ResultSpectrogram res {
      .duration = static_cast<double>(n) / fs
     ,.max_idx_time_rank = n
     ,.max_freq_rank = f

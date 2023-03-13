@@ -21,7 +21,6 @@ struct ResultSpectrogram{
     return data[freq_rank * max_idx_time_rank + time_rank];
   }
 
-  MeasureData raw_data;
   std::vector<double> data;
   std::vector<double> frequencies;
 };

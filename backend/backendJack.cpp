@@ -1,13 +1,15 @@
 #include "backendJack.h"
-#include "signalAnalysis.h"
+
 #include "../constants.h"
 
 #include <jack/types.h>
 #include <jack/jack.h>
 #include <mutex>
 #include <stdio.h>
-#include <algorithm>
+
+#include <chrono>
 #include <thread>
+
 
 //#include <QtConcurrent/QtConcurrent>
 
@@ -93,7 +95,6 @@ void * BackendJack::audio_thread(void * arg){
         }
 
       jack_cycle_signal(jb->client,0);
-
     }
 }
 
@@ -176,24 +177,7 @@ void BackendJack::sendOutput(){
   status = Waiting;
 }
 
-void pad_right_0(uint n, vector<VD> & in){
-  for(auto &i : in){
-      i.resize(i.size()+n,0.0);
-    }
-}
 
-void remove_left(uint n, vector<VD> & in){
-  for(auto &i : in){
-      std::rotate(i.begin(), i.begin() + n, i.end());
-      i.resize(i.size()-n);
-    }
-}
-void remove_right(uint n, vector<VD> & in){
-  for(auto &i : in){
-      //std::rotate(i.rbegin(), i.rbegin() + n, i.rend());
-      i.resize(i.size() - n);
-    }
-}
 
 
 vector<VD> BackendJack::acquisition(const vector<VD> &input){
@@ -201,33 +185,14 @@ vector<VD> BackendJack::acquisition(const vector<VD> &input){
     return input;
   lock.lock();
   auto in = vector{input};
-  auto l = getLatencySample();
-  auto foo = 10000;
-  if(latency_automatic){
-      pad_right_0(foo,in);
-    }else{
-      pad_right_0(l,in);
-    }
-
   requestMeasure(in);
-
   do{
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
       //QThread::msleep(100);
       auto r  = tryGetOutput();
       if(r.has_value()){
           auto out = r.value();
-
           lock.unlock();
-          if(latency_automatic) {
-              auto delay = compute_delay(out[0],in[0],10000,1024);
-              setLatency(delay);
-              //qDebug() << "computed latency" <<delay;
-              remove_left(delay,out);
-              remove_right(foo-delay,out);
-            }else {
-              remove_left(l,out);
-            }
-
           return out;
         }
     }while(true);

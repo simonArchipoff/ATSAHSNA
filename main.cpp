@@ -16,10 +16,10 @@
 #include <signalSpectrogram.h>
 
 
+#include <matplot/matplot.h>
+
 struct OptionsParser : private QCommandLineParser{
 public:
-
-
   OptionsParser(QStringList arguments){
     this->arguments = arguments;
     addHelpOption();
@@ -28,26 +28,30 @@ public:
     addPositionalArgument("backend", "backend to measure <jack|faust program [arg1=val1...]>");
     parse(arguments);
     const QStringList args = positionalArguments();
-    command = args.isEmpty() ? QString() : args.first();
-    backend = args.size() < 2 ? QString() : args[1];
+    auto command = args.isEmpty() ? QString() : args.first();
+    auto backend = args.size() < 2 ? QString() : args[1];
+
+
     if(command == "response"){
         addOptions(response_options);
-
+        computation = RESPONSE;
       } else if(command == "distortion") {
         addOptions(distortion_option);
-
+        computation = HARMONICS;
       } else if(command == "spectrogram") {
         addOptions(spectrogram_option);
-
+        computation = SPECTROGRAM;
       } else {
         showHelp();
       }
+
+
     if(backend == "jack"){
         addOptions(jack_options);
-
+        this->backend = JACK;
       } else if(backend == "faust" && args.size() >= 3){
         addOptions(faust_options);
-
+        this->backend = FAUST;
       } else {
         showHelp();
       }
@@ -58,14 +62,12 @@ public:
         addPositionalArgument("faust_program","");
       }
     process(arguments);
-
   }
 
   bool getParamBackend(ParamFaust * paramfaust){
-    assert(backend != "");
     bool success=true;
     bool tmp;
-    if(backend == "faust"){
+    if(backend == FAUST){
         auto pos_arg = positionalArguments();
         assert(!pos_arg.empty());
         std::vector<std::pair<std::string,double>> params;
@@ -101,24 +103,20 @@ public:
   }
 
 
-
+/*
   bool getParamComputation(){
-    assert(command != "");
-    if(command == "response" || command == "spectrogram"){
-
-
-
-      }else if(command == "distortion"){
-
+    assert(command != UNDEFCOMPUTATION);
+    if(command == RESPONSE) {
+      }else if(command == SPECTROGRAM){
+      }else if(command == HARMONICS){
       }
     abort();
-  }
-
+  }*/
+  backend_type backend = UNDEFBACKEND;
+  signal_gen_type gen_type = CHIRP;
+  computation_type computation = UNDEFCOMPUTATION;
 
 protected:
-
-  QString command;
-  QString backend;
   QStringList arguments;
 
   QCommandLineOption faust_samplerate{"sample-rate","faust samplerate in FPS","samplerate","44100"};
@@ -159,7 +157,24 @@ int main(int argc, char *argv[]){
   ParamFaust f;
   o.getParamBackend(&f);
 
+  Backend * b;
+  if(o.backend == FAUST){
+    b = make_faust_backend(f);
+    }
+  if(o.computation == RESPONSE) {
+    ParamResponse p;
+    auto r = compute<ImpulseResponse>(b, p);
+    using namespace matplot;
+    for(auto & o : r){
+        FDFLOG foo(o.response);
+        auto p = semilogx(foo.getFrequency(), foo.getAmplitude20log10());
+        hold(true);
+        auto p2 = semilogx(foo.getFrequency(), foo.getPhase())->color(p->color()).use_y2(true);
+        break;
+      }
 
+    show();
+    }
 
 
   return 0;

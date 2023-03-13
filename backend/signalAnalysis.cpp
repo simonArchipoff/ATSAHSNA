@@ -50,7 +50,7 @@ int compute_delay(const VD & out, const VD & in, int maximum_delay,int size_inpu
   for (const auto &e : conv_out)
     outFile <<  std::setprecision(17) << std::setw(25) << e << "\n";
   for(auto & i : conv_out)
-    i = abs(i);
+    i = std::abs(i);
   double m = *std::max_element(conv_out.begin(), conv_out.end());
   vector<int> idx;
   vector<double> maxs;
@@ -72,7 +72,6 @@ double stddev(const VD & v){
         [m](double const & x, double const & y) { return (x - m)*(y - m); });
     return std::sqrt(sq_sum / v.size());
 }
-
 
 VD try_make_phase_continuous(const VD &v){
   vector<double> res = VD{v};

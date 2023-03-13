@@ -7,15 +7,20 @@
 struct ParamResponse {
   int freqMin = 20;
   int freqMax = 20000;
-  signal_gen_type mode;
-  double duration=0.0;
 };
 
 struct ResultResponse {
   FDF response;
   ParamResponse params;
-  MeasureData raw_data;
 };
 
-FDF computeResponse(const VD & input, const VD & output, int sampleRate);
 
+struct ImpulseResponse{
+  typedef struct ParamResponse Param;
+  typedef struct ResultResponse Result;
+  VD generate_data(Param p, uint sampleRate);
+  Result computeResult(const VD & out, Param p, uint sampleRate);
+};
+
+
+FDF computeResponse(const VD & input, const VD & output, int sampleRate);

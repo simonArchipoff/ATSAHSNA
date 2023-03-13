@@ -7,6 +7,31 @@
 #include <numeric>
 
 
+
+/*
+vector<ResultTHD> ComputeSinResponse::compute(Backend * b, ParamTHD p){
+  auto in = chirp(p.frequency, p.frequency, p.duration, b->getSampleRate());
+  vector<VD> input;
+  for(uint i = 0; i<b->numberInput(); i++){
+      input.push_back(in);
+    }
+  input = b->latency->preprocess_inputs(input);
+  auto output = b->acquisition(input);
+  auto pair = b->latency->post_process(input,output);
+  input = pair.first;
+  output = pair.second;
+  vector<struct ResultTHD> res;
+  for(auto &o : output){
+      assert(input[0].size() == o.size());
+      auto tmp = computeTHD(p, o, b->getSampleRate());
+      res.push_back(tmp);
+    }
+  return res;
+}
+*/
+
+
+
 class KahanSum {
 public:
   KahanSum():sum(0.0),c(0.0){}
@@ -148,7 +173,7 @@ public:
 
 
 
-ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
+ResultHarmonics computeTHD(const ParamHarmonics p, const VD& signal, int sampleRate){
   assert(p.duration > 0 && p.freqMin <= p.frequency && p.frequency <= p.freqMax);
   assert(signal.size() > 1);
 
@@ -196,7 +221,7 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
   /*for(auto &i : signalfft)
     i /= 0.5*signalfft.size();
 */
-  return ResultTHD {
+  return ResultHarmonics {
       .harmonicSpectrum = FDF(signalfft,sampleRate)
       ,.thdNoiseRate = snh.thdn()
       ,.thdRate = snh.thd()
@@ -204,8 +229,6 @@ ResultTHD computeTHD(const ParamTHD p, const VD& signal, int sampleRate){
 //      ,.sinad = snh.sinad()
       ,.harmonicsLevel = h_level
       ,.params = p
-      ,.raw_data = MeasureData { .inputs  = vector<VD>({}),
-                                 .outputs = vector({signal})}
     };
   //return sqrt(e_tot_wo_h1) / sqrt(e_tot_wo_h1 + eh1 * eh1);
 }

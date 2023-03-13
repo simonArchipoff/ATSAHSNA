@@ -12,6 +12,7 @@ find_package(Faust REQUIRED)
 set(BACKEND_SOURCES
     ${HEADER_FAUST_QTUI}
     backend.h
+    backend.cpp
     backendFaust.h
     backendFaust.cpp
     backendJack.h
@@ -28,9 +29,7 @@ set(BACKEND_SOURCES
     signalSpectrogram.cpp
     concurrentqueue.h
     signalFrequencyDomain.cpp
-    signalFrequencyDomain.h
-    acquisition.h
-    acquisition.cpp)
+    signalFrequencyDomain.h)
 
 
 
@@ -39,7 +38,7 @@ set(BACKEND_SOURCES
 
 add_library(backend ${BACKEND_SOURCES})
 target_include_directories(backend PUBLIC fCWT ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(backend PUBLIC  fCWT)
+target_link_libraries(backend PUBLIC faust jack fftw3 fCWT)
 
 #find_package(doctest REQUIRED)
 #add_executable(test_signal test.cpp )

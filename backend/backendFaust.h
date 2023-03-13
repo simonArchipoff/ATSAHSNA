@@ -10,11 +10,15 @@
 
 
 
+
+
 struct ParamFaust {
   std::string file_or_code;
   uint sample_rate;
   std::vector<std::pair<std::string,double>> params;
 };
+
+
 
 
 class BackendFaust : public Backend {
@@ -26,7 +30,7 @@ public:
     bool isReady()       const override;
     vector<VD> acquisition(const vector<VD> &input) override;
 
-    BackendFaust() = default;
+    BackendFaust(){};
     ~BackendFaust();
     bool setCode(std::string dspCode,int sampleRate);
 
@@ -35,11 +39,12 @@ public:
 
 protected:
     dsp * dspInstance;
-    APIUI * apiui;
+    APIUI  apiui;
     std::string errorString;
     llvm_dsp_factory * factory;
 };
 
+BackendFaust * make_faust_backend(ParamFaust p);
 
 class DetectChange {
 public:
