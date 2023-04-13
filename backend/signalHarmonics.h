@@ -1,7 +1,6 @@
 #pragma once
 
 #include "signalFrequencyDomain.h"
-#include "signalAnalysis.h"
 
 struct ParamHarmonics {
   double frequency = 1000, duration=1;

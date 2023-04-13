@@ -60,7 +60,7 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
       res.frequencies[ (f - 1) - i] =  fs/pow(2, 1+(double(i+start_octave_pow-1) / nsuboctaves));
     }
 
-  assert(tfm.size() / 2 == n*f);
+  assert(tfm.size() / 2 == (uint) n*f);
   res.data.resize(n*f);
 
   //flip matrix and compute abs value

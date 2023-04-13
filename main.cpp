@@ -16,8 +16,6 @@
 #include <signalSpectrogram.h>
 
 
-#include <matplot/matplot.h>
-
 struct OptionsParser : private QCommandLineParser{
 public:
   OptionsParser(QStringList arguments){
@@ -78,8 +76,6 @@ public:
             auto v = s[1].toDouble(&tmp);
             success |= tmp;
             params.push_back(std::pair{a,v});
-            qDebug() << s[0];
-            qDebug() << v;
           }
         paramfaust->file_or_code = arguments[3].toStdString();
         paramfaust->params = params;
@@ -146,9 +142,6 @@ protected:
 };
 
 
-
-
-
 int main(int argc, char *argv[]){
   QCoreApplication app(argc, argv);
   QCoreApplication::setApplicationName(APPNAME);
@@ -164,18 +157,10 @@ int main(int argc, char *argv[]){
   if(o.computation == RESPONSE) {
     ParamResponse p;
     auto r = compute<ImpulseResponse>(b, p);
-    using namespace matplot;
     for(auto & o : r){
         FDFLOG foo(o.response);
-        auto p = semilogx(foo.getFrequency(), foo.getAmplitude20log10());
-        hold(true);
-        auto p2 = semilogx(foo.getFrequency(), foo.getPhase())->color(p->color()).use_y2(true);
         break;
       }
-
-    show();
     }
-
-
   return 0;
 }

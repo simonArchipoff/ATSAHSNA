@@ -3,6 +3,7 @@
 #include <complex>
 #include <vector>
 #include <cassert>
+#include "../constants.h"
 
 using std::complex;
 using std::vector;
@@ -11,8 +12,6 @@ using std::vector;
 #define ZEROISH (1e-20)
 #endif
 
-typedef vector<complex<double>> VCD;
-typedef vector<double> VD;
 
 //Frequency Domain Function
 //map frequency to complex
