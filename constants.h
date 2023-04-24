@@ -2,14 +2,14 @@
 
 #include <vector>
 #include <complex>
+#include <algorithm>
 
 #define APPNAME "ATSAHSNA"
 #define APPVERS "0.0.1"
 
-typedef enum {UNDEFSIGNAL, CHIRP, IMPULSE} signal_gen_type;
-typedef enum {UNDEFBACKEND, FAUST, JACK} backend_type;
-typedef enum {UNDEFCOMPUTATION, RESPONSE, HARMONICS, SPECTROGRAM} computation_type;
-
+enum signal_gen_type {UNDEFSIGNAL, CHIRP, IMPULSE};
+enum backend_type {UNDEFBACKEND, FAUST, JACK};
+enum computation_type {UNDEFCOMPUTATION, RESPONSE, HARMONICS, SPECTROGRAM};
 
 using std::vector;
 using std::complex;
@@ -26,3 +26,5 @@ typedef vector<double> VD;
 #define MINFREQ 1
 
 #define DEFAULTSR 44100
+
+

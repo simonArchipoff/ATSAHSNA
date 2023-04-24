@@ -1,7 +1,6 @@
 
 find_package(PkgConfig)
 pkg_check_modules(JACK REQUIRED jack)
-pkg_search_module(FFTW REQUIRED fftw3 IMPORTED_TARGET)
 
 find_package(Faust REQUIRED)
 
@@ -15,21 +14,10 @@ set(BACKEND_SOURCES
     backend.cpp
     backendFaust.h
     backendFaust.cpp
+    concurrentqueue.h
     backendJack.h
     backendJack.cpp
-    signalAnalysis.h
-    signalAnalysis.cpp
-    signalGeneration.h
-    signalGeneration.cpp
-    signalHarmonics.h
-    signalHarmonics.cpp
-    signalResponse.h
-    signalResponse.cpp
-    signalSpectrogram.h
-    signalSpectrogram.cpp
-    concurrentqueue.h
-    signalFrequencyDomain.cpp
-    signalFrequencyDomain.h)
+)
 
 
 
@@ -37,21 +25,6 @@ set(BACKEND_SOURCES
 
 
 add_library(backend ${BACKEND_SOURCES})
-target_include_directories(backend PUBLIC fCWT ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(backend PUBLIC faust jack fftw3 fCWT)
+target_include_directories(backend PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(backend PUBLIC faust jack)
 
-#find_package(doctest REQUIRED)
-#add_executable(test_signal test.cpp )
-##signal.h signal.cpp DTF.h DTF.cpp ../constants.h )
-##target_compile_features(test_signal PRIVATE cxx_std_20)
-#target_link_libraries(test_signal transfer_function fftw3)
-#
-#if(0)
-#set(TF_SOURCES
-#    ${CMAKE_CURRENT_SOURCE_DIR}/DTF.h
-#    ${CMAKE_CURRENT_SOURCE_DIR}/measure.h
-#    ${CMAKE_CURRENT_SOURCE_DIR}/DTF.cpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/measure.cpp
-#    PARENT_SCOPE)
-#endif()
-##cmake_print_variables(BACKEND_SOURCES)

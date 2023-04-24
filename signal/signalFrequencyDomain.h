@@ -8,10 +8,6 @@
 using std::complex;
 using std::vector;
 
-#ifndef ZEROISH
-#define ZEROISH (1e-20)
-#endif
-
 
 //Frequency Domain Function
 //map frequency to complex
@@ -22,8 +18,8 @@ public:
     FDF();
     FDF(const FDF&) = default;
     FDF(const vector<complex<double>> &v, uint sampleRate):response(v),
-                                                          sampleRate(sampleRate),
-                                                          f1(sampleRate / ((double) response.size())){}
+        sampleRate(sampleRate),
+        f1(sampleRate / ((double) response.size())){}
     //DTF(const DTF&&) = default;
 
     FDF operator+(const FDF &a) const;
@@ -33,15 +29,15 @@ public:
     FDF neutralAdd() const ;
     FDF neutralMult() const;
 
-    const vector<complex<double>> & getResponse() const;
+    const VCD & getResponse() const;
 
     void setSampleRate(uint sr);
     uint getSampleRate() const;
 
-    vector <double> getAmplitude() const;
-    vector <double> getAmplitude20log10() const;
-    vector <double> getPhase() const;
-    vector <double> getFrequency() const;
+    VD getAmplitude() const;
+    VD getAmplitude20log10() const;
+    VD getPhase() const;
+    VD getFrequency() const;
 
     //std::tuple<VD,VD,VD> getDecimatedAmplitude20log10PhaseFrequency(int step) const;
 
@@ -54,7 +50,7 @@ public:
     VD frequencyDomainTotemporal() const;
     FDF reduce(uint factor) const;
 protected:
-    vector<complex<double>> response;
+    VCD response;
     uint sampleRate;
     double f1;
 };
@@ -62,19 +58,19 @@ protected:
 
 class FDFLOG{
 public:
-  FDFLOG(const FDFLOG &) = default;
-  FDFLOG(const FDF&,uint base = 10);
+    FDFLOG(const FDFLOG &) = default;
+    FDFLOG(const FDF&,uint base = 10);
 
-  VD getAmplitude() const;
-  VD getAmplitude20log10() const;
-  VD getPhase() const;
-  VD getFrequency() const;
+    VD getAmplitude() const;
+    VD getAmplitude20log10() const;
+    VD getPhase() const;
+    VD getFrequency() const;
 
-  void trimLF(double f);
-  void trimHF(double f);
+    void trimLF(double f);
+    void trimHF(double f);
 
 protected:
-  VD amplitude,phase,frequency;
+    VD amplitude,phase,frequency;
 };
 
 FDF compute_TF_FFT(const VD  &input, const VD  &output,int sampleRate);

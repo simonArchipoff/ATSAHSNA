@@ -151,12 +151,16 @@ int main(int argc, char *argv[]){
   o.getParamBackend(&f);
 
   Backend * b;
-  if(o.backend == FAUST){
+  switch(o.backend){
+  case FAUST:
     b = make_faust_backend(f);
-    }
+    break;
+  case JACK:
+    break;
+  }
   if(o.computation == RESPONSE) {
     ParamResponse p;
-    auto r = compute<ImpulseResponse>(b, p);
+   auto r = compute<ImpulseResponse>(b, p);
     for(auto & o : r){
         FDFLOG foo(o.response);
         break;

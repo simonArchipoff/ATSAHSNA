@@ -8,7 +8,21 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra -Wno-unused-parameter")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra")
+
+
+
+Include(FetchContent)
+
+FetchContent_Declare(
+  Catch2
+  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+  GIT_TAG        v3.3.2 # or a later release
+)
+FetchContent_MakeAvailable(Catch2)
+
+#find_package(Catch2 2 REQUIRED)
+
 
 
 include(CMakePrintHelpers)
@@ -23,9 +37,15 @@ qt_standard_project_setup()
 
 add_subdirectory(third_party/fCWT_wrapper)
 add_subdirectory(backend)
+add_subdirectory(signal)
+
+add_executable(tests test_helpers.cpp signal/test_signal.cpp )
+target_link_libraries(tests PRIVATE signal Catch2::Catch2WithMain)
+
 
 set(PROJECT_SOURCES
         constants.h
+        helpers.h
         main.cpp
         ${TF_SOURCES}
         ${TS_FILES}
@@ -34,7 +54,7 @@ set(PROJECT_SOURCES
 
 add_executable(ATSAHSNA ${PROJECT_SOURCES})
 
-target_link_libraries(ATSAHSNA PRIVATE Qt6::Core tbb fCWT backend) #I dont know what uses tbb, fcwt probably
+target_link_libraries(ATSAHSNA PRIVATE Qt6::Core tbb fCWT backend signal) #I dont know what uses tbb, fcwt probably
 
 
 

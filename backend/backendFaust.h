@@ -9,17 +9,11 @@
 
 
 
-
-
-
 struct ParamFaust {
-  std::string file_or_code;
-  uint sample_rate;
-  std::vector<std::pair<std::string,double>> params;
+    std::string file_or_code;
+    uint sample_rate;
+    std::vector<std::pair<std::string,double>> params;
 };
-
-
-
 
 class BackendFaust : public Backend {
 public:
@@ -29,13 +23,17 @@ public:
     uint getSampleRate() const override;
     bool isReady()       const override;
     vector<VD> acquisition(const vector<VD> &input) override;
+    double linearZone() const override{
+        return 0.0;
+    }
 
-    BackendFaust(){};
+    BackendFaust(){}
     ~BackendFaust();
     bool setCode(std::string dspCode,int sampleRate);
 
     //if something goes wrong APIUI write something on stderr
     void setParamValue(std::string name, FAUSTFLOAT value);
+
 
 protected:
     dsp * dspInstance;
@@ -48,25 +46,25 @@ BackendFaust * make_faust_backend(ParamFaust p);
 
 class DetectChange {
 public:
-  DetectChange(){};
-  DetectChange(APIUI*ui){
-    for(int i = 0; i < ui->getParamsCount(); i++){
-        faustZones.push_back(ui->getParamZone(i));
-        ref.push_back(ui->getParamValue(i));
-      }
-  }
+    DetectChange(){}
+    DetectChange(APIUI*ui){
+        for(int i = 0; i < ui->getParamsCount(); i++){
+            faustZones.push_back(ui->getParamZone(i));
+            ref.push_back(ui->getParamValue(i));
+        }
+    }
 
-  bool isSomethingChanged(){
-    bool changed=false;
-    for(uint i = 0; i<faustZones.size(); i++){
-        changed |= *faustZones[i] != ref[i];
-        ref[i] = *faustZones[i];
-      }
-    return changed;
-  }
+    bool isSomethingChanged(){
+        bool changed=false;
+        for(uint i = 0; i<faustZones.size(); i++){
+            changed |= *faustZones[i] != ref[i];
+            ref[i] = *faustZones[i];
+        }
+        return changed;
+    }
 
 private:
-  vector<double *> faustZones;
-  vector<double> ref;
+    vector<double *> faustZones;
+    vector<double> ref;
 };
 

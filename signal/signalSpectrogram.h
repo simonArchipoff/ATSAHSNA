@@ -7,22 +7,22 @@
 
 
 struct ParamSpectrogram : ParamResponse {
-  int nb_octave;
-  int resolution;
-  double duration;
+    int nb_octave;
+    int resolution;
+    double duration;
 };
 
 struct ResultSpectrogram{
-  double duration;
-  int max_idx_time_rank;
-  int max_freq_rank;
+    double duration;
+    int max_idx_time_rank;
+    int max_freq_rank;
 
-  double at(int freq_rank, int time_rank) const {
-    return data[freq_rank * max_idx_time_rank + time_rank];
-  }
+    double at(int freq_rank, int time_rank) const {
+        return data[freq_rank * max_idx_time_rank + time_rank];
+    }
 
-  std::vector<double> data;
-  std::vector<double> frequencies;
+    std::vector<double> data;
+    std::vector<double> frequencies;
 };
 
 
