@@ -8,7 +8,7 @@
 #include <fstream>
 #include <iomanip>
 
-double window_sample(const enum window_type t, double s){
+inline double window_sample(const enum window_type t, double s){
     double a0 = 0.53836;
     double a1 = 0.46164; // hamming parameters
     switch(t){
@@ -45,10 +45,11 @@ VD window(uint size, window_type t){
 
 VD correlation(const VD &v, uint start, uint size,
                const VD &k, uint kstart, uint ksize){
-    assert(v.size() > start + size);
-    assert(k.size() > kstart + ksize);
-    VD res(size+ksize);
-    for(uint i = 0; i < size; i++){
+    assert(v.size() >= start + size);
+    assert(k.size() >= kstart + ksize);
+    VD res(size-ksize);
+    for(uint i = 0; i < res.size(); i++){
+        res[i] = 0;
         for(uint j = 0; j < ksize; j++){
             res[i] += v[start + i + j] * k[kstart + j];
         }
@@ -57,7 +58,7 @@ VD correlation(const VD &v, uint start, uint size,
 }
 
 
-void find_maximums(const VD & in, vector<int> & idx, vector<double> & maxs, double minimum_max){
+static void find_maximums(const VD & in, vector<int> & idx, vector<double> & maxs, double minimum_max){
     idx.resize(0);
     maxs.resize(0);
     if(in.size() > 1 && in[0] > in[1] && in[0] > minimum_max){ //is first element a maximum?
@@ -77,19 +78,19 @@ void find_maximums(const VD & in, vector<int> & idx, vector<double> & maxs, doub
 }
 
 
-int compute_delay(const VD & out, const VD & in, int maximum_delay,int size_input){
-    VD k(2*size_input);
+int compute_delay(const VD & out, const VD & in){
+/*    VD k(2*size_input);
     for(int i = 0; i < size_input; i++){
         k[i] = in[size_input - i - 1];
         k[size_input + i] = in[i];
-    }
-    auto corr_out = correlation(out,0,maximum_delay + size_input, k, 0, k.size());
+    }*/
+    auto corr_out = correlation(out,0,out.size(), in, 0, in.size());
     double m = *std::max_element(corr_out.begin(), corr_out.end());
     vector<int> idx;
     vector<double> maxs;
     find_maximums(corr_out, idx, maxs,0.99*m);
     //qDebug() << idx;
-    return idx[0] + size_input;
+    return idx[0];
 }
 
 

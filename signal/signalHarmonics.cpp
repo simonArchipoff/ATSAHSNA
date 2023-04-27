@@ -196,7 +196,6 @@ ResultHarmonics computeTHD(const ParamHarmonics p, const VD& signal, int sampleR
 
     assert(imax > 0);
 
-
     auto slices = find_harmonics(amplitude,imax,smax);
 
 

@@ -2,9 +2,11 @@
 find_package(PkgConfig)
 pkg_check_modules(JACK REQUIRED jack)
 
+find_package(Qt6 COMPONENTS Core Widgets REQUIRED)
+
 find_package(Faust REQUIRED)
 
-#set(HEADER_FAUST_QTUI ${FAUST_INCLUDE_DIR}/faust/gui/QTUI.h)
+set(HEADER_FAUST_QTUI ${FAUST_INCLUDE_DIR}/faust/gui/QTUI.h)
 #set(HEADER_FAUST_QTUI_MOC ${CMAKE_CURRENT_BINARY_DIR}/moc_QTUI.cpp)
 
 #include(CMakePrintHelpers)
@@ -26,5 +28,5 @@ set(BACKEND_SOURCES
 
 add_library(backend ${BACKEND_SOURCES})
 target_include_directories(backend PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(backend PUBLIC faust jack)
+target_link_libraries(backend PUBLIC faust jack Qt6::Core Qt6::Widgets)
 

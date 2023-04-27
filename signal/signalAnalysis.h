@@ -16,8 +16,8 @@ struct MeasureData{
 
 
 enum window_type {
-    RECTANGLE = 0, BOXCAR = 0, DIRICHLET = 0
-    ,HANN
+    RECTANGLE = 0, BOXCAR = 0, DIRICHLET = 0, UNIFORM = 0
+    ,HANN = 1, HANNING = 1
     ,HAMMING
 };
 
@@ -28,7 +28,7 @@ VD window(uint size, window_type t);
 //naive implementation for finding k in v
 VD correlation(const VD &v, uint start, uint size,
                const VD &k, uint kstart, uint ksize);
-int compute_delay(const VD & out, const VD & in, int maximum_delay,int size_input);
+int compute_delay(const VD & out, const VD & in);
 
 double mean(const VD &v);
 double stddev(const VD &v);

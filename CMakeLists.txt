@@ -31,7 +31,7 @@ include(CMakePrintHelpers)
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 
-find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(Qt6 COMPONENTS Core  REQUIRED)
 
 qt_standard_project_setup()
 

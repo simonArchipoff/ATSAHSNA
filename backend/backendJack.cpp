@@ -8,8 +8,8 @@
 #include <mutex>
 #include <stdio.h>
 
-#include <chrono>
-#include <thread>
+#include <QThread>
+
 
 
 //#include <QtConcurrent/QtConcurrent>
@@ -219,8 +219,8 @@ vector<VD> BackendJack::acquisition(const vector<VD> &input){
     auto in = vector{input};
     requestMeasure(in);
     do{
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        //QThread::msleep(100);
+        //std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        QThread::msleep(50);
         auto r  = tryGetOutput();
         if(r.has_value()){
             auto out = r.value();

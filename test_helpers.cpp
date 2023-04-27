@@ -20,3 +20,4 @@ TEST_CASE( "VectorHelpers", "[helpers]" ){
     remove_right(n,v1);
     REQUIRE(v1==v);
 }
+

@@ -6,7 +6,7 @@
 #include <condition_variable>
 #include <variant>
 #include <optional>
-
+#include <QDebug>
 
 using std::vector;
 using std::string;
@@ -143,7 +143,9 @@ protected:
     }
 
 
-    virtual void jack_info_shutdown(jack_status_t code, const char *reason){}
+    virtual void jack_info_shutdown(jack_status_t code, const char *reason){
+        qDebug() << code << reason;
+    }
 
     static void jackInfoShutdownCallback(jack_status_t code, const char *reason, void * b){
         BackendJack * backend = static_cast<BackendJack *>(b);
@@ -157,6 +159,7 @@ protected:
     //static void jackFreewheelCallback(int starting, BackendJack * backend);
 
     virtual int jack_buffer_size(jack_nframes_t nframes){
+        qDebug() << "new buffer size " << nframes;
         return 0;
     }
 
@@ -166,6 +169,7 @@ protected:
     }
 
     virtual int jack_samplerate(jack_nframes_t nframes){
+        qDebug() << "new sample rate " << nframes;
         return 0;
     }
     static int jackSampleRateCallback(jack_nframes_t nframes, void * b){
@@ -181,6 +185,7 @@ protected:
     }
 
     virtual void jack_port_registration(jack_port_id_t port, int i){
+        qDebug() << "new port " << port << " " << i ;
     }
 
     static void jackPortRegistrationCallback(jack_port_id_t port, int i, void * b){
@@ -188,7 +193,9 @@ protected:
         backend->jack_port_registration(port,i);
     }
 
-    virtual void jack_port_rename(jack_port_id_t port, const char *old_name, const char *new_name){}
+    virtual void jack_port_rename(jack_port_id_t port, const char *old_name, const char *new_name){
+        qDebug() << "port rename " << port << " " << old_name << new_name;
+    }
 
     static void jackPortRenameCallback(jack_port_id_t port, const char *old_name, const char *new_name,void * b){
         BackendJack * backend = static_cast<BackendJack *>(b);
@@ -196,6 +203,9 @@ protected:
     }
 
     virtual void jack_port_connect(jack_port_id_t a, jack_port_id_t b, int connect){
+        auto na = jack_port_name(jack_port_by_id(client,a));
+        auto nb = jack_port_name(jack_port_by_id(client,b));
+        qDebug() << na << " " <<  nb  << " " << connect;
     }
 
     //int 	jack_set_port_connect_callback (jack_client_t *, JackPortConnectCallback connect_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
@@ -205,7 +215,10 @@ protected:
     }
 
 
-    virtual int jack_xrun(){return 0;}
+    virtual int jack_xrun(){
+        qDebug() << "xrun" ;
+        return 0;
+    }
     static int jackXRunCallback(void * b){
         BackendJack * backend = static_cast<BackendJack *>(b);
         return backend->jack_xrun();
