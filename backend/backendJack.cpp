@@ -7,9 +7,10 @@
 #include <jack/jack.h>
 #include <mutex>
 #include <stdio.h>
-
+#if __has_include("QThread")
+#define WE_HAVE_QT
 #include <QThread>
-
+#endif
 
 
 //#include <QtConcurrent/QtConcurrent>
@@ -160,6 +161,7 @@ void BackendJack::treatRequest(){
     request r;
     bool b = requests.try_dequeue(r);
     struct V {
+        BackendJack *t;
         V(BackendJack * b):t(b){}
         void operator()(RequestMeasure &r){
             //assert(t->status == Waiting);
@@ -197,7 +199,6 @@ void BackendJack::treatRequest(){
                 i.resize(0);
             }
         }
-        BackendJack *t;
     };
     if(b){
         std::visit(V(this),r);
@@ -219,8 +220,12 @@ vector<VD> BackendJack::acquisition(const vector<VD> &input){
     auto in = vector{input};
     requestMeasure(in);
     do{
-        //std::this_thread::sleep_for(std::chrono::milliseconds(50));
-        QThread::msleep(50);
+        const int delay_ms = 50;
+#ifdef WE_HAVE_QT
+        QThread::msleep(delay_ms);
+#else
+        std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
+#endif
         auto r  = tryGetOutput();
         if(r.has_value()){
             auto out = r.value();

@@ -6,7 +6,16 @@
 #include <condition_variable>
 #include <variant>
 #include <optional>
+
+#if __has_include("QDebug")
 #include <QDebug>
+#else
+#ifndef NDEBUG
+#define QDebug() std::cerr
+#else
+#define QDebug() (void)
+#endif //NDEBUG
+#endif //has_include
 
 using std::vector;
 using std::string;
@@ -178,7 +187,9 @@ protected:
     }
 
 
-    virtual void jack_client_registration (const char *name, int i){}
+    virtual void jack_client_registration (const char *name, int i){
+        qDebug() << "client registration" << name << " " << i;
+    }
     static void jackClientRegistrationCallback (const char *name, int i, void * b){
         BackendJack * backend = static_cast<BackendJack *>(b);
         return backend->jack_client_registration(name,i);

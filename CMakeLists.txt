@@ -46,6 +46,8 @@ target_link_libraries(tests PRIVATE signal Catch2::Catch2WithMain)
 set(PROJECT_SOURCES
         constants.h
         helpers.h
+        commandlineparser.h
+        commandlineparser.cpp
         main.cpp
         ${TF_SOURCES}
         ${TS_FILES}
