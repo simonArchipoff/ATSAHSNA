@@ -17,10 +17,12 @@ inline double window_sample(const enum window_type t, double s){
     break;
     case HANN:
     a0 = a1 = 0.5;
+    [[fallthrough]];
     case HAMMING:
     return a0 - a1 * cos(2*M_PI*s);
     break;
     }
+    return std::nan("window_sample");
 }
 
 

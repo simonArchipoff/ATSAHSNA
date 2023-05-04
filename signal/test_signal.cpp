@@ -23,7 +23,7 @@ TEST_CASE("chirp"){
     int SR = 44000;
     double freq = 100;
     double d = 0.1;
-    auto s = chirp(freq,freq,d,SR);
+    auto s = sin(freq,d,SR);
     auto f = compute_TF_FFT(array_VD_to_VCD(s), SR);
     auto a = f.getAmplitude20log10();
     REQUIRE(a[freq * d] == *std::max_element(a.begin(),a.end()));
@@ -37,11 +37,12 @@ TEST_CASE("find delay"){
     auto s{o};
     pad_right_0(1500,s);
 
-    pad_left_0(530,s);
+    int delay = 530;
+    pad_left_0(delay,s);
 
-    int delay = compute_delay(s, o);
+    int measured_delay = compute_delay(s, o);
 
-    REQUIRE(delay == 530);
+    REQUIRE(delay == measured_delay);
 
 }
 
