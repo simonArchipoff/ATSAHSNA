@@ -4,6 +4,7 @@
 #include <fftw3.h>
 #include <iterator>
 #include <numeric>
+#include <complex>
 
 FDF FDF::operator+(const FDF &a) const{
     assert(this->sampleRate == a.sampleRate);
@@ -156,7 +157,7 @@ FDF FDF::reduce(uint factor) const {
 
 
 
-FDF compute_TF_FFT(const vector<double> &input, const vector<double> &output,int sampleRate){
+FDF compute_TF_FFT(const vector<double> &input, const vector<double> &output, uint sampleRate){
     assert(input.size() == output.size());
     VCD in(input.size());
     VCD out(output.size());
@@ -168,7 +169,7 @@ FDF compute_TF_FFT(const vector<double> &input, const vector<double> &output,int
 }
 
 
-FDF compute_TF_FFT(const VCD &input, const VCD &output,int sampleRate){
+FDF compute_TF_FFT(const VCD &input, const VCD &output, uint sampleRate){
     assert(input.size() == output.size());
 
     auto dtf_input = compute_TF_FFT(input,sampleRate);
@@ -179,7 +180,7 @@ FDF compute_TF_FFT(const VCD &input, const VCD &output,int sampleRate){
 
 
 
-FDF compute_TF_FFT(const VCD &v, int sampleRate) {
+FDF compute_TF_FFT(const VCD &v, uint sampleRate) {
     int size = v.size();
     VCD in_fft(v);
     VCD out_fft(size);
@@ -243,6 +244,58 @@ VD FDF::frequencyDomainTotemporal() const {
     return o;
 }
 
+/*
+struct APF {
+    double amplitude,phase,frequency;
+};
+*/
+
+double interpolate(double fa, double f, double fb, double xa, double xb){
+    assert(fa < fb);
+    assert(f >= fa);
+    assert(f <= fb);
+    double d = (xb - xa) / (fb - fa);
+    double res = d * (f - fa) + xa;
+    assert((res >= xa && res <= xb) || (res <= xa && res >= xb));
+    return res;
+}
+
+/*
+ * return the linear interpolation for any given point, the ends are infinitely prolongated
+ */
+APF lin_interpolate(const vector<APF> & v, double f){
+    assert(v.size() > 1);
+    for(uint i = 0; i < v.size() - 1; i++){
+        assert(v[i - 1].frequency < v[i].frequency);
+    }
+
+    if(v.begin()->frequency > f)
+        return *v.begin();
+    if(v.rbegin()->frequency < f)
+        return *v.rbegin();
+    auto la = std::lower_bound(v.begin(), v.end(), APF{0,0,f},[](const auto &a, const auto& b){ return a.frequency < b.frequency;});
+    assert(la != v.end());
+    assert(la->frequency < f);
+    auto lb = la + 1;
+    assert(lb < v.end());
+    assert(lb->frequency > f);
+    double a = interpolate(la->frequency, f, lb->frequency, la->amplitude, lb->amplitude);
+    double p = interpolate(la->frequency, f, lb->frequency, la->phase    , lb->phase);
+    return APF{a,p,f};
+}
+
+FDF compute_TF_FFT(const vector<APF> & v, uint sampleRate){
+    double fcase = v.begin()->frequency;
+    int duration = sampleRate / fcase;
+    VCD s(duration);
+    for(uint idx = 0; idx < s.size(); idx++){
+        auto r = lin_interpolate(v,fcase * idx);
+        complex<double> i{0.0,1.0};
+        s[idx] = pow(10,r.amplitude/20) * exp(i * M_PI*r.phase/180.0);
+    }
+
+    return FDF{s,sampleRate};
+}
 
 
 

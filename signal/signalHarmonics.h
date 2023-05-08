@@ -29,6 +29,8 @@ struct HarmonicResponse {
 };
 
 
+VD optimal_window(const VD & signal, double frequency, uint sampleRate);
+
 ResultHarmonics computeTHD(const ParamHarmonics p, const VD&, int sampleRate);
 
 

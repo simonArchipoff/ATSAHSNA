@@ -13,7 +13,6 @@ struct ResultResponse {
     ParamResponse params;
 };
 
-
 struct ImpulseResponse{
     typedef struct ParamResponse Param;
     typedef struct ResultResponse Result;
@@ -22,3 +21,4 @@ struct ImpulseResponse{
 };
 
 FDF computeResponse(const VD & input, const VD & output, int sampleRate);
+

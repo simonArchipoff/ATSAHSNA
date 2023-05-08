@@ -33,7 +33,7 @@ set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 find_package(Qt6 COMPONENTS Core  REQUIRED)
 
-qt_standard_project_setup()
+#qt_standard_project_setup()
 
 add_subdirectory(third_party/fCWT_wrapper)
 add_subdirectory(backend)
@@ -56,7 +56,7 @@ set(PROJECT_SOURCES
 
 add_executable(ATSAHSNA ${PROJECT_SOURCES})
 
-target_link_libraries(ATSAHSNA PRIVATE Qt6::Core tbb fCWT backend signal) #I dont know what uses tbb, fcwt probably
+target_link_libraries(ATSAHSNA PRIVATE Qt6::Core fCWT backend signal)
 
 
 

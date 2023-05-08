@@ -19,7 +19,7 @@ VD chirp(double f1, double f2, double duration, uint sampleRate){
     return chirp_angular(2*M_PI * f1,2*M_PI*f2,duration,sampleRate);
 }
 
-VD sin(double f, double duration, unsigned int sampleRate){
+VD sinusoid(double f, double duration, unsigned int sampleRate){
     return chirp(f,f,duration,sampleRate);
 }
 

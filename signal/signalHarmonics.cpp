@@ -1,9 +1,14 @@
 #include "signalHarmonics.h"
+#include "signalGeneration.h"
+#include "signalAnalysis.h"
+
+#include "../helpers.h"
 
 #include <algorithm>
 
 #include <fstream>
 #include <iomanip>
+#include <algorithm>
 #include <numeric>
 
 
@@ -234,6 +239,28 @@ ResultHarmonics computeTHD(const ParamHarmonics p, const VD& signal, int sampleR
     //return sqrt(e_tot_wo_h1) / sqrt(e_tot_wo_h1 + eh1 * eh1);
 }
 
+
+
+VD optimal_window(const VD & signal, double frequency, uint sampleRate){
+    auto p = sinusoid(frequency,1/frequency,sampleRate);
+
+    //TODO: optimise that, we dont need the full correlation, only where it is relevant in the begining and the end.
+    auto corr = correlation(signal,0,signal.size(),p,0,p.size());
+
+    double max = *std::max_element(corr.begin(),corr.end());
+    vector<uint> idx_max;
+    for(uint i = 1; i < corr.size()-1; i++){
+        if(corr[i-1] < corr[i] && corr[i] > corr[i+1] && corr[i] > 0.96 * max){
+            idx_max.push_back(i);
+        }
+    }
+    assert(idx_max.size() >= 2);
+    VD s(signal);
+    remove_left(*idx_max.begin(), s);
+    auto d = signal.size() - *idx_max.rbegin()-p.size();
+    remove_right(d , s);
+    return s;
+}
 
 
 

@@ -1,4 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/benchmark/catch_benchmark.hpp>
+
 #include "helpers.h"
 #include "signalHarmonics.h"
 #include "signalGeneration.h"
@@ -23,7 +25,7 @@ TEST_CASE("chirp"){
     int SR = 44000;
     double freq = 100;
     double d = 0.1;
-    auto s = sin(freq,d,SR);
+    auto s = sinusoid(freq,d,SR);
     auto f = compute_TF_FFT(array_VD_to_VCD(s), SR);
     auto a = f.getAmplitude20log10();
     REQUIRE(a[freq * d] == *std::max_element(a.begin(),a.end()));
@@ -43,7 +45,19 @@ TEST_CASE("find delay"){
     int measured_delay = compute_delay(s, o);
 
     REQUIRE(delay == measured_delay);
-
 }
 
 
+TEST_CASE("optimal window", "[benchmark]"){
+    int SR = 44000;
+    double f = 100;
+    auto s = sinusoid(f,1,SR);
+    auto signal = s;
+    pad_right_0(100,signal);
+    pad_left_0(256,signal);
+    VD r;
+    BENCHMARK("optimal window"){
+        return r = optimal_window(signal,f,SR);
+    };
+    REQUIRE(s == r);
+}
