@@ -7,7 +7,6 @@
 VD chirp_angular(double w1, double w2, double duration, int sampleRate){
     uint size = static_cast<uint>(duration*sampleRate);
     VD out(size);
-
     for(uint frame = 0; frame < size; frame++){
         double t = frame * 1/static_cast<double>(sampleRate);
         out[frame] = sin(w1 * t + (w2 - w1) * t * t / (2*duration));

@@ -24,9 +24,6 @@ public:
     uint getSampleRate() const override;
     bool isReady()       const override;
     vector<VD> acquisition(const vector<VD> &input) override;
-    double linearZone() const override{
-        return 0.0;
-    }
 
     BackendFaust(){}
     ~BackendFaust();

@@ -1,1 +1,5 @@
-update fcwt
+- update fcwt
+- better correlation with complex signal
+- improve correlation performances
+- implement stft
+- submodule for moodycamel (?)

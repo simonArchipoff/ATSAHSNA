@@ -8,19 +8,23 @@
 #include <fstream>
 #include <iomanip>
 
+
+
+
+
 inline double window_sample(const enum window_type t, double s){
     double a0 = 0.53836;
     double a1 = 0.46164; // hamming parameters
     switch(t){
     case BOXCAR:
         return 1;
-    break;
+        break;
     case HANN:
-    a0 = a1 = 0.5;
-    [[fallthrough]];
+        a0 = a1 = 0.5; //hann paremeters
+        [[fallthrough]];
     case HAMMING:
-    return a0 - a1 * cos(2*M_PI*s);
-    break;
+        return a0 - a1 * cos(2*M_PI*s);
+        break;
     }
     return std::nan("window_sample");
 }
@@ -59,7 +63,6 @@ VD correlation(const VD &v, uint start, uint size,
     return res;
 }
 
-
 static void find_maximums(const VD & in, vector<int> & idx, vector<double> & maxs, double minimum_max){
     idx.resize(0);
     maxs.resize(0);
@@ -81,7 +84,7 @@ static void find_maximums(const VD & in, vector<int> & idx, vector<double> & max
 
 
 int compute_delay(const VD & out, const VD & in){
-/*    VD k(2*size_input);
+    /*    VD k(2*size_input);
     for(int i = 0; i < size_input; i++){
         k[i] = in[size_input - i - 1];
         k[size_input + i] = in[i];

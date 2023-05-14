@@ -13,28 +13,16 @@
 
 
 
-/*
-vector<ResultTHD> ComputeSinResponse::compute(Backend * b, ParamTHD p){
-  auto in = chirp(p.frequency, p.frequency, p.duration, b->getSampleRate());
-  vector<VD> input;
-  for(uint i = 0; i<b->numberInput(); i++){
-      input.push_back(in);
-    }
-  input = b->latency->preprocess_inputs(input);
-  auto output = b->acquisition(input);
-  auto pair = b->latency->post_process(input,output);
-  input = pair.first;
-  output = pair.second;
-  vector<struct ResultTHD> res;
-  for(auto &o : output){
-      assert(input[0].size() == o.size());
-      auto tmp = computeTHD(p, o, b->getSampleRate());
-      res.push_back(tmp);
-    }
-  return res;
-}
-*/
 
+
+VD HarmonicResponse::generate_data(Param p, uint sampleRate) {
+    auto in = sinusoid(p.frequency, p.duration,sampleRate);
+    return in;
+}
+
+ResultHarmonics HarmonicResponse::computeResult(const VD & out, Param p, uint sampleRate){
+      return computeTHD(p, out, sampleRate);
+}
 
 
 class KahanSum {
@@ -171,9 +159,9 @@ public:
     double snr(){
         return 20 * log10(s / n);
     }
-    /* double sinad(){
+    /*double sinad(){
     return log2(s/(n+h));//((s+n+h)/(s+h));
-  }*/
+    }*/
     double s,n,h;
     vector<slice> slices;
 };

@@ -20,17 +20,17 @@ inline bool file_exists (const std::string& name) {
 }
 
 BackendFaust * make_faust_backend(ParamFaust p){
-  BackendFaust * f = new BackendFaust();
-  f->setCode(p.file_or_code,p.sample_rate);
-  if(f->isReady()){
-      for(auto & p : p.params){
-          f->setParamValue(p.first,p.second);
+    BackendFaust * f = new BackendFaust();
+    f->setCode(p.file_or_code,p.sample_rate);
+    if(f->isReady()){
+        for(auto & p : p.params){
+            f->setParamValue(p.first,p.second);
         }
-      return f;
+        return f;
     } else {
-      std::cerr << f->getErrorMessage() << std::endl;
-      delete f;
-      return nullptr;
+        std::cerr << f->getErrorMessage() << std::endl;
+        delete f;
+        return nullptr;
     }
 
 }
@@ -38,24 +38,24 @@ BackendFaust * make_faust_backend(ParamFaust p){
 
 
 bool BackendFaust::setCode(std::string dspCode_or_file, int sampleRate=DEFAULTSR){
-  const char* argv[] = {"--double-precision-floats"};
-  const int argc = sizeof(argv)/sizeof(*argv);
-  // compiling in memory (createDSPFactoryFromFile could be used alternatively)
+    const char* argv[] = {"--double-precision-floats"};
+    const int argc = sizeof(argv)/sizeof(*argv);
+    // compiling in memory (createDSPFactoryFromFile could be used alternatively)
 
-  factory = file_exists(dspCode_or_file) ?
-         createDSPFactoryFromFile(dspCode_or_file, argc, argv ,"", errorString,0)
-      :  createDSPFactoryFromString("", dspCode_or_file, argc, argv ,"", errorString,0);
+    factory = file_exists(dspCode_or_file) ?
+                  createDSPFactoryFromFile(dspCode_or_file, argc, argv ,"", errorString,0)
+                                           :  createDSPFactoryFromString("", dspCode_or_file, argc, argv ,"", errorString,0);
 
-  dspInstance = factory ? factory->createDSPInstance() : nullptr;
-  if(dspInstance){
-      dspInstance->init(sampleRate);
-      dspInstance->buildUserInterface(&apiui);
+    dspInstance = factory ? factory->createDSPInstance() : nullptr;
+    if(dspInstance){
+        dspInstance->init(sampleRate);
+        dspInstance->buildUserInterface(&apiui);
     }
-  return dspInstance;
+    return dspInstance;
 }
 
 uint BackendFaust::getSampleRate() const{
-  return dspInstance->getSampleRate();
+    return dspInstance->getSampleRate();
 }
 
 bool BackendFaust::isReady() const {
@@ -67,54 +67,54 @@ std::string BackendFaust::getErrorMessage(){
 }
 
 uint BackendFaust::numberInput()const {
-  return dspInstance->getNumInputs();
+    return dspInstance->getNumInputs();
 }
 uint BackendFaust::numberOutput() const{
-  return dspInstance->getNumOutputs();
+    return dspInstance->getNumOutputs();
 }
 
 void BackendFaust::setParamValue(std::string name, FAUSTFLOAT value){
-  assert(dspInstance);
-  apiui.setParamValue(name.c_str(),value);
+    assert(dspInstance);
+    apiui.setParamValue(name.c_str(),value);
 }
 
 vector<VD> BackendFaust::acquisition(const vector<VD> &in){
-   vector<VD> input{in};
-   assert(input.size() > 0);
-  uint inputSize = input[0].size();
+    vector<VD> input{in};
+    assert(input.size() > 0);
+    uint inputSize = input[0].size();
 
-  vector<double*> inputs{numberInput()};
-  for(uint i = 0; i < inputs.size(); i++){
-      inputs[i] = input[i].data();
+    vector<double*> inputs{numberInput()};
+    for(uint i = 0; i < inputs.size(); i++){
+        inputs[i] = input[i].data();
     }
-  vector<double*> outputs{numberOutput()};
-  vector<vector<double>> out{numberOutput()};
+    vector<double*> outputs{numberOutput()};
+    vector<vector<double>> out{numberOutput()};
 
-  for(uint i = 0; i < outputs.size(); i++){
-      out[i].resize(inputSize);
-      outputs[i] = out[i].data();
+    for(uint i = 0; i < outputs.size(); i++){
+        out[i].resize(inputSize);
+        outputs[i] = out[i].data();
     }
-  for(uint i = 0; i < outputs.size(); i++){
-      for(uint j = 0; j < inputSize; j++){
-          outputs[i][j] = ~0;
+    for(uint i = 0; i < outputs.size(); i++){
+        for(uint j = 0; j < inputSize; j++){
+            outputs[i][j] = ~0;
         }
     }
 
-  uint block = 4*1024;
-  uint nb_block = inputSize / block;
+    uint block = 4*1024;
+    uint nb_block = inputSize / block;
 
-  for(uint i = 0; i < nb_block; i++){
-      dspInstance->compute(block,inputs.data(), outputs.data());
-      for(uint j = 0; j < outputs.size(); j++){
-          outputs[j] = outputs[j] + block;
+    for(uint i = 0; i < nb_block; i++){
+        dspInstance->compute(block,inputs.data(), outputs.data());
+        for(uint j = 0; j < outputs.size(); j++){
+            outputs[j] = outputs[j] + block;
         }
-      for(uint j = 0; j < inputs.size(); j++){
-          inputs[j] = inputs[j] + block;
+        for(uint j = 0; j < inputs.size(); j++){
+            inputs[j] = inputs[j] + block;
         }
     }
 
-  dspInstance->compute(inputSize % block,inputs.data(), outputs.data());
+    dspInstance->compute(inputSize % block,inputs.data(), outputs.data());
 
-  return out;
+    return out;
 }
 

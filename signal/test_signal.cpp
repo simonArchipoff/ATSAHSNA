@@ -51,7 +51,7 @@ TEST_CASE("find delay"){
 TEST_CASE("optimal window", "[benchmark]"){
     int SR = 44000;
     double f = 100;
-    auto s = sinusoid(f,1,SR);
+    auto s = sinusoid(f,0.1,SR);
     auto signal = s;
     pad_right_0(100,signal);
     pad_left_0(256,signal);
