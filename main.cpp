@@ -2,7 +2,7 @@
 #include <QDebug>
 #include "constants.h"
 #include "commandlineparser.h"
-#include "signalHarmonics.h"
+#include <acquisition.h>
 
 
 
@@ -29,11 +29,11 @@ int main(int argc, char *argv[]){
     }
     if(o.computation == RESPONSE) {
         ParamResponse p;
-        auto r = compute<ImpulseResponse>(b, p);
+       /* auto r = compute<ImpulseResponse>(b, p);
         for(auto & o : r){
             FDFLOG foo(o.response);
             break;
-        }
+        }*/
     } /*else if(o.computation == HARMONICS){
         ParamHarmonics p;
         auto r = compute<HarmonicResponse>(b,p);

@@ -20,10 +20,10 @@ struct ResultHarmonics {
     ParamHarmonics params;
 };
 
-
 struct HarmonicResponse {
     typedef struct ParamHarmonics Param;
     typedef struct ResultHarmonics Result;
+    constexpr static std::string name = "harmonics";
     VD generate_data(Param p, uint sampleRate);
     Result computeResult(const VD & out, Param p, uint sampleRate);
 };

@@ -49,6 +49,8 @@ set(PROJECT_SOURCES
         commandlineparser.h
         commandlineparser.cpp
         main.cpp
+        acquisition.h
+        acquisition.cpp
         ${TF_SOURCES}
         ${TS_FILES}
 )

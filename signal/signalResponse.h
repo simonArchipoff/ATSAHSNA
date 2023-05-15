@@ -16,9 +16,11 @@ struct ResultResponse {
 struct ImpulseResponse{
     typedef struct ParamResponse Param;
     typedef struct ResultResponse Result;
+    constexpr static const std::string name = "response";
     VD generate_data(Param p, uint sampleRate);
     Result computeResult(const VD & out, Param p, uint sampleRate);
 };
+
 
 FDF computeResponse(const VD & input, const VD & output, int sampleRate);
 
