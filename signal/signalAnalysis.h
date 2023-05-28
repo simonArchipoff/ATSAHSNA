@@ -2,25 +2,11 @@
 
 #include "../constants.h"
 
-struct MeasureData{
-    int numberInput(){
-        return inputs.size();
-    }
-    int numberOutput(){
-        return outputs.size();
-    }
-
-    vector<VD> inputs;
-    vector<VD> outputs;
-};
-
-
 enum window_type {
     RECTANGLE = 0, BOXCAR = 0, DIRICHLET = 0, UNIFORM = 0
     ,HANN = 1, HANNING = 1
     ,HAMMING
 };
-
 
 
 VD window(uint size, window_type t);

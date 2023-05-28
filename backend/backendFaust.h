@@ -5,38 +5,42 @@
 #include <faust/dsp/llvm-dsp.h>
 #include <cstring> //missing header in APIUI.h
 #include <faust/gui/APIUI.h>
-
+#include <mutex>
 #include "backend.h"
 
-
+using namespace std;
 
 struct ParamFaust {
-    std::string file_or_code;
+    string file_or_code;
     uint sample_rate;
-    std::vector<std::pair<std::string,double>> params;
+    vector<pair<string,double>> params;
 };
 
 class BackendFaust : public Backend {
 public:
-    std::string getErrorMessage();
+    string getErrorMessage();
     uint numberInput()   const override;
     uint numberOutput()  const override;
     uint getSampleRate() const override;
     bool isReady()       const override;
-    vector<VD> acquisition(const vector<VD> &input) override;
-
+    vector<VD> acquisition(const vector<VD> &input);
     BackendFaust(){}
     ~BackendFaust();
-    bool setCode(std::string dspCode,int sampleRate);
+    bool setCode(string dspCode,int sampleRate);
 
     //if something goes wrong APIUI write something on stderr
-    void setParamValue(std::string name, FAUSTFLOAT value);
+    void setParamValue(string name, FAUSTFLOAT value);
+
+
+    variant<vector<ResultHarmonics>> getResultHarmonics() override;
+    variant<vector<ResultResponse>>  getResultResponse()   override;
 
 
 protected:
+    mutex lock;
     dsp * dspInstance;
     APIUI  apiui;
-    std::string errorString;
+    string errorString;
     llvm_dsp_factory * factory;
 };
 
@@ -62,6 +66,7 @@ public:
     }
 
 private:
+
     vector<double *> faustZones;
     vector<double> ref;
 };

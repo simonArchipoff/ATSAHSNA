@@ -3,7 +3,7 @@
 #include "backend.h"
 #include <jack/jack.h>
 #include "concurrentqueue.h"
-#include <condition_variable>
+#include <mutex>
 #include <variant>
 #include <optional>
 
@@ -119,7 +119,7 @@ public:
         latency_automatic = b;
     }
 
-    vector<VD> acquisition(const vector<VD> &input) override;
+    vector<VD> acquisition(const vector<VD> &input);
 
     //QFuture<vector<VD>> acquisition_async(const vector<VD> &input);
 

@@ -2,8 +2,11 @@
 #include <faust/dsp/llvm-dsp.h>
 #include <list>
 #include <iostream>
+#include <mutex>
+#include <signalGeneration.h>
 
 
+using namespace std;
 BackendFaust::~BackendFaust(){
     delete dspInstance;
     deleteDSPFactory(factory);
@@ -78,6 +81,13 @@ void BackendFaust::setParamValue(std::string name, FAUSTFLOAT value){
     apiui.setParamValue(name.c_str(),value);
 }
 
+//send a bunch of 0, I dont know how to properly init internal state
+void reinit(BackendFaust * b){
+    VD zero(b->getSampleRate(),0.0);
+    vector<VD>in(b->numberInput(), zero);
+    (void)b->acquisition(in);
+}
+
 vector<VD> BackendFaust::acquisition(const vector<VD> &in){
     vector<VD> input{in};
     assert(input.size() > 0);
@@ -118,3 +128,26 @@ vector<VD> BackendFaust::acquisition(const vector<VD> &in){
     return out;
 }
 
+
+std::variant<std::vector<ResultResponse>> BackendFaust::getResultResponse(){
+    const std::lock_guard<std::mutex> g(this->lock);
+    reinit(this);
+    std::vector<ResultResponse> res;
+    auto in = impulse(paramResponse.freqMin, paramResponse.duration, getSampleRate());
+    auto out = acquisition(vector<VD>(numberInput(),in));
+    for(auto & o : out){
+        res.push_back(computeResponse(paramResponse,in, o, getSampleRate()));
+    }
+    return std::variant<std::vector<ResultResponse>>(res);
+
+}
+std::variant<std::vector<ResultHarmonics>>  BackendFaust::getResultHarmonics(){
+    reinit(this);
+    vector<ResultHarmonics> res;
+    auto in = sinusoid(paramHarmonics.frequency, 1, getSampleRate());
+    auto out = acquisition(vector<VD>(numberInput(),in));
+    for(auto & o : out){
+        res.push_back(computeTHD(paramHarmonics,o, getSampleRate()));
+    }
+    return std::variant<std::vector<ResultHarmonics>>(res);
+}

@@ -6,6 +6,7 @@
 struct ParamResponse {
     int freqMin = 20;
     int freqMax = 20000;
+    double duration = 0.1;
 };
 
 struct ResultResponse {
@@ -13,14 +14,4 @@ struct ResultResponse {
     ParamResponse params;
 };
 
-struct ImpulseResponse{
-    typedef struct ParamResponse Param;
-    typedef struct ResultResponse Result;
-    constexpr static const std::string name = "response";
-    VD generate_data(Param p, uint sampleRate);
-    Result computeResult(const VD & out, Param p, uint sampleRate);
-};
-
-
-FDF computeResponse(const VD & input, const VD & output, int sampleRate);
-
+ResultResponse computeResponse(ParamResponse p,const VD & in,const VD & out, uint sampleRate);

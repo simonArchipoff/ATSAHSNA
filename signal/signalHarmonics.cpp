@@ -15,16 +15,6 @@
 
 
 
-VD HarmonicResponse::generate_data(Param p, uint sampleRate) {
-    auto in = sinusoid(p.frequency, p.duration,sampleRate);
-    return in;
-}
-
-ResultHarmonics HarmonicResponse::computeResult(const VD & out, Param p, uint sampleRate){
-      return computeTHD(p, out, sampleRate);
-}
-
-
 class KahanSum {
 public:
     KahanSum():sum(0.0),c(0.0){}
