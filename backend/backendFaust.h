@@ -1,9 +1,8 @@
 #pragma once
 
 #define FAUSTFLOAT double
-#include <cstdint> //hopefully this header wont be necessary, it's a workaround because it misses in dsp.h
 #include <faust/dsp/llvm-dsp.h>
-#include <cstring> //missing header in APIUI.h
+#include <cstring>
 #include <faust/gui/APIUI.h>
 #include <mutex>
 #include "backend.h"
@@ -70,3 +69,5 @@ private:
     vector<double *> faustZones;
     vector<double> ref;
 };
+
+

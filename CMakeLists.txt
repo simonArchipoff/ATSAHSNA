@@ -31,13 +31,14 @@ include(CMakePrintHelpers)
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 
-find_package(Qt6 COMPONENTS Core  REQUIRED)
+find_package(Qt6 COMPONENTS Core Widgets REQUIRED)
 
 #qt_standard_project_setup()
 
 add_subdirectory(third_party/fCWT_wrapper)
 add_subdirectory(backend)
 add_subdirectory(signal)
+add_subdirectory(view)
 
 add_executable(tests test_helpers.cpp signal/test_signal.cpp )
 target_link_libraries(tests PRIVATE signal Catch2::Catch2WithMain)
