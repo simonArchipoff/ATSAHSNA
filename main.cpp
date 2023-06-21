@@ -1,47 +1,25 @@
-#include <QCoreApplication>
+#include "mainwindow.h"
+
+#include <QApplication>
+#include <QLocale>
+#include <QTranslator>
 #include <QDebug>
-#include "constants.h"
-#include "commandlineparser.h"
-#include <acquisition.h>
 
 
+int main(int argc, char *argv[])
+{
+  QApplication a(argc, argv);
 
-
-
-
-int main(int argc, char *argv[]){
-    QCoreApplication app(argc, argv);
-    QCoreApplication::setApplicationName(APPNAME);
-    QCoreApplication::setApplicationVersion(APPVERS);
-    CommandLineParser o(QCoreApplication::arguments());
-    ParamFaust f;
-    o.getParamBackend(&f);
-
-    Backend * b;
-    switch(o.backend){
-    case FAUST:
-        b = make_faust_backend(f);
-        break;
-    case JACK:
-        break;
-    case UNDEFBACKEND:
-        break;
-    }
-    if(o.computation == RESPONSE) {
-        ParamResponse p;
-       /* auto r = compute<ImpulseResponse>(b, p);
-        for(auto & o : r){
-            FDFLOG foo(o.response);
-            break;
-        }*/
-    } /*else if(o.computation == HARMONICS){
-        ParamHarmonics p;
-        auto r = compute<HarmonicResponse>(b,p);
-        for(auto & o : r){
-            FDFLOG foo(o.thdNoiseRate);;
-            break;
+  QTranslator translator;
+  const QStringList uiLanguages = QLocale::system().uiLanguages();
+  for (const QString &locale : uiLanguages) {
+      const QString baseName = "ATSAHSNA_" + QLocale(locale).name();
+      if (translator.load(":/i18n/" + baseName)) {
+          a.installTranslator(&translator);
+          break;
         }
-    }*/
-
-    return 0;
+    }
+  MainWindow w;
+  w.show();
+  return a.exec();
 }

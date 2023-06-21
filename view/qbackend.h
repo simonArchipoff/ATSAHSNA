@@ -12,65 +12,23 @@
 #include <QSpinBox>
 
 
-
-
 #include <backendJack.h>
 #include <backendFaust.h>
 #include <faust/gui/QTUI.h>
 
-
-class BackendFaustQT :  public QObject, public BackendFaust {
+class QFaustDsp : public QWidget{
     Q_OBJECT
 public:
-    BackendFaustQT(QWidget * parent=nullptr);
-    ~BackendFaustQT();
+    explicit QFaustDsp(QWidget *parent = nullptr);
 
-    bool setCode(QString dspCode, uint sampleRate);
-    QWidget * getUI();
-    void timerEvent(QTimerEvent *event) override;
-signals:
-    void changed();
-
-protected:
-    QTGUI * ui;
-    APIUI * apiui;
-    DetectChange detectchange;
-};
-
-
-
-typedef std::variant<BackendFaustQT *, QString> dsp_or_error;
-
-dsp_or_error
-create_faust_qt(QString dspCode, int sampleRate, QWidget * parent=nullptr);
-
-
-class QBackend {
-public:
-  QBackend(Backend * b = nullptr):backend{b}{};
-
-  void setBackend(Backend * b){
-    this->backend.reset(b);
-  }
-  Backend * getBackend(){
-    return backend.data();
-  }
-protected:
-  QScopedPointer<Backend> backend;
-};
-
-
-class QFaustDsp : public QWidget, public QBackend {
-    Q_OBJECT
-public:
-    explicit QFaustDsp(BackendFaustQT * b, QWidget *parent = nullptr);
-
-    void setUI(QWidget * ui);
+    void setDSPUI(QWidget * ui);
     void setErrorMessage(QString);
     void compile();
+signals:
     void setFaustCode(QString code,uint sampleRate);
-private:
-    QWidget * dspUi;
+
+public:
+    QSharedPointer<QWidget> dspUi;
     QLineEdit * sr;
     QTextEdit * codeEdit;
     QLabel * errorLabel;
@@ -79,20 +37,12 @@ private:
 };
 
 
-/*
-class QJackPort : public QWidget {
-  Q_OBJECT
-public:
-  QJackPort(QWidget * parent=nullptr);
-protected:
-};
-*/
 
-/*
-class QBackendJack : public QWidget, public QBackend {
+
+class QBackendJack : public QWidget {
   Q_OBJECT
 public:
-  QBackendJack(BackendJackQt * b, QWidget * parent=nullptr);
+  QBackendJack(QWidget * parent=nullptr);
 
 protected:
 
@@ -106,20 +56,6 @@ protected:
   QSpinBox * latency;
   QDoubleSpinBox * gain;
 };
-*/
-
-class QBackends : public QTabWidget {
-public:
-  QBackends(QWidget * parent=nullptr);
-
-  BackendFaustQT * addFaustBackend();
-  //BackendJackQt * addJackBackend();
-
-  Backend * getSelectedBackend();
-protected:
-  vector<QBackend *> backends;
-};
-
 
 
 

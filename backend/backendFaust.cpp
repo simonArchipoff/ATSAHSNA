@@ -53,6 +53,7 @@ bool BackendFaust::setCode(std::string dspCode_or_file, int sampleRate=DEFAULTSR
     if(dspInstance){
         dspInstance->init(sampleRate);
         dspInstance->buildUserInterface(&apiui);
+        detectChange.setAPIUI(&apiui);
     }
     return dspInstance;
 }
@@ -63,6 +64,9 @@ uint BackendFaust::getSampleRate() const{
 
 bool BackendFaust::isReady() const {
     return dspInstance;
+}
+void BackendFaust::init(uint sampleRate){
+    dspInstance->init(sampleRate);
 }
 
 std::string BackendFaust::getErrorMessage(){

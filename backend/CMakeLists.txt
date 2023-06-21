@@ -2,7 +2,6 @@
 find_package(PkgConfig)
 pkg_check_modules(JACK REQUIRED jack)
 
-find_package(Qt6 COMPONENTS Core Widgets REQUIRED)
 
 find_package(Faust REQUIRED)
 
@@ -28,5 +27,5 @@ set(BACKEND_SOURCES
 
 add_library(backend ${BACKEND_SOURCES})
 target_include_directories(backend PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(backend PUBLIC faust signal jack Qt6::Core Qt6::Widgets)
+target_link_libraries(backend PUBLIC faust signal jack Qt6::Core Qt6::Widgets )
 

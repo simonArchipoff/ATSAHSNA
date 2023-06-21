@@ -15,40 +15,12 @@ struct ParamFaust {
     vector<pair<string,double>> params;
 };
 
-class BackendFaust : public Backend {
-public:
-    string getErrorMessage();
-    uint numberInput()   const override;
-    uint numberOutput()  const override;
-    uint getSampleRate() const override;
-    bool isReady()       const override;
-    vector<VD> acquisition(const vector<VD> &input);
-    BackendFaust(){}
-    ~BackendFaust();
-    bool setCode(string dspCode,int sampleRate);
-
-    //if something goes wrong APIUI write something on stderr
-    void setParamValue(string name, FAUSTFLOAT value);
-
-
-    variant<vector<ResultHarmonics>> getResultHarmonics() override;
-    variant<vector<ResultResponse>>  getResultResponse()   override;
-
-
-protected:
-    mutex lock;
-    dsp * dspInstance;
-    APIUI  apiui;
-    string errorString;
-    llvm_dsp_factory * factory;
-};
-
-BackendFaust * make_faust_backend(ParamFaust p);
-
 class DetectChange {
 public:
     DetectChange(){}
-    DetectChange(APIUI*ui){
+    void setAPIUI(APIUI*ui){
+        faustZones.resize(0);
+        ref.resize(0);
         for(int i = 0; i < ui->getParamsCount(); i++){
             faustZones.push_back(ui->getParamZone(i));
             ref.push_back(ui->getParamValue(i));
@@ -69,5 +41,44 @@ private:
     vector<double *> faustZones;
     vector<double> ref;
 };
+
+class BackendFaust : public Backend {
+public:
+    string getErrorMessage();
+    uint numberInput()   const override;
+    uint numberOutput()  const override;
+    uint getSampleRate() const override;
+    bool isReady()       const override;
+
+    vector<VD> acquisition(const vector<VD> &input);
+    BackendFaust(){}
+    ~BackendFaust();
+    bool setCode(string dspCode,int sampleRate);
+    void init(uint sampleRate);
+    //if something goes wrong APIUI write something on stderr
+    void setParamValue(string name, FAUSTFLOAT value);
+
+    bool didSomethingChanged(){
+        return detectChange.isSomethingChanged();
+    }
+
+    variant<vector<ResultHarmonics>> getResultHarmonics()  override;
+    variant<vector<ResultResponse>>  getResultResponse()   override;
+    void buildUserInterface(UI * ui){
+        dspInstance->buildUserInterface(ui);
+    }
+
+protected:
+    mutex lock;
+    dsp * dspInstance;
+    APIUI  apiui;
+    DetectChange detectChange;
+    string errorString;
+    llvm_dsp_factory * factory;
+};
+
+BackendFaust * make_faust_backend(ParamFaust p);
+
+
 
 

@@ -79,7 +79,7 @@ void RasterSpectro::setSpectrogramData(const struct ResultSpectrogram &s){
   max_duration = s.max_idx_time_rank;
   //double high = s.frequencies.back();
   //double low = s.frequencies.front();
-  matrix.setValueMatrix(QVector<double>(s.data.begin(),s.data.end()),s.max_idx_time_rank);
+  //matrix.setValueMatrix(QVector<double>(s.data.begin(),s.data.end()),s.max_idx_time_rank);
 
   matrix.setInterval(Qt::XAxis,QwtInterval(0,s.max_idx_time_rank));
   matrix.setInterval(Qt::YAxis,QwtInterval(0,s.max_freq_rank));
