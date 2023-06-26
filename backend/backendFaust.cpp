@@ -86,8 +86,8 @@ void BackendFaust::setParamValue(std::string name, FAUSTFLOAT value){
 }
 
 //send a bunch of 0, I dont know how to properly init internal state
-void reinit(BackendFaust * b){
-    VD zero(b->getSampleRate(),0.0);
+void reinit(BackendFaust * b,int size){
+    VD zero(size,0.0);
     vector<VD>in(b->numberInput(), zero);
     (void)b->acquisition(in);
 }
@@ -133,25 +133,30 @@ vector<VD> BackendFaust::acquisition(const vector<VD> &in){
 }
 
 
-std::variant<std::vector<ResultResponse>> BackendFaust::getResultResponse(){
+bool BackendFaust::didSomethingChanged(){
+    reinit(this,1);
+    return detectChange.isSomethingChanged();
+}
+
+std::variant<const std::vector<ResultResponse>> BackendFaust::getResultResponse(){
     const std::lock_guard<std::mutex> g(this->lock);
-    reinit(this);
+    reinit(this,getSampleRate());
     std::vector<ResultResponse> res;
     auto in = impulse(paramResponse.freqMin, paramResponse.duration, getSampleRate());
     auto out = acquisition(vector<VD>(numberInput(),in));
     for(auto & o : out){
         res.push_back(computeResponse(paramResponse,in, o, getSampleRate()));
     }
-    return std::variant<std::vector<ResultResponse>>(res);
+    return std::variant<const std::vector<ResultResponse>>(res);
 
 }
-std::variant<std::vector<ResultHarmonics>>  BackendFaust::getResultHarmonics(){
-    reinit(this);
+std::variant<const std::vector<ResultHarmonics>>  BackendFaust::getResultHarmonics(){
+    reinit(this,getSampleRate());
     vector<ResultHarmonics> res;
     auto in = sinusoid(paramHarmonics.frequency, 1, getSampleRate());
     auto out = acquisition(vector<VD>(numberInput(),in));
     for(auto & o : out){
         res.push_back(computeTHD(paramHarmonics,o, getSampleRate()));
     }
-    return std::variant<std::vector<ResultHarmonics>>(res);
+    return std::variant<const std::vector<ResultHarmonics>>(res);
 }

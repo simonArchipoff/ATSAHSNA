@@ -1,7 +1,7 @@
 #pragma once
 
-#include "qscopedpointer.h"
-#include "qtmetamacros.h"
+#include <mainwindow.h>
+#include "signalHarmonics.h"
 #include <backendFaust.h>
 #include <qbackend.h>
 #include <QWeakPointer>
@@ -17,18 +17,21 @@ public:
     void connectGUI();
 
     bool setCode(QString dspCode, uint sampleRate);
-    void timerEvent(QTimerEvent *event) override;
+
     bool isReady() const;
     string getErrorMessage(){
         return backend->getErrorMessage();
     }
+
 signals:
     void changed();
+    void resultResponse( std::variant<const std::vector<ResultResponse>>& response);
+    void resultHarmonics( std::variant< const std::vector<ResultHarmonics>>& harmonics);
 
 protected:
+    void timerEvent(QTimerEvent * e);
     QScopedPointer<BackendFaust> backend;
     QWeakPointer<QFaustDsp> faust_gui;
-
 };
 
 //typedef std::variant<faust_backend *, QString> dsp_or_error;
@@ -42,12 +45,13 @@ class delegate : public QObject
     Q_OBJECT
 public:
 
-    delegate();
+    delegate(MainWindow * mw);
 
 
     void addFaustBackend(QSharedPointer<QFaustDsp> gui);
     void addJackBackend();
 
     QScopedPointer<faust_backend> faust;
+    MainWindow * mw;
 };
 

@@ -1,29 +1,78 @@
 #pragma once
 
+#include "qlineseries.h"
 #include <QMap>
 #include <QWidget>
 #include <QSlider>
-#include <qwt_plot.h>
-#include <qwt_plot_curve.h>
-#include <qwt_plot_marker.h>
-#include <qwt_plot_textlabel.h>
-
+#include <QChart>
+#include <QLineSeries>
 #include <vector>
+#include <set>
 
 #include <signalResponse.h>
 #include <signalHarmonics.h>
 
-#include "qwtthings.h"
+
+
+QSharedPointer<QLineSeries>  transform(VD x,VD y);
+class Plot:public QObject{
+    Q_OBJECT
+public:
+
+
+    void setResponse(const ResultResponse & r){
+        auto a = r.response.getAmplitude20log10();
+        auto p = r.response.getPhase();
+        auto f = r.response.getFrequency();
+        amplitude = transform(f,a);
+        phase = transform(f,p);
+    }
+
+    QSharedPointer<QLineSeries> amplitude,phase;
+    QString name;
+};
+
+class FrequencyPlot : public QChart
+{
+    Q_OBJECT
+public:
+    FrequencyPlot(QWidget * parent){
+        plots = new Plot;
+    }
+    void setResponses(std::variant<const std::vector<ResultResponse>> & r){
+        std::vector<ResultResponse> v = get<const std::vector<ResultResponse > >(r);
+
+        plots->setResponse(v[0]);
+        update(plots);
+    }
+    void update(Plot * p){
+        plots = p;
+        addSeries(plots->amplitude.data());
+        addSeries(plots->phase.data());
+    }
+
+    Plot * plots;
+};
+
+/*
+class ColorMapViridis : public QwtLinearColorMap{
+public:
+    ColorMapViridis();
+};
+
+class ColorMapBlackBody : public QwtLinearColorMap{
+public:
+    ColorMapBlackBody();
+};
+*/
+
 
 class BodeCurve{
 public:
   //BodeCurve(const BodeCurve&) = default;
   BodeCurve(const QColor);
   void setCurve(const FDF&,double minFrequency, double maxFrequency);
-  void attach(QwtPlot *);
 
-
-  QSharedPointer<QwtPlotCurve> c_amplitude, c_phase;
   QColor color;
   double maxAmplitude,minAmplitude;
   double maxFrequency,minFrequency;
@@ -49,8 +98,4 @@ public:
   THDPlot(QWidget* parent);
   void setResult(const ResultHarmonics &, QColor c);
   //void setThdResult
-
-
-  QMap<QString,QwtPlotCurve *> curves;
-  QwtPlotTextLabel *textResult;
 };

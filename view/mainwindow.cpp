@@ -9,7 +9,7 @@
 #include "qnamespace.h"
 //#include "task.h"
 #include "qbackend.h"
-
+#include <QChartView>
 #include <QtConcurrent/QtConcurrent>
 
 
@@ -30,6 +30,11 @@ MainWindow::MainWindow(QWidget *parent)
   //auto l = new QVBoxLayout;
   //s->addWidget(backends.data());
   setCentralWidget(faust.data());
+  auto * s = new QMainWindow(this);
+  this->bode = new FrequencyPlot(s);
+  s->setCentralWidget(new QChartView(bode));
+  s->show();
+
   //setLayout(hb);
 
   //auto b = backends->addFaustBackend();

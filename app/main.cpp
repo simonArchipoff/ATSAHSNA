@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     }
 
     MainWindow mw;
-    delegate d;
+    delegate d(&mw);
     mw.show();
     d.addFaustBackend(mw.faust);
 

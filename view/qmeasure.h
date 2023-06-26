@@ -1,8 +1,6 @@
 #pragma once
 
 
-#include "BodePlot.h"
-#include "TemporalPlot.h"
 #include <QDockWidget>
 #include <QSplitter>
 #include <QScopedPointer>
@@ -16,11 +14,21 @@
 #include <signalHarmonics.h>
 #include <signalSpectrogram.h>
 
-#include "qspectrogram.h"
-#include "qresponse.h"
 
 
-
+class QParamResponse : public QWidget {
+    Q_OBJECT
+public:
+    QParamResponse(QWidget * parent);
+    typedef struct ParamResponse Param;
+    Param getParam();
+signals:
+    void start_measure_response(struct ParamResponse);
+private:
+    QScopedPointer<QSpinBox> fmin,fmax;
+    QScopedPointer<QDoubleSpinBox> duration;
+    QScopedPointer<QComboBox> typeMeasure;
+};
 
 class QParamDistortion : public QWidget{
   Q_OBJECT
@@ -47,15 +55,8 @@ public:
   QPushButton * start_button;
 };
 
-class QDisplayDistortion : public THDPlot{
-  Q_OBJECT
-public:
-  typedef ResultHarmonics Result;
-  QDisplayDistortion(QWidget * parent=nullptr);
-};
 
-
-template<class QPARAM,class QRESULT>
+template<class QPARAM>
 class QResult : public QWidget {
 public:
   QResult():QWidget(){
@@ -67,12 +68,7 @@ public:
 
     s->setOrientation(Qt::Vertical);
     qcontrol.reset(new QPARAM{s});
-    qplot.reset(new QRESULT{s});
-    temporalPlot.reset(new TemporalPlot());
     s->addWidget(qcontrol.data());
-    s->addWidget(qplot.data());
-    s->addWidget(temporalPlot.data());
-
     s->setSizes({1,3,1});
     setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
   }
@@ -81,23 +77,11 @@ public:
     return qcontrol->getParam();
   }
 
-  void setResult(const typename QRESULT::Result &r, QColor c){
-    qplot->setResult(r,c);
-
-    if constexpr (requires{r.raw_data;}){
-      if(r.raw_data.inputs.size() > 0)
-        temporalPlot->setInput(r.raw_data.inputs[0]);
-      if(r.raw_data.outputs.size() > 0)
-        temporalPlot->setOutput(r.raw_data.outputs[0]);
-    }
-  }
-
-  QScopedPointer<TemporalPlot> temporalPlot;
   QScopedPointer<QPARAM> qcontrol;
-  QScopedPointer<QRESULT> qplot;
 };
 
-typedef class QResult<QParamResponse,QDisplayResponse> QResponse;
-typedef class QResult<QParamDistortion,QDisplayDistortion> QDistortion;
-typedef class QResult<QParamSpectrogram,QDisplaySpectrogram> QSpectrogram;
+
+typedef class QResult<QParamResponse> QResponse;
+typedef class QResult<QParamDistortion> QDistortion;
+//typedef class QResult<QParamSpectrogram,QDisplaySpectrogram> QSpectrogram;
 

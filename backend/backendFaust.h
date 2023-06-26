@@ -58,12 +58,10 @@ public:
     //if something goes wrong APIUI write something on stderr
     void setParamValue(string name, FAUSTFLOAT value);
 
-    bool didSomethingChanged(){
-        return detectChange.isSomethingChanged();
-    }
+    bool didSomethingChanged();
 
-    variant<vector<ResultHarmonics>> getResultHarmonics()  override;
-    variant<vector<ResultResponse>>  getResultResponse()   override;
+    variant<const vector<ResultHarmonics>> getResultHarmonics()  override;
+    variant<const vector<ResultResponse>>  getResultResponse()   override;
     void buildUserInterface(UI * ui){
         dspInstance->buildUserInterface(ui);
     }

@@ -22,8 +22,8 @@ public:
         paramResponse = p;
     }
 
-    virtual std::variant<std::vector<ResultHarmonics>> getResultHarmonics() = 0;
-    virtual std::variant<std::vector<ResultResponse>>  getResultResponse()  = 0;
+    virtual std::variant<const std::vector<ResultHarmonics>> getResultHarmonics() = 0;
+    virtual std::variant<const std::vector<ResultResponse>>  getResultResponse()  = 0;
 
 protected:
     ParamHarmonics paramHarmonics;

@@ -1,5 +1,6 @@
 #include "qbackend.h"
 #include "backendJack.h"
+#include "qmeasure.h"
 #include "qnamespace.h"
 #include "qpushbutton.h"
 
@@ -27,15 +28,12 @@ QFaustDsp::QFaustDsp(QWidget *parent)
     sr->setText("44100");
 
     compile_button = new QPushButton(tr("valider"),this);
-    //compile_button->isCheckable();
     layout->addWidget(compile_button,0);
     layout->addWidget(errorLabel,1);
 
     setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-    // b->setSizePolicy(QSizePolicy::Policy::Preferred,QSizePolicy::MinimumExpanding);
     codeEdit->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
     errorLabel->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-    //codeEdit->setSizeAdjustPolicy(QTextEdit::AdjustToContents);
 
     codeEdit->setText(
         "import(\"filters.lib\");\n" \
@@ -45,27 +43,12 @@ QFaustDsp::QFaustDsp(QWidget *parent)
     connect(compile_button,&QPushButton::clicked,this, &QFaustDsp::compile);
     connect(codeEdit,&QTextEdit::textChanged, this, [this](){compile_button->setDisabled(false);});
     connect(sr,&QLineEdit::textChanged, this, [this](){compile_button->setDisabled(false);});
-    //setMaximumWidth(minimumSizeHint().width());
 }
 
 void QFaustDsp::compile(){
     emit setFaustCode(codeEdit->toPlainText(),sr->text().toInt());
 }
 
-/*
-void QFaustDsp::setFaustCode(QString code,uint sampleRate){
-    auto res = create_faust_qt(code,sampleRate,this);
-    try{
-        auto tmp = std::get<BackendFaustQT*>(res);
-        backend.reset(tmp);
-        this->setErrorMessage("");
-        this->setUI(static_cast<BackendFaustQT*>(backend.data())->getUI());
-    } catch (const std::bad_variant_access& ex) {
-        auto s = std::get<QString>(res);
-        this->setErrorMessage(s);
-    }
-}
-*/
 void QFaustDsp::setDSPUI(QWidget * ui)
 {
     if(dspUi == nullptr) {
@@ -77,7 +60,7 @@ void QFaustDsp::setDSPUI(QWidget * ui)
     }
     layout->addWidget(dspUi.data(),5);
     compile_button->setDisabled(true);
-    //setMaximumWidth(minimumSizeHint().width());
+    errorLabel->setText("");
 }
 
 void QFaustDsp::setErrorMessage(QString s)

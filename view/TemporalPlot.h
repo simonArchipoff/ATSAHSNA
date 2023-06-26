@@ -2,9 +2,6 @@
 
 #include <QWidget>
 
-#include <qwt_plot.h>
-#include <qwt_plot_curve.h>
-
 #include <QSlider>
 #include <signalAnalysis.h>
 
@@ -25,8 +22,6 @@ protected:
   QScopedPointer<QSlider> start, len;
   VD input_data;
   VD output_data;
-  QScopedPointer<QwtPlot> plot;
-  QScopedPointer<QwtPlotCurve> input_curve, output_curve;
 };
 
 

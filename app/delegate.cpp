@@ -1,8 +1,15 @@
 #include "delegate.h"
+#include "mainwindow.h"
+#include "signalHarmonics.h"
 #include <faust/gui/QTUI.h>
 
-delegate::delegate()
+#include <BodePlot.h>
+
+delegate::delegate(MainWindow * m):mw{m}
 {
+
+
+
 }
 
 faust_backend::faust_backend(QSharedPointer<QFaustDsp> gui):QObject{},faust_gui{gui}{
@@ -12,26 +19,32 @@ faust_backend::faust_backend(QSharedPointer<QFaustDsp> gui):QObject{},faust_gui{
 faust_backend::~faust_backend(){
   //  ui->stop();
 }
-void faust_backend::timerEvent(QTimerEvent *event){
+void faust_backend::timerEvent(QTimerEvent * e){
+
     if(backend->didSomethingChanged()){
         qDebug("something changed");
-        emit changed();
+        auto response = backend->getResultResponse();
+        auto harmonics = backend->getResultHarmonics();
+        emit resultResponse(response);
+//emit resultHarmonics(harmonics);
     }
 }
 
 void faust_backend::connectGUI(){
     connect(faust_gui.toStrongRef().data(),&QFaustDsp::setFaustCode,
             this,&faust_backend::setCode);
+
 }
 
 bool faust_backend::setCode(QString dspCode, uint sampleRate){
+    qDebug() << "set code";
     if(backend->setCode(dspCode.toStdString(),sampleRate)){
         QTGUI * ui = new QTGUI{nullptr};
         ui->setParent(faust_gui.toStrongRef().data());
         backend->buildUserInterface((QTGUI*)ui);
         faust_gui.toStrongRef()->setDSPUI(ui);
         backend->init(sampleRate);
-        this->startTimer(200);
+        startTimer(100);
         return true;
     }
     faust_gui.toStrongRef().data()->setErrorMessage(QString(backend->getErrorMessage().c_str()));
@@ -45,7 +58,13 @@ bool faust_backend::isReady() const{
 
 void delegate::addFaustBackend(QSharedPointer<QFaustDsp> gui){
     faust.reset(new faust_backend{gui});
+    connect(faust.data()
+            ,&faust_backend::resultResponse
+            ,mw->bode
+            ,&FrequencyPlot::setResponses);
 }
+
+
 
 /*
 std::variant<faust_backend *, QString>

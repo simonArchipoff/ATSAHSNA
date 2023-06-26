@@ -1,6 +1,7 @@
 #pragma once
 
 #include "qlineedit.h"
+#include "qmeasure.h"
 #include "qwidget.h"
 #include <QWidget>
 #include <QGroupBox>
@@ -11,10 +12,10 @@
 #include <QPushButton>
 #include <QSpinBox>
 
-
 #include <backendJack.h>
 #include <backendFaust.h>
 #include <faust/gui/QTUI.h>
+
 
 class QFaustDsp : public QWidget{
     Q_OBJECT
@@ -33,9 +34,8 @@ public:
     QTextEdit * codeEdit;
     QLabel * errorLabel;
     QPushButton * compile_button;
-    QVBoxLayout *layout;
+    QVBoxLayout * layout;
 };
-
 
 
 
@@ -48,7 +48,6 @@ protected:
 
   void set_sample_rate(uint);
   void set_buffer_size(uint);
-
 
   QPushButton * inputButton, * outputButton;
   QLabel * sampleRate, *bufferSize;
