@@ -24,13 +24,12 @@ void clean_spectrum(VD &s){
 }
 
 
-QSharedPointer<QLineSeries>  transform(VD x,VD y){
+void  transform(QSharedPointer<QLineSeries> & s, VD x,VD y){
     assert(x.size() == y.size());
-    QSharedPointer<QLineSeries> res{new QLineSeries};
-    for(uint i = 0; i < x.size(); i++){
-        res->append(x[i],y[i]);
+    s.data()->clear();
+    for(uint i = 1; i < x.size(); i+= x[i] > 1000 ? 10: 1 ){
+        s->append(QPointF(x[i],y[i]));
     }
-    return res;
 }
 
 

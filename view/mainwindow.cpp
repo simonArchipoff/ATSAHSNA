@@ -31,8 +31,8 @@ MainWindow::MainWindow(QWidget *parent)
   //s->addWidget(backends.data());
   setCentralWidget(faust.data());
   auto * s = new QMainWindow(this);
-  this->bode = new FrequencyPlot(s);
-  s->setCentralWidget(new QChartView(bode));
+  this->bode = new FrequencyPlot(this);
+  s->setCentralWidget(bode);
   s->show();
 
   //setLayout(hb);
