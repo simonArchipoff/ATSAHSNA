@@ -12,6 +12,7 @@ struct ParamResponse {
 struct ResultResponse {
     FDF response;
     ParamResponse params;
+    std::string name;
 };
 
 ResultResponse computeResponse(ParamResponse p,const VD & in,const VD & out, uint sampleRate);

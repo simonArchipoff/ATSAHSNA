@@ -37,7 +37,7 @@ QFaustDsp::QFaustDsp(QWidget *parent)
 
     codeEdit->setText(
         "import(\"filters.lib\");\n" \
-        "fc = hslider(\"frequency\",100,10,20000,1);\n" \
+        "fc = hslider(\"frequency\",100,100,20000,1);\n" \
         "q = hslider(\"quality\",1,0.1,10,0.1);\n" \
         "process=fi.resonlp(fc,q,1);\n");
     connect(compile_button,&QPushButton::clicked,this, &QFaustDsp::compile);

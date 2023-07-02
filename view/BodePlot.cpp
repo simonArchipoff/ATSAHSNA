@@ -24,14 +24,24 @@ void clean_spectrum(VD &s){
 }
 
 
-void  transform(QSharedPointer<QLineSeries> & s, VD x,VD y){
+void  transform(QLineSeries *s, const VD & x,const VD & y){
     assert(x.size() == y.size());
-    s.data()->clear();
-    for(uint i = 1; i < x.size(); i+= x[i] > 1000 ? 10: 1 ){
-        s->append(QPointF(x[i],y[i]));
+    s->clear();
+    QList<QPointF> l;
+    for(uint i = 1; i < x.size(); i+= ceil(i/100)+1 ){
+        l.push_back(QPointF(x[i],y[i]));
     }
+    s->append(l);
 }
 
+void PlotAmplitudePhase::setCurve(const VD&f, const VD&a, const VD&p, QString name){
+    assert(this->name == name);
+    transform(amplitude.data(),f,a);
+    amplitude.data()->setName(name);
+//phase.data()->setName(name + "_phase");
+
+    transform(phase.data(),f,p);
+}
 
 /*
 

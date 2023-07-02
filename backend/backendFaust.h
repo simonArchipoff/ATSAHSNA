@@ -23,7 +23,7 @@ public:
         ref.resize(0);
         for(int i = 0; i < ui->getParamsCount(); i++){
             faustZones.push_back(ui->getParamZone(i));
-            ref.push_back(ui->getParamValue(i));
+            ref.push_back(0);//ui->getParamValue(i));
         }
     }
 

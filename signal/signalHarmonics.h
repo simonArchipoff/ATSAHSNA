@@ -18,6 +18,7 @@ struct ResultHarmonics {
     vector<double> harmonicsLevel;
     //vector<double> harmonicsPhases;
     ParamHarmonics params;
+    std::string name;
 };
 
 VD optimal_window(const VD & signal, double frequency, uint sampleRate);

@@ -17,5 +17,5 @@ public:
     MainWindow(QWidget *parent = nullptr);
 
     QSharedPointer<QFaustDsp> faust;
-    FrequencyPlot * bode;
+    BodePlot * bode;
 };

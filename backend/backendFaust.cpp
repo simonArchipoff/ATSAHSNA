@@ -144,8 +144,11 @@ std::variant<const std::vector<ResultResponse>> BackendFaust::getResultResponse(
     std::vector<ResultResponse> res;
     auto in = impulse(paramResponse.freqMin, paramResponse.duration, getSampleRate());
     auto out = acquisition(vector<VD>(numberInput(),in));
+    int i=0;
     for(auto & o : out){
-        res.push_back(computeResponse(paramResponse,in, o, getSampleRate()));
+        auto tmp = computeResponse(paramResponse,in, o, getSampleRate());
+        tmp.name = std::string("faust_") + std::to_string(i++) ;
+        res.push_back(tmp);
     }
     return std::variant<const std::vector<ResultResponse>>(res);
 

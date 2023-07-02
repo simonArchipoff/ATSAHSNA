@@ -20,13 +20,11 @@ faust_backend::~faust_backend(){
   //  ui->stop();
 }
 void faust_backend::timerEvent(QTimerEvent * e){
-
     if(backend->didSomethingChanged()){
-        qDebug("something changed");
         auto response = backend->getResultResponse();
         auto harmonics = backend->getResultHarmonics();
         emit resultResponse(response);
-//emit resultHarmonics(harmonics);
+        emit resultHarmonics(harmonics);
     }
 }
 
@@ -37,7 +35,6 @@ void faust_backend::connectGUI(){
 }
 
 bool faust_backend::setCode(QString dspCode, uint sampleRate){
-    qDebug() << "set code";
     if(backend->setCode(dspCode.toStdString(),sampleRate)){
         QTGUI * ui = new QTGUI{nullptr};
         ui->setParent(faust_gui.toStrongRef().data());
@@ -61,7 +58,7 @@ void delegate::addFaustBackend(QSharedPointer<QFaustDsp> gui){
     connect(faust.data()
             ,&faust_backend::resultResponse
             ,mw->bode
-            ,&FrequencyPlot::setResponses);
+            ,&BodePlot::setResponses);
 }
 
 
