@@ -25,11 +25,11 @@ public:
 
 signals:
     void changed();
-    void resultResponse( std::variant<const std::vector<ResultResponse>>& response);
-    void resultHarmonics( std::variant< const std::vector<ResultHarmonics>>& harmonics);
+    void resultResponse(std::variant<const std::vector<ResultResponse>>& response);
+    void resultHarmonics(std::variant< const std::vector<ResultHarmonics>>& harmonics);
 
 protected:
-    void timerEvent(QTimerEvent * e);
+    void timerEvent(QTimerEvent * e) override;
     QScopedPointer<BackendFaust> backend;
     QWeakPointer<QFaustDsp> faust_gui;
 };
@@ -48,7 +48,7 @@ public:
     delegate(MainWindow * mw);
 
 
-    void addFaustBackend(QSharedPointer<QFaustDsp> gui);
+    void addFaustBackend();
     void addJackBackend();
 
     QScopedPointer<faust_backend> faust;

@@ -53,15 +53,15 @@ bool faust_backend::isReady() const{
     return backend->isReady();
 }
 
-void delegate::addFaustBackend(QSharedPointer<QFaustDsp> gui){
-    faust.reset(new faust_backend{gui});
+void delegate::addFaustBackend(){
+    auto f = mw->backends->addFaust();
+    auto d = mw->displays->addBodePlot();
+    faust.reset(new faust_backend{f});
     connect(faust.data()
             ,&faust_backend::resultResponse
-            ,mw->bode
+            ,d.data()
             ,&BodePlot::setResponses);
 }
-
-
 
 /*
 std::variant<faust_backend *, QString>

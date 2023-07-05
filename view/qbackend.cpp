@@ -177,3 +177,17 @@ Backend * QBackends::getSelectedBackend(){
 */
 
 
+QSharedPointer<QFaustDsp> QBackends::addFaust(){
+    auto f = QSharedPointer<QFaustDsp>(new QFaustDsp);
+    addTab(f.data(),"faust"+QString::number(fausts.size()));
+    fausts.push_back(f);
+    return f;
+}
+
+
+QSharedPointer<QBackendJack> QBackends::addJack(){
+    auto f = QSharedPointer<QBackendJack>(new QBackendJack);
+    addTab(f.data(),"jack"+QString::number(jacks.size()));
+    jacks.push_back(f);
+    return f;
+}

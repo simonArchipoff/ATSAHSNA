@@ -16,6 +16,6 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = nullptr);
 
-    QSharedPointer<QFaustDsp> faust;
-    BodePlot * bode;
+    QSharedPointer<QBackends> backends;
+    QSharedPointer<QDisplays> displays;
 };

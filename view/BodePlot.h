@@ -13,6 +13,7 @@
 #include <QLineSeries>
 #include <QValueAxis>
 #include <QLogValueAxis>
+#include <QTabWidget>
 #include <vector>
 #include <set>
 
@@ -86,7 +87,9 @@ public:
         chart.addAxis(amplitude_axis, Qt::AlignLeft);
         chart.addAxis(phase_axis,Qt::AlignRight);
         frequency_axis->setBase(10);
-
+        phase_axis->setRange(-180,180);
+        amplitude_axis->setRange(-100,20);
+        frequency_axis->setRange(20,30000);
         setChart(&chart);
     }
 
@@ -112,6 +115,7 @@ public:
         auto * p = plots[name];
         assert(p);
         p->setCurve(v.getFrequency(),v.getAmplitude20log10(),v.getPhase(),name);
+        chart.update();
     }
 
     QMap<QString,PlotAmplitudePhase *> plots;
@@ -157,10 +161,7 @@ public:
         for(uint i = 0; i < v.size(); i++){
             addPlot(v[i].response,QString{v[i].name.data()}+ "_" + QString::number(i));
         }
-        phase_axis->setRange(-180,180);
-        amplitude_axis->setRange(-100,20);
-        frequency_axis->setRange(20,30000);
-        chart.update();
+
     }
 
 };
@@ -172,3 +173,15 @@ public:
     void setResult(const ResultHarmonics &, QColor c);
     //void setThdResult
 };
+
+
+class QDisplays : public QTabWidget{
+public:
+    QDisplays(QWidget * parents):QTabWidget(parents){
+    }
+    QSharedPointer<BodePlot> addBodePlot();
+protected:
+    QSharedPointer<BodePlot> bodePlot;
+};
+
+

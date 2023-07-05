@@ -43,6 +43,16 @@ void PlotAmplitudePhase::setCurve(const VD&f, const VD&a, const VD&p, QString na
     transform(phase.data(),f,p);
 }
 
+
+
+
+
+QSharedPointer<BodePlot> QDisplays::addBodePlot(){
+    bodePlot.reset(new BodePlot(this));
+    addTab(bodePlot.data(),"response");
+    return bodePlot;
+}
+
 /*
 
 BodeCurve::BodeCurve(const QColor c) : color(c) {

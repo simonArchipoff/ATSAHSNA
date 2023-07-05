@@ -15,8 +15,9 @@
 
 
 MainWindow::MainWindow(QWidget *parent)
-    :QMainWindow{parent},faust{new QFaustDsp{this}}
-  //,backends{new QBackends{this}}
+    :QMainWindow{parent}
+    ,backends{new QBackends(this)}
+    ,displays{new QDisplays{this}}
   //,measures{new QMeasure{this}}
 {
   //QToolBar * toolbar = addToolBar("main toolbar");
@@ -24,15 +25,15 @@ MainWindow::MainWindow(QWidget *parent)
   //connect(start_measure, &QAction::triggered, this, &MainWindow::measure);
           //qDebug()<< QThread::currentThreadId();
 
-//  auto s = new QSplitter{this};
-  //w->setMaximumWidth(w->minimumSizeHint().width());
+  auto s = new QSplitter{this};
 
+  setCentralWidget(s);
+  s->addWidget(backends.data());
+  s->addWidget(displays.data());
+  backends->setMaximumWidth(backends->minimumSizeHint().width());
   //auto l = new QVBoxLayout;
   //s->addWidget(backends.data());
-  setCentralWidget(faust.data());
-  auto * s = new QMainWindow(this);
-  this->bode = new BodePlot(this);
-  s->setCentralWidget(bode);
+
   s->show();
 
   //setLayout(hb);

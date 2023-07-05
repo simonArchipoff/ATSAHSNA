@@ -2,6 +2,8 @@
 
 #include "qlineedit.h"
 #include "qmeasure.h"
+#include "qscopedpointer.h"
+#include <QSharedPointer>
 #include "qwidget.h"
 #include <QWidget>
 #include <QGroupBox>
@@ -15,6 +17,9 @@
 #include <backendJack.h>
 #include <backendFaust.h>
 #include <faust/gui/QTUI.h>
+
+
+
 
 
 class QFaustDsp : public QWidget{
@@ -58,3 +63,13 @@ protected:
 
 
 
+class QBackends : public QTabWidget{
+  public:
+  QBackends(QWidget * parents):QTabWidget(parents){
+  }
+  QSharedPointer<QFaustDsp> addFaust();
+  QSharedPointer<QBackendJack> addJack();
+  protected:
+  std::vector<QSharedPointer<QFaustDsp>> fausts;
+  std::vector<QSharedPointer<QBackendJack>> jacks;
+};
