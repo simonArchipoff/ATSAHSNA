@@ -47,9 +47,11 @@ public:
 
     delegate(MainWindow * mw);
 
-
     void addFaustBackend();
     void addJackBackend();
+
+    void addResponseDisplay();
+    void addHarmonicsDisplay();
 
     QScopedPointer<faust_backend> faust;
     MainWindow * mw;

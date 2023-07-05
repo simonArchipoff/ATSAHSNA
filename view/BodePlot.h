@@ -169,9 +169,16 @@ public:
 class THDPlot : public FrequencyPlot
 {
 public:
-    THDPlot(QWidget* parent);
-    void setResult(const ResultHarmonics &, QColor c);
-    //void setThdResult
+    THDPlot(QWidget* parent):FrequencyPlot(parent){
+    }
+    void setResult(std::variant<const std::vector<ResultHarmonics>> & r){
+        auto v = get<const std::vector<ResultHarmonics>>(r);
+        for(uint i = 0; i < v.size(); i++){
+            auto name = QString{v[i].name.data()}+ "_" + QString::number(i);
+            addPlot(v[i].harmonicSpectrum, name);
+            plots[name]->phaseDisplayed = false;
+        }
+    }
 };
 
 
@@ -179,9 +186,19 @@ class QDisplays : public QTabWidget{
 public:
     QDisplays(QWidget * parents):QTabWidget(parents){
     }
+
+    bool isBodeInit(){
+        return !bodePlot.isNull();
+    }
+    bool isTHDinit(){
+        return !thdPlot.isNull();
+    }
+
     QSharedPointer<BodePlot> addBodePlot();
+    QSharedPointer<THDPlot> addTHDPlot();
 protected:
     QSharedPointer<BodePlot> bodePlot;
+    QSharedPointer<THDPlot> thdPlot;
 };
 
 

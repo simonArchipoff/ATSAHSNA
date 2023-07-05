@@ -53,6 +53,12 @@ QSharedPointer<BodePlot> QDisplays::addBodePlot(){
     return bodePlot;
 }
 
+QSharedPointer<THDPlot> QDisplays::addTHDPlot(){
+    thdPlot.reset(new THDPlot(this));
+    addTab(thdPlot.data(),"harmonics");
+    return thdPlot;
+}
+
 /*
 
 BodeCurve::BodeCurve(const QColor c) : color(c) {

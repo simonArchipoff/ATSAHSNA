@@ -1,4 +1,4 @@
-#include "delegate.h"
+ #include "delegate.h"
 #include "mainwindow.h"
 #include "signalHarmonics.h"
 #include <faust/gui/QTUI.h>
@@ -60,8 +60,24 @@ void delegate::addFaustBackend(){
     connect(faust.data()
             ,&faust_backend::resultResponse
             ,d.data()
-            ,&BodePlot::setResponses);
+            ,&BodePlot::setResponses
+            ,Qt::UniqueConnection);
 }
+
+void delegate::addResponseDisplay(){
+    if(!mw->displays->isBodeInit()){
+        auto bode = mw->displays->addBodePlot();
+
+    }
+}
+void delegate::addHarmonicsDisplay(){
+    if(!mw->displays->isTHDinit()){
+        auto thd = mw->displays->addTHDPlot();
+
+    }
+
+}
+
 
 /*
 std::variant<faust_backend *, QString>

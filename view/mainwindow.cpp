@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
   setCentralWidget(s);
   s->addWidget(backends.data());
   s->addWidget(displays.data());
-  backends->setMaximumWidth(backends->minimumSizeHint().width());
+//  backends->setWidth(backends->minimumSizeHint().width());
   //auto l = new QVBoxLayout;
   //s->addWidget(backends.data());
 
