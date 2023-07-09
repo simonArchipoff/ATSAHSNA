@@ -7,6 +7,8 @@ pkg_search_module(FFTW REQUIRED fftw3 IMPORTED_TARGET)
 
 #include(CMakePrintHelpers)
 set(SIGNAL_SOURCES
+    signalFFT.h
+    signalFFT.cpp
     signalAnalysis.h
     signalAnalysis.cpp
     signalGeneration.h

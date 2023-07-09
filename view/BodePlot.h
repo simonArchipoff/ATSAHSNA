@@ -89,7 +89,7 @@ public:
         frequency_axis->setBase(10);
         phase_axis->setRange(-180,180);
         amplitude_axis->setRange(-100,20);
-        frequency_axis->setRange(20,30000);
+        frequency_axis->setRange(20,20000);
         setChart(&chart);
     }
 

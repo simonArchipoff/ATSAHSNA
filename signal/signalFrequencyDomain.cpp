@@ -1,7 +1,7 @@
 #include "signalFrequencyDomain.h"
 #include <algorithm>
 #include <cmath>
-#include <fftw3.h>
+#include <signalFFT.h>
 #include <iterator>
 #include <numeric>
 #include <complex>
@@ -181,21 +181,12 @@ FDF compute_TF_FFT(const VCD &input, const VCD &output, uint sampleRate){
 
 
 FDF compute_TF_FFT(const VCD &v, uint sampleRate) {
-    int size = v.size();
-    VCD in_fft(v);
-    VCD out_fft(size);
-    fftw_plan p = fftw_plan_dft_1d(size,
-                                   reinterpret_cast<fftw_complex*>(in_fft.data()),
-                                   reinterpret_cast<fftw_complex*>(out_fft.data()),
-                                   FFTW_FORWARD,
-                                   FFTW_ESTIMATE);
-    fftw_execute(p);
-    for(int i = 0; i < size; i++){
-        out_fft[i] /= size;
+    VCD out_fft = fft(v);
+    for(uint i = 0; i < v.size(); i++){
+        out_fft[i] /= v.size();
     }
     out_fft.resize(out_fft.size());
     FDF dtf(out_fft,sampleRate);
-    fftw_destroy_plan(p);
     return dtf;
 }
 
@@ -210,16 +201,7 @@ VCD vdToVCD(const VD &input){
 
 
 VCD computeDFT(const VD &input){
-    VCD cinput = vdToVCD(input);
-    VCD coutput(input.size());
-    fftw_plan p = fftw_plan_dft_1d(input.size(),
-                                   reinterpret_cast<fftw_complex*>(cinput.data()),
-                                   reinterpret_cast<fftw_complex*>(coutput.data()),
-                                   FFTW_FORWARD,
-                                   FFTW_ESTIMATE);
-
-    fftw_execute(p);
-    fftw_destroy_plan(p);
+    VCD coutput = fft(input);
     for(uint i = 0; i < coutput.size(); i++){
         coutput[i] /= coutput.size()/2;
     }
@@ -228,17 +210,8 @@ VCD computeDFT(const VD &input){
 
 
 VD FDF::frequencyDomainTotemporal() const {
-    vector<double> o;
-    o.resize(response.size());
-    vector<complex<double>> i{response};
-    i.resize(i.size());
-
-    auto plan = fftw_plan_dft_c2r_1d(response.size()
-                                     ,reinterpret_cast<fftw_complex*>(i.data())
-                                     ,o.data()
-                                     ,FFTW_ESTIMATE);
-    fftw_execute(plan);
-    fftw_destroy_plan(plan);
+    VD o;
+    rfft(response,o);
     for(auto & i : o)
         i *= response.size();
     return o;

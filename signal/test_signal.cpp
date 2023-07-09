@@ -32,7 +32,7 @@ TEST_CASE("chirp"){
 }
 
 
-TEST_CASE("find delay"){
+TEST_CASE("find delay","[benchmark]"){
     int SR = 44000;
     double d = 0.1;
     auto o = chirp(100,10000,d,SR);
@@ -45,6 +45,30 @@ TEST_CASE("find delay"){
     int measured_delay = compute_delay(s, o);
 
     REQUIRE(delay == measured_delay);
+}
+
+
+TEST_CASE("find delay fft","[benchmark]"){
+    int SR = 44000;
+    double d = 0.1;
+    auto o = chirp(100,10000,d,SR);
+    auto s{o};
+    pad_right_0(1501,s);
+
+    int delay = 666;
+    pad_left_0(delay,s);
+
+    VD res =  correlation_fft(s,o);
+
+    auto m = std::max_element(res.begin(), res.end());
+    double maxim = *m;
+    int diff = (m - res.begin()) - o.size() + 1;
+
+    to_file("/tmp/s",s);
+    to_file("/tmp/o",o);
+    to_file("/tmp/res",res);
+
+    REQUIRE(diff == delay);
 }
 
 

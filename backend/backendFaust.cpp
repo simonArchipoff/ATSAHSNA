@@ -134,8 +134,11 @@ vector<VD> BackendFaust::acquisition(const vector<VD> &in){
 
 
 bool BackendFaust::didSomethingChanged(){
-    reinit(this,1);
-    return detectChange.isSomethingChanged();
+    if(dspInstance){
+        reinit(this,1);
+        return detectChange.isSomethingChanged();
+    }
+    return false;
 }
 
 std::variant<const std::vector<ResultResponse>> BackendFaust::getResultResponse(){

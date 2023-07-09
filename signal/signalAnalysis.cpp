@@ -1,9 +1,11 @@
 #include "signalAnalysis.h"
 
+#include <signalFFT.h>
 #include <assert.h>
 #include <algorithm>
 #include <numeric>
 #include <cmath>
+
 
 #include <fstream>
 #include <iomanip>
@@ -25,6 +27,8 @@ inline double window_sample(const enum window_type t, double s){
     case HAMMING:
         return a0 - a1 * cos(2*M_PI*s);
         break;
+    default:
+        abort();
     }
     return std::nan("window_sample");
 }
@@ -62,6 +66,37 @@ VD correlation(const VD &v, uint start, uint size,
     }
     return res;
 }
+
+VD reverse(const VD&v){
+    return std::vector(v.rbegin(),v.rend());
+}
+
+
+VD correlation_fft(const VD&a, const VD&b){
+    return convolution_fft(a,reverse(b));
+}
+
+
+
+template<typename T>
+T _convolution_fft(const T&a,const T&b){
+    int lenght = a.size() + b.size() - 1;
+    auto af=fft(a,lenght);
+    auto bf=fft(b,lenght);
+    for(uint i = 0; i < af.size(); i++){
+        af[i] = af[i]*bf[i];
+    }
+    return rfft<T>(af);
+}
+VD convolution_fft(const VD&a, const VD&b){
+    return _convolution_fft<VD>(a,b);
+}
+
+
+VCD convolution_fft(const VCD&a, const VCD&b){
+    return _convolution_fft<VCD>(a,b);
+}
+
 
 static void find_maximums(const VD & in, vector<int> & idx, vector<double> & maxs, double minimum_max){
     idx.resize(0);

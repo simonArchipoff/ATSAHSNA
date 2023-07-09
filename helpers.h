@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <fstream>
 #include "constants.h"
 
 template<typename T>
@@ -31,3 +32,11 @@ static VCD array_VD_to_VCD(const VD & input){
     return out;
 }
 
+
+template<typename T>
+void to_file(const std::string & s, const std::vector<T> & v){
+    using namespace std;
+    std::ofstream out(s,ios::out | ios::binary);
+    out.write((char*)v.data(), sizeof(T)*v.size());
+    out.close();
+}
