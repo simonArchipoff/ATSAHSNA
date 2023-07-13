@@ -52,6 +52,19 @@ VD window(uint size, window_type t){
     }
 }
 
+template<typename VD>
+VD reverse(const VD&v){
+    return std::vector(v.rbegin(),v.rend());
+}
+
+VCD reverse_and_conj(const VCD & v){
+    VCD r = reverse(v);
+    for(auto &i : r){
+        i = std::conj(i);
+    }
+    return r;
+}
+
 
 VD correlation(const VD &v, uint start, uint size,
                const VD &k, uint kstart, uint ksize){
@@ -67,9 +80,6 @@ VD correlation(const VD &v, uint start, uint size,
     return res;
 }
 
-VD reverse(const VD&v){
-    return std::vector(v.rbegin(),v.rend());
-}
 
 
 VD correlation_fft(const VD&a, const VD&b){

@@ -58,16 +58,14 @@ TEST_CASE("find delay fft","[benchmark]"){
     int delay = 666;
     pad_left_0(delay,s);
 
-    VD res =  correlation_fft(s,o);
 
-    auto m = std::max_element(res.begin(), res.end());
-    double maxim = *m;
-    int diff = (m - res.begin()) - o.size() + 1;
+    int diff = compute_delay_fft(s,o);
 
+/*
     to_file("/tmp/s",s);
     to_file("/tmp/o",o);
     to_file("/tmp/res",res);
-
+*/
     REQUIRE(diff == delay);
 }
 

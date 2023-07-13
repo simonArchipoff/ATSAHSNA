@@ -49,7 +49,7 @@ add_subdirectory(view)
 add_subdirectory(app)
 
 add_executable(tests test_helpers.cpp signal/test_signal.cpp )
-target_link_libraries(tests PRIVATE signal Catch2::Catch2WithMain)
+target_link_libraries(tests PRIVATE signal Catch2::Catch2WithMain fftw3)
 
 
 set(PROJECT_SOURCES
