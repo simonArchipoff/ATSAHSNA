@@ -48,7 +48,7 @@ add_subdirectory(signal)
 add_subdirectory(view)
 add_subdirectory(app)
 
-add_executable(tests test_helpers.cpp signal/test_signal.cpp )
+add_executable(tests test_helpers.cpp signal/test_signal.cpp backend/test_backend.cpp )
 target_link_libraries(tests PRIVATE signal Catch2::Catch2WithMain fftw3)
 
 

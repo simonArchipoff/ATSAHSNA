@@ -15,6 +15,8 @@ set(BACKEND_SOURCES
     backend.cpp
     backendFaust.h
     backendFaust.cpp
+    backendRingBuffer.h
+    backendRingBuffer.cpp
     concurrentqueue.h
     backendJack.h
     backendJack.cpp

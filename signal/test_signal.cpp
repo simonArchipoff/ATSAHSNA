@@ -77,9 +77,6 @@ TEST_CASE("optimal window", "[benchmark]"){
     auto signal = s;
     pad_right_0(100,signal);
     pad_left_0(256,signal);
-    VD r;
-    BENCHMARK("optimal window"){
-        return r = optimal_window(signal,f,SR);
-    };
+    VD r = optimal_window(signal,f,SR);
     REQUIRE(s == r);
 }
