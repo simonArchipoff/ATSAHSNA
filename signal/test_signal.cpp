@@ -32,22 +32,6 @@ TEST_CASE("chirp"){
 }
 
 
-TEST_CASE("find delay","[benchmark]"){
-    int SR = 44000;
-    double d = 0.1;
-    auto o = chirp(100,10000,d,SR);
-    auto s{o};
-    pad_right_0(1500,s);
-
-    int delay = 530;
-    pad_left_0(delay,s);
-
-    int measured_delay = compute_delay(s, o);
-
-    REQUIRE(delay == measured_delay);
-}
-
-
 TEST_CASE("find delay fft","[benchmark]"){
     int SR = 44000;
     double d = 0.1;

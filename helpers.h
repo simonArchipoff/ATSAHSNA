@@ -15,11 +15,13 @@ void pad_left_0(uint n, vector<T> & in){
 }
 template<typename T>
 void remove_left(uint n, vector<T> & in){
+    assert(n<=in.size());
     std::rotate(in.begin(), in.begin() + n, in.end());
     in.resize(in.size()-n);
 }
 template<typename T>
 void remove_right(uint n, vector<T> & in){
+    assert(n <= in.size());
     in.resize(in.size() - n);
 }
 

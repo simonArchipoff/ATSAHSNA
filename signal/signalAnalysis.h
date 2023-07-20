@@ -19,9 +19,6 @@ void multiply_vector(T & a, const T &b){
 
 VD window(uint size, window_type t);
 
-//naive implementation for finding k in v
-VD correlation(const VD &v, uint start, uint size,
-               const VD &k, uint kstart, uint ksize);
 VD convolution_fft(const VD&a,const VD&b);
 VCD convolution_fft(const VCD&a, const VCD&b);
 VD correlation_fft(const VD&a, const VD&b);
@@ -52,6 +49,7 @@ int compute_delay_fft(const T & s, const T & k){
     int diff = (m - res.begin()) - k.size() + 1;
     return diff;
  }
+
 
 int compute_delay(const VD & out, const VD & in);
 

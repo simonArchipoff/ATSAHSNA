@@ -223,13 +223,13 @@ VD optimal_window(const VD & signal, double frequency, uint sampleRate){
     auto p = sinusoid(frequency,1/frequency,sampleRate);
 
     //TODO: optimise that, we dont need the full correlation, only where it is relevant in the begining and the end.
-    auto corr = correlation(signal,0,signal.size(),p,0,p.size());
-
+    auto corr = //correlation(signal,0,signal.size(),p,0,p.size());
+        correlation_fft(signal,p);
     double max = *std::max_element(corr.begin(),corr.end());
     vector<uint> idx_max;
     for(uint i = 1; i < corr.size()-1; i++){
         if(corr[i-1] < corr[i] && corr[i] > corr[i+1] && corr[i] > 0.96 * max){
-            idx_max.push_back(i);
+            idx_max.push_back(i - p.size() + 1);
         }
     }
     assert(idx_max.size() >= 2);

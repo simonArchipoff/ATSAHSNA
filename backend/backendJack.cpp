@@ -52,7 +52,6 @@ void * BackendJack::audio_thread(void * arg){
     BackendJack * jb = static_cast<BackendJack *>(arg);
 
     while(1) {
-        jb->treatRequest();
         jack_nframes_t nframes = jack_cycle_wait(jb->client);
         if(jb->status == Waiting){
             for(uint i = 0; i < jb->outputPorts.size(); i++){
@@ -93,7 +92,6 @@ void * BackendJack::audio_thread(void * arg){
         jb->idx += size_to_copy;
         if(jb->idx >= jb->currentInput[0].size()){
             assert(jb->idx == jb->currentInput[0].size());
-            jb->sendOutput();
         }
 
         jack_cycle_signal(jb->client,0);
@@ -157,80 +155,4 @@ bool BackendJack::addOutputPort(std::string name,std::string connect){
 }
 
 
-void BackendJack::treatRequest(){
-    request r;
-    bool b = requests.try_dequeue(r);
-    struct V {
-        BackendJack *t;
-        V(BackendJack * b):t(b){}
-        void operator()(RequestMeasure &r){
-            //assert(t->status == Waiting);
 
-            t->idx=0;
-            t->status = Measuring;
-            t->currentInput = r.input;
-            t->currentOutput.resize(t->numberOutput());
-            assert(t->currentInput.size() == t->inputPorts.size());
-            if(t->numberInput() == 0 || t->numberOutput() == 0){
-                t->sendOutput();
-            }
-#ifndef NDEBUG
-            for(auto &i : t->currentInput){
-                assert(i.size() == t->currentInput[0].size());
-            }
-#endif
-            for(auto &i : t->currentOutput){
-                i.resize(t->currentInput[0].size());
-            }
-        }
-        void operator()(RequestPartialOutput &){
-            auto r = t->currentOutput;
-            for(auto &i : r){
-                i.resize(t->idx);
-            }
-            t->responses.enqueue(PartialOutput{r});
-        }
-        void operator()(CancelMeasure &){
-            t->status = Waiting;
-            for(auto &i : t->currentInput){
-                i.resize(0);
-            }
-            for(auto &i : t->currentOutput){
-                i.resize(0);
-            }
-        }
-    };
-    if(b){
-        std::visit(V(this),r);
-    }
-}
-
-void BackendJack::sendOutput(){
-    responses.enqueue(Output{currentOutput});
-    status = Waiting;
-}
-
-
-
-
-vector<VD> BackendJack::acquisition(const vector<VD> &input){
-    if(input.size()==0)
-        return input;
-    lock.lock();
-    auto in = vector{input};
-    requestMeasure(in);
-    do{
-        const int delay_ms = 50;
-#ifdef WE_HAVE_QT
-        QThread::msleep(delay_ms);
-#else
-        std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
-#endif
-        auto r  = tryGetOutput();
-        if(r.has_value()){
-            auto out = r.value();
-            lock.unlock();
-            return out;
-        }
-    }while(true);
-}

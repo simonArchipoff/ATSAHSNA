@@ -31,16 +31,6 @@ struct ParamJack {
 };
 
 
-struct RequestMeasure{vector<VD> input;};
-struct RequestPartialOutput{};
-//struct RequestOutput{};
-struct CancelMeasure{};
-typedef std::variant<RequestMeasure,
-                     RequestPartialOutput,
-                     CancelMeasure> request;
-struct PartialOutput{vector<VD> output;};
-struct Output {vector<VD> output;};
-typedef std::variant<PartialOutput,Output> response;
 
 
 class BackendJack : public Backend
@@ -75,39 +65,6 @@ public:
         return outputGain;
     }
 
-
-    void requestMeasure(vector<VD> input){
-        assert(input.size() == numberInput());
-        requests.enqueue(RequestMeasure{input});
-    }
-    void requestPartialOutput(){
-        requests.enqueue(RequestPartialOutput{});
-    }
-    void cancelMeasure(){
-        requests.enqueue(CancelMeasure{});
-    }
-
-    std::optional<response> tryGetResponse(){
-        response r;
-        if(responses.try_dequeue(r)){
-            return std::optional{r};
-        } else {
-            return std::nullopt;
-        }
-    }
-
-    std::optional<vector<VD>> tryGetOutput(){
-        auto r = tryGetResponse();
-        if(r.has_value()) {
-            try{
-                return std::optional{std::get<struct Output>(r.value()).output};
-            } catch(const std::bad_variant_access& e) {
-                return std::nullopt;
-            }
-        }
-        return std::nullopt;
-    }
-
     virtual void setLatency(uint l){
         latency = l;
     }
@@ -121,21 +78,16 @@ public:
 
     vector<VD> acquisition(const vector<VD> &input);
 
-    //QFuture<vector<VD>> acquisition_async(const vector<VD> &input);
-
 
 
 protected:
     int latency = 0;
     bool latency_automatic = true;
 
-    moodycamel::ConcurrentQueue<request>  requests;
-    moodycamel::ConcurrentQueue<response> responses;
+    //moodycamel::ConcurrentQueue<request>  requests;
+   // moodycamel::ConcurrentQueue<response> responses;
     std::mutex lock;
     static void * audio_thread(void*);
-
-    void treatRequest();
-    void sendOutput();
 
     //int 	jack_set_thread_init_callback (jack_client_t *client, JackThreadInitCallback thread_init_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
     //static void jackThreadInitCallback(void *arg);

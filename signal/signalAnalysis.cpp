@@ -66,22 +66,6 @@ VCD reverse_and_conj(const VCD & v){
 }
 
 
-VD correlation(const VD &v, uint start, uint size,
-               const VD &k, uint kstart, uint ksize){
-    assert(v.size() >= start + size);
-    assert(k.size() >= kstart + ksize);
-    VD res(size-ksize);
-    for(uint i = 0; i < res.size(); i++){
-        res[i] = 0;
-        for(uint j = 0; j < ksize; j++){
-            res[i] += v[start + i + j] * k[kstart + j];
-        }
-    }
-    return res;
-}
-
-
-
 VD correlation_fft(const VD&a, const VD&b){
     return convolution_fft(a,reverse(b));
 }
@@ -108,7 +92,7 @@ VCD convolution_fft(const VCD&a, const VCD&b){
 }
 
 
-static void find_maximums(const VD & in, vector<int> & idx, vector<double> & maxs, double minimum_max){
+void find_maximums(const VD & in, vector<int> & idx, vector<double> & maxs, double minimum_max){
     idx.resize(0);
     maxs.resize(0);
     if(in.size() > 1 && in[0] > in[1] && in[0] > minimum_max){ //is first element a maximum?
@@ -127,21 +111,6 @@ static void find_maximums(const VD & in, vector<int> & idx, vector<double> & max
     }
 }
 
-
-int compute_delay(const VD & out, const VD & in){
-    /*    VD k(2*size_input);
-    for(int i = 0; i < size_input; i++){
-        k[i] = in[size_input - i - 1];
-        k[size_input + i] = in[i];
-    }*/
-    auto corr_out = correlation(out,0,out.size(), in, 0, in.size());
-    double m = *std::max_element(corr_out.begin(), corr_out.end());
-    vector<int> idx;
-    vector<double> maxs;
-    find_maximums(corr_out, idx, maxs,0.99*m);
-    //qDebug() << idx;
-    return idx[0];
-}
 
 
 //https://stackoverflow.com/questions/7616511/calculate-mean-and-standard-deviation-from-a-vector-of-samples-in-c-using-boos
