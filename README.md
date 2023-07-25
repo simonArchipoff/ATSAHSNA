@@ -4,7 +4,7 @@ This project aims to be a free/libre software to perform accoustical measures.
 
 It's licenced under GPLv3.
 /!\ For now it's under heavy development, you can play with it but please dont build something with it yet.
-This development is stopped for now as I'll focus on a CLI interface.
+once the dev branch will reach the same level of functionnality master will be updated (it's gonna be awesome)
 
 What's already implemented:
 - two backend (faust and jackd)
