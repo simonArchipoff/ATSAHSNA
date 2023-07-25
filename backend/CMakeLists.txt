@@ -19,6 +19,7 @@ set(BACKEND_SOURCES
     backendRingBuffer.cpp
     concurrentqueue.h
     backendJack.h
+    BackendRT.h
     backendJack.cpp
 )
 

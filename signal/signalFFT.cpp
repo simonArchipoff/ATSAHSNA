@@ -25,9 +25,9 @@ VCD fft(const VCD& input, int size){
     return fft(ci);
 }
 
-void rfft(const VCD & input, VD & out){
-    out.resize(input.size());
-    fftw_plan p = fftw_plan_dft_c2r_1d(input.size(),(fftw_complex*) const_cast<complex<double>*>(input.data()), out.data(), FFTW_ESTIMATE);
+void rfft(const VCD & input, VD & out, int size){
+    out.resize(size);
+    fftw_plan p = fftw_plan_dft_c2r_1d(size,(fftw_complex*) const_cast<complex<double>*>(input.data()), out.data(), FFTW_ESTIMATE);
     fftw_execute(p);
     fftw_destroy_plan(p);
 }

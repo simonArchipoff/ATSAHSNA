@@ -23,7 +23,6 @@ inline double window_sample(const enum window_type t, double s){
         break;
     case HANN:
         a0 = a1 = 0.5; //hann paremeters
-        [[fallthrough]];
     case HAMMING:
         return a0 - a1 * cos(2*M_PI*s);
         break;
@@ -70,27 +69,32 @@ VD correlation_fft(const VD&a, const VD&b){
     return convolution_fft(a,reverse(b));
 }
 
-
-
 template<typename T>
 T _convolution_fft(const T&a,const T&b){
-    int lenght = a.size() + b.size() - 1;
-    auto af=fft(a,lenght);
-    auto bf=fft(b,lenght);
+    uint lenght = a.size() + b.size() - 1;
+    VCD af=fft(a,lenght);
+    VCD bf=fft(b,lenght);
+    assert(af.size() == bf.size());
     for(uint i = 0; i < af.size(); i++){
         af[i] = af[i]*bf[i];
     }
-    return rfft<T>(af);
+    T out;
+    rfft(af, out,lenght);
+    for(auto & i: out){
+        i/=lenght;
+    }
+    return out;
 }
 VD convolution_fft(const VD&a, const VD&b){
     return _convolution_fft<VD>(a,b);
 }
 
 
+/*
 VCD convolution_fft(const VCD&a, const VCD&b){
     return _convolution_fft<VCD>(a,b);
 }
-
+*/
 
 void find_maximums(const VD & in, vector<int> & idx, vector<double> & maxs, double minimum_max){
     idx.resize(0);

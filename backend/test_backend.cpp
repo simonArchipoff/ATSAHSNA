@@ -26,3 +26,69 @@ TEST_CASE("Ring buffer") {
     REQUIRE(rb.available() == 8);
 
 }
+
+
+//tests made by chatGPT (and fixed by me)
+
+TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
+    SECTION("Default Constructor") {
+        RingBuffer<int> rb;
+        REQUIRE(rb.available() == 0);
+        REQUIRE(rb.freespace() == 0);
+    }
+
+    SECTION("Constructor with Size") {
+        RingBuffer<int> rb(10);
+        REQUIRE(rb.available() == 0);
+        REQUIRE(rb.freespace() == 10);
+    }
+
+    SECTION("Reset Buffer Size") {
+        RingBuffer<int> rb;
+        rb.reset(5);
+        REQUIRE(rb.available() == 0);
+        REQUIRE(rb.freespace() == 5);
+    }
+
+    SECTION("Write and Read Elements") {
+        RingBuffer<int> rb(5);
+        std::vector<int> data = {1, 2, 3};
+        rb.write(data);
+        REQUIRE(rb.available() == 3);
+        REQUIRE(rb.freespace() == 2);
+
+        std::vector<int> readData = rb.read(2);
+        REQUIRE(readData == std::vector<int>({1, 2}));
+        REQUIRE(rb.available() == 3);
+        REQUIRE(rb.freespace() == 2);
+
+        rb.write({4, 5});
+        REQUIRE(rb.available() == 5);
+        REQUIRE(rb.freespace() == 0);
+
+        readData = rb.read(4);
+        REQUIRE(readData == std::vector<int>({1, 2, 3,4}));
+        REQUIRE(rb.available() == 5);
+        REQUIRE(rb.freespace() == 0);
+    }
+
+    SECTION("Pop Elements") {
+        RingBuffer<int> rb(5);
+        rb.write({1, 2, 3, 4, 5});
+        REQUIRE(rb.available() == 5);
+        REQUIRE(rb.freespace() == 0);
+
+        rb.pop(2);
+        REQUIRE(rb.available() == 3);
+        REQUIRE(rb.freespace() == 2);
+
+        std::vector<int> readData = rb.read(2);
+        REQUIRE(readData == std::vector<int>({3, 4}));
+        REQUIRE(rb.available() == 3);
+        REQUIRE(rb.freespace() == 2);
+
+        rb.pop(1);
+        REQUIRE(rb.available() == 2);
+        REQUIRE(rb.freespace() == 3);
+    }
+}

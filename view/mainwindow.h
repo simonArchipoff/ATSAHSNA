@@ -18,4 +18,16 @@ public:
 
     QSharedPointer<QBackends> backends;
     QSharedPointer<QDisplays> displays;
+
+ // chatGPT :
+private slots:
+    void onAddFaust();
+    void onAddJack();
+    void onAddResponse();
+    void onAddHarmonics();
+    void onAddSpectrogram();
+
+private:
+    void createMenus();
+
 };

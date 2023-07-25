@@ -30,9 +30,6 @@ protected:
     ParamResponse paramResponse;
 };
 
-
-
-
 /*
 void setLatency(int l);
 uint getLatence() const{

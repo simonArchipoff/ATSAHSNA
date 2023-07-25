@@ -6,8 +6,8 @@ template<typename T>
 class RingBuffer
 {
 public:
-    RingBuffer(){}
-    RingBuffer(int size){
+    RingBuffer():size(0),begin(0),end(0){}
+    RingBuffer(int size):RingBuffer(){
         reset(size);
     }
     void reset(int size){
@@ -19,7 +19,7 @@ public:
         std::vector<T> res;
         res.resize(size,42);
         if(buff.size() - begin >= size){
-            std::copy(buff.cbegin() + begin, buff.cbegin() + size,res.begin());
+            std::copy(buff.cbegin() + begin, buff.cbegin() + begin + size,res.begin());
         } else {
             int tmp = buff.size() - begin;
             assert(tmp < size);

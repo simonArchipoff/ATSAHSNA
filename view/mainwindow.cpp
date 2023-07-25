@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
 //  backends->setWidth(backends->minimumSizeHint().width());
   //auto l = new QVBoxLayout;
   //s->addWidget(backends.data());
-
+  createMenus();
   s->show();
 
   //setLayout(hb);
@@ -77,3 +77,40 @@ void MainWindow::measure(Backend * b, ParamSpectrogram p){
  //   this->qResults->setResult(r[2],Qt::green);
 }
 */
+
+
+
+// chat gpt :
+void MainWindow::createMenus()
+{
+  // Créer le menu "Backend"
+  QMenu *backendMenu = new QMenu("Backend");
+  QAction *addFaustAction = backendMenu->addAction("Add Faust");
+  QAction *addJackAction = backendMenu->addAction("Add Jack");
+
+  // Connecter les actions du menu "Backend" à des slots (si besoin)
+  connect(addFaustAction, &QAction::triggered, this, &MainWindow::onAddFaust);
+  connect(addJackAction, &QAction::triggered, this, &MainWindow::onAddJack);
+
+  // Créer le menu "Analyse"
+  QMenu *analyseMenu = new QMenu("Analyse");
+  QAction *addResponseAction = analyseMenu->addAction("Add Response");
+  QAction *addHarmonicsAction = analyseMenu->addAction("Add Harmonics");
+  QAction *addSpectrogramAction = analyseMenu->addAction("Add Spectrogram");
+
+  // Connecter les actions du menu "Analyse" à des slots (si besoin)
+  connect(addResponseAction, &QAction::triggered, this, &MainWindow::onAddResponse);
+  connect(addHarmonicsAction, &QAction::triggered, this, &MainWindow::onAddHarmonics);
+  connect(addSpectrogramAction, &QAction::triggered, this, &MainWindow::onAddSpectrogram);
+
+  // Ajouter les menus à la barre de menu de la fenêtre
+  menuBar()->addMenu(backendMenu);
+  menuBar()->addMenu(analyseMenu);
+}
+
+// Implémenter les slots ici pour effectuer les actions spécifiques
+void MainWindow::onAddFaust() { /* Action pour ajouter Faust */ }
+void MainWindow::onAddJack() { /* Action pour ajouter Jack */ }
+void MainWindow::onAddResponse() { /* Action pour ajouter Response */ }
+void MainWindow::onAddHarmonics() { /* Action pour ajouter Harmonics */ }
+void MainWindow::onAddSpectrogram() { /* Action pour ajouter Spectrogram */}

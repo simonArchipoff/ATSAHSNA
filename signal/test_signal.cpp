@@ -3,8 +3,47 @@
 
 #include "helpers.h"
 #include "signalHarmonics.h"
-#include "signalGeneration.h"
 #include "signalAnalysis.h"
+#include "signalGeneration.h"
+/*
+#include <fftw3.h>
+TEST_CASE("fftw)"){
+
+    double foo[20] = {0,0,
+                      1,4,
+                      0,0,
+                      0,0};
+    double bar[20] = {};
+    for(int i = 0; i < 20; i++){
+        bar[i] = 42;
+    }
+
+    auto p2 = fftw_plan_dft_c2r_1d(3,(fftw_complex*)foo,bar, FFTW_ESTIMATE);
+    fftw_execute(p2);
+
+
+    REQUIRE(1==1);
+}
+*/
+
+
+
+TEST_CASE("Convolution FFT Test", "[convolution_fft]") {
+    SECTION("Test avec des vecteurs simples") {
+        auto a = VD({1.0, 2.0, 3.0,4.0});
+        auto b = VD({0.5,0.3});
+        double sum=0.0;
+        auto result = convolution_fft(a, b);
+        auto resnumpy = VD({0.5000000000000002,1.3,2.1,2.9000000000000004,1.2000000000000002});
+        for(uint i = 0; i < result.size(); i++){
+            sum += fabs(result[i]-resnumpy[i]);;
+        };
+        REQUIRE(result.size() == resnumpy.size());
+        REQUIRE( sum < 0.000001 );
+    }
+}
+    // Ajoutez d'autres tests selon vos besoins...
+
 
 TEST_CASE("computeTHD") {
     uint t = 2*2048;
@@ -54,6 +93,8 @@ TEST_CASE("find delay fft","[benchmark]"){
 }
 
 
+
+
 TEST_CASE("optimal window", "[benchmark]"){
     int SR = 44000;
     double f = 100;
@@ -64,3 +105,4 @@ TEST_CASE("optimal window", "[benchmark]"){
     VD r = optimal_window(signal,f,SR);
     REQUIRE(s == r);
 }
+
