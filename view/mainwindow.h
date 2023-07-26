@@ -5,6 +5,7 @@
 
 
 #include "qbackend.h"
+#include <widget_chatgpt.h>
 
 #include <signalHarmonics.h>
 #include <signalResponse.h>
@@ -15,19 +16,34 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
     MainWindow(QWidget *parent = nullptr);
-
+    ~MainWindow();
     QSharedPointer<QBackends> backends;
     QSharedPointer<QDisplays> displays;
 
- // chatGPT :
-private slots:
-    void onAddFaust();
-    void onAddJack();
-    void onAddResponse();
-    void onAddHarmonics();
-    void onAddSpectrogram();
+
 
 private:
     void createMenus();
 
+public:
+signals:
+    void addResponseWidgetRequested();
+    void addHarmonicsWidgetRequested();
+    void addSpectrogramWidgetRequested();
+    void addFaustBackendRequested();
+    void addJackBackendRequested();
+
+private slots:
+    void onAddResponseWidgetRequested();
+    void onAddHarmonicsWidgetRequested();
+    void onAddSpectrogramWidgetRequested();
+    void onAddFaustBackendRequested();
+    void onAddJackBackendRequested();
+
+private:
+    ParamResponseWidget* paramResponseWidget;
+    ParamHarmonicsWidget* paramHarmonicsWidget;
+    ParamSpectrogramWidget* spectrogramWidget;
 };
+
+

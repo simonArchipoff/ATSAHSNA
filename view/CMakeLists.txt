@@ -9,6 +9,8 @@ add_library(view
     BodePlot.h
     mainwindow.cpp
     mainwindow.h
+    widget_chatgpt.h
+    widget_chatgpt.cpp
 )
 
 target_link_libraries(view PUBLIC Qt${QT_VERSION_MAJOR}::Widgets backend Qt6::Charts)

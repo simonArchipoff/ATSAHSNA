@@ -36,6 +36,17 @@ MainWindow::MainWindow(QWidget *parent)
   createMenus();
   s->show();
 
+  paramResponseWidget = new ParamResponseWidget(this);
+  paramHarmonicsWidget = new ParamHarmonicsWidget(this);
+  spectrogramWidget = new ParamSpectrogramWidget(this);
+
+
+  // Configuration initiale : cacher les widgets
+  paramResponseWidget->hide();
+  paramHarmonicsWidget->hide();
+  spectrogramWidget->hide();
+
+
   //setLayout(hb);
 
   //auto b = backends->addFaustBackend();
@@ -81,36 +92,67 @@ void MainWindow::measure(Backend * b, ParamSpectrogram p){
 
 
 // chat gpt :
-void MainWindow::createMenus()
+
+
+
+
+MainWindow::~MainWindow()
 {
-  // Créer le menu "Backend"
-  QMenu *backendMenu = new QMenu("Backend");
-  QAction *addFaustAction = backendMenu->addAction("Add Faust");
-  QAction *addJackAction = backendMenu->addAction("Add Jack");
-
-  // Connecter les actions du menu "Backend" à des slots (si besoin)
-  connect(addFaustAction, &QAction::triggered, this, &MainWindow::onAddFaust);
-  connect(addJackAction, &QAction::triggered, this, &MainWindow::onAddJack);
-
-  // Créer le menu "Analyse"
-  QMenu *analyseMenu = new QMenu("Analyse");
-  QAction *addResponseAction = analyseMenu->addAction("Add Response");
-  QAction *addHarmonicsAction = analyseMenu->addAction("Add Harmonics");
-  QAction *addSpectrogramAction = analyseMenu->addAction("Add Spectrogram");
-
-  // Connecter les actions du menu "Analyse" à des slots (si besoin)
-  connect(addResponseAction, &QAction::triggered, this, &MainWindow::onAddResponse);
-  connect(addHarmonicsAction, &QAction::triggered, this, &MainWindow::onAddHarmonics);
-  connect(addSpectrogramAction, &QAction::triggered, this, &MainWindow::onAddSpectrogram);
-
-  // Ajouter les menus à la barre de menu de la fenêtre
-  menuBar()->addMenu(backendMenu);
-  menuBar()->addMenu(analyseMenu);
 }
 
-// Implémenter les slots ici pour effectuer les actions spécifiques
-void MainWindow::onAddFaust() { /* Action pour ajouter Faust */ }
-void MainWindow::onAddJack() { /* Action pour ajouter Jack */ }
-void MainWindow::onAddResponse() { /* Action pour ajouter Response */ }
-void MainWindow::onAddHarmonics() { /* Action pour ajouter Harmonics */ }
-void MainWindow::onAddSpectrogram() { /* Action pour ajouter Spectrogram */}
+void MainWindow::createMenus()
+{
+  QMenu* backendMenu = new QMenu("Backend", this);
+  QAction* addFaustAction = backendMenu->addAction("Add Faust");
+  QAction* addJackAction = backendMenu->addAction("Add Jack");
+  menuBar()->addMenu(backendMenu);
+
+  QMenu* analyseMenu = new QMenu("Analyse", this);
+  QAction* addResponseAction = analyseMenu->addAction("Add Response");
+  QAction* addHarmonicsAction = analyseMenu->addAction("Add Harmonics");
+  QAction* addSpectrogramAction = analyseMenu->addAction("Add Spectrogram");
+  menuBar()->addMenu(analyseMenu);
+
+  // Connecter les signaux des actions aux slots appropriés
+  connect(addResponseAction, &QAction::triggered, this, &MainWindow::onAddResponseWidgetRequested);
+  connect(addHarmonicsAction, &QAction::triggered, this, &MainWindow::onAddHarmonicsWidgetRequested);
+  connect(addSpectrogramAction, &QAction::triggered, this, &MainWindow::onAddSpectrogramWidgetRequested);
+
+  // Connecter les signaux personnalisés aux slots appropriés
+  connect(this, &MainWindow::addResponseWidgetRequested, this, &MainWindow::onAddResponseWidgetRequested);
+  connect(this, &MainWindow::addHarmonicsWidgetRequested, this, &MainWindow::onAddHarmonicsWidgetRequested);
+  connect(this, &MainWindow::addSpectrogramWidgetRequested, this, &MainWindow::onAddSpectrogramWidgetRequested);
+  connect(addFaustAction, &QAction::triggered, this, &MainWindow::onAddFaustBackendRequested);
+  connect(addJackAction, &QAction::triggered, this, &MainWindow::onAddJackBackendRequested);
+}
+
+void MainWindow::onAddResponseWidgetRequested()
+{
+  paramResponseWidget->show();
+}
+
+void MainWindow::onAddHarmonicsWidgetRequested()
+{
+  paramHarmonicsWidget->show();
+}
+
+void MainWindow::onAddSpectrogramWidgetRequested()
+{
+  spectrogramWidget->show();
+}
+
+void MainWindow::onAddFaustBackendRequested()
+{
+  // Logique pour ajouter le backend Faust
+  // Émettre le signal pour indiquer que le backend a été ajouté
+  emit addFaustBackendRequested();
+}
+
+void MainWindow::onAddJackBackendRequested()
+{
+  // Logique pour ajouter le backend Jack
+  // Émettre le signal pour indiquer que le backend a été ajouté
+  emit addJackBackendRequested();
+}
+
+
