@@ -20,11 +20,14 @@ public:
     QSharedPointer<QBackends> backends;
     QSharedPointer<QDisplays> displays;
 
-
-
 private:
     void createMenus();
-
+public:
+    void onAddResponseWidgetRequested();
+    void onAddHarmonicsWidgetRequested();
+    void onAddSpectrogramWidgetRequested();
+    void onAddFaustBackendRequested();
+    void onAddJackBackendRequested();
 public:
 signals:
     void addResponseWidgetRequested();
@@ -33,12 +36,7 @@ signals:
     void addFaustBackendRequested();
     void addJackBackendRequested();
 
-private slots:
-    void onAddResponseWidgetRequested();
-    void onAddHarmonicsWidgetRequested();
-    void onAddSpectrogramWidgetRequested();
-    void onAddFaustBackendRequested();
-    void onAddJackBackendRequested();
+
 
 private:
     ParamResponseWidget* paramResponseWidget;

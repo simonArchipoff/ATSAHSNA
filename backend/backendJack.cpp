@@ -10,6 +10,7 @@
 #if __has_include("QThread")
 #define WE_HAVE_QT
 #include <QThread>
+#include <QDebug>
 #endif
 
 
@@ -106,7 +107,8 @@ const char ** get_list_ports(jack_client_t * client){
 bool does_port_exists(jack_client_t * client, const char * port){
     const char ** s = get_list_ports(client);
     while(*s){
-        if(strcmp(*s,port) == 0)
+        assert(strchr(*s,':') < *s + strlen(*s));
+        if(strcmp(strchr(*s,':')+1,port) == 0)
             return true;
         else
             s++;
@@ -121,7 +123,7 @@ bool BackendJack::addInputPort(std::string name, std::string connect){
         int i=0;
         std::string{n};
         do{
-            n = name + std::to_string(i++);
+            n =name + std::to_string(i++);
         }while(does_port_exists(client,n.c_str()));
 
         auto inputPort = jack_port_register(client,n.c_str(),
@@ -142,7 +144,7 @@ bool BackendJack::addOutputPort(std::string name,std::string connect){
         do{
             n = name + std::to_string(i++);
         }while(does_port_exists(client,n.c_str()));
-        auto outputPort = jack_port_register(client,name.data(),
+        auto outputPort = jack_port_register(client,n.c_str(),
                                              JACK_DEFAULT_AUDIO_TYPE,
                                              JackPortIsOutput,0);
         if(outputPort){

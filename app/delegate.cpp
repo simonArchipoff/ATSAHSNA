@@ -7,9 +7,8 @@
 
 delegate::delegate(MainWindow * m):mw{m}
 {
-
-
-
+    connect(m,&MainWindow::addJackBackendRequested,this, &delegate::addJackBackend);
+    connect(m,&MainWindow::addFaustBackendRequested,this, &delegate::addFaustBackend);
 }
 
 faust_backend::faust_backend(QSharedPointer<QFaustDsp> gui):QObject{},faust_gui{gui}{
@@ -53,6 +52,8 @@ bool faust_backend::isReady() const{
     return backend->isReady();
 }
 
+
+
 void delegate::addFaustBackend(){
     auto f = mw->backends->addFaust();
     auto d = mw->displays->addBodePlot();
@@ -62,6 +63,13 @@ void delegate::addFaustBackend(){
             ,d.data()
             ,&BodePlot::setResponses
             ,Qt::UniqueConnection);
+}
+
+void delegate::addJackBackend(){
+    auto j = mw->backends->addJack();
+    jack.reset(new BackendJack);
+    connect(j.data(),&QBackendJack::requestNewInputPort, this,[this](QString s){jack->addInputPort(s.toStdString());});
+    connect(j.data(),&QBackendJack::requestNewOutputPort,this,[this](QString s){jack->addOutputPort(s.toStdString());});
 }
 
 void delegate::addResponseDisplay(){

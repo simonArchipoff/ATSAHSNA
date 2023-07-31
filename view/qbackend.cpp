@@ -1,6 +1,4 @@
 #include "qbackend.h"
-#include "backendJack.h"
-#include "qmeasure.h"
 #include "qnamespace.h"
 #include "qpushbutton.h"
 
@@ -88,13 +86,8 @@ QBackendJack::QBackendJack(QWidget * parent)
 
     inputName->setText(tr("input"));
     outputName->setText(tr("output"));
-    latency = new QSpinBox;
 
-    auto automatic_latency = new QCheckBox;
-    latency->setRange(0,15000);
-    latency->setValue(0);
-    l->addRow(tr("automatic latency"),automatic_latency);
-    l->addRow(tr("latency"),latency);
+
     l->addRow(tr("gain"),gain);
     gain->setMaximum(20);
     gain->setMinimum(-40);
@@ -109,12 +102,11 @@ QBackendJack::QBackendJack(QWidget * parent)
       b->setLatencyAutomatic(i);
     });
 */
-    automatic_latency->setCheckState(Qt::CheckState::Checked);
 
     setLayout(l);
     //setMaximumWidth(minimumSizeHint().width());
-    //connect(inputButton,&QPushButton::clicked,this,[b,this](){b->addInputPort(inputName->text().toStdString());});
-    //connect(outputButton,&QPushButton::clicked,this,[b,this](){b->addOutputPort(outputName->text().toStdString());});
+    connect(inputButton,&QPushButton::clicked,this,[this](){emit requestNewInputPort(inputName->text());});
+    connect(outputButton,&QPushButton::clicked,this,[this](){emit requestNewOutputPort(outputName->text());});
     QString str;
     //str.setNum(b->getSampleRate());
     sampleRate->setText(str);

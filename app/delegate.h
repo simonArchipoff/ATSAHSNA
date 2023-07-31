@@ -34,6 +34,8 @@ protected:
     QWeakPointer<QFaustDsp> faust_gui;
 };
 
+
+
 //typedef std::variant<faust_backend *, QString> dsp_or_error;
 
 //dsp_or_error
@@ -54,6 +56,7 @@ public:
     void addHarmonicsDisplay();
 
     QScopedPointer<faust_backend> faust;
+    QScopedPointer<BackendJack> jack;
     MainWindow * mw;
 };
 

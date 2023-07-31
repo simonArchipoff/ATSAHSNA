@@ -188,6 +188,14 @@ protected:
     }
 
 
+    virtual std::variant<const std::vector<ResultHarmonics>> getResultHarmonics() override{
+        abort();
+    }
+    virtual std::variant<const std::vector<ResultResponse>>  getResultResponse() override {
+        abort();
+    }
+
+
     //int 	jack_set_latency_callback (jack_client_t *, JackLatencyCallback latency_callback, void *) JACK_WEAK_EXPORT
     //static void jackLatencyCallback(jack_latency_callback_mode_t mode, BackendJack * backend);
 

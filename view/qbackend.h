@@ -31,7 +31,7 @@ public:
     void setErrorMessage(QString);
     void compile();
 signals:
-    void setFaustCode(QString code,uint sampleRate);
+    void setFaustCode(QString code, uint sampleRate);
 
 public:
     QSharedPointer<QWidget> dspUi;
@@ -49,6 +49,11 @@ class QBackendJack : public QWidget {
 public:
   QBackendJack(QWidget * parent=nullptr);
 
+signals:
+  void requestNewInputPort(QString);
+  void requestNewOutputPort(QString);
+
+
 protected:
 
   void set_sample_rate(uint);
@@ -57,7 +62,6 @@ protected:
   QPushButton * inputButton, * outputButton;
   QLabel * sampleRate, *bufferSize;
   QLineEdit * inputName, *outputName;
-  QSpinBox * latency;
   QDoubleSpinBox * gain;
 };
 
