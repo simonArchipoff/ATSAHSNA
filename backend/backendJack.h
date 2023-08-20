@@ -2,6 +2,7 @@
 
 #include "backend.h"
 #include <jack/jack.h>
+#include "BackendRT.h"
 
 #include <mutex>
 #include <variant>
@@ -33,7 +34,7 @@ struct ParamJack {
 
 
 
-class BackendJack : public Backend
+class BackendJack : public Backend, public HandleRTModule
 {
 public:
     BackendJack();
@@ -79,14 +80,10 @@ public:
     vector<VD> acquisition(const vector<VD> &input);
 
 
-
 protected:
     int latency = 0;
     bool latency_automatic = true;
 
-    //moodycamel::ConcurrentQueue<request>  requests;
-   // moodycamel::ConcurrentQueue<response> responses;
-    std::mutex lock;
     static void * audio_thread(void*);
 
     //int 	jack_set_thread_init_callback (jack_client_t *client, JackThreadInitCallback thread_init_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
@@ -187,13 +184,6 @@ protected:
         return backend->jack_xrun();
     }
 
-
-    virtual std::variant<const std::vector<ResultHarmonics>> getResultHarmonics() override{
-        abort();
-    }
-    virtual std::variant<const std::vector<ResultResponse>>  getResultResponse() override {
-        abort();
-    }
 
 
     //int 	jack_set_latency_callback (jack_client_t *, JackLatencyCallback latency_callback, void *) JACK_WEAK_EXPORT

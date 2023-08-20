@@ -60,8 +60,8 @@ public:
 
     bool didSomethingChanged();
 
-    variant<const vector<ResultHarmonics>> getResultHarmonics()  override;
-    variant<const vector<ResultResponse>>  getResultResponse()   override;
+    variant<const vector<ResultHarmonics>> getResultHarmonics();
+    variant<const vector<ResultResponse>>  getResultResponse();
     void buildUserInterface(UI * ui){
         dspInstance->buildUserInterface(ui);
     }

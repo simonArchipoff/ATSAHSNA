@@ -1,6 +1,5 @@
 #pragma once
 
-#include "signalAnalysis.h"
 #include "signalFrequencyDomain.h"
 #include "signalResponse.h"
 

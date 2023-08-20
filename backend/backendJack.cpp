@@ -54,48 +54,23 @@ void * BackendJack::audio_thread(void * arg){
 
     while(1) {
         jack_nframes_t nframes = jack_cycle_wait(jb->client);
-        if(jb->status == Waiting){
-            for(uint i = 0; i < jb->outputPorts.size(); i++){
-                auto out= (float*) jack_port_get_buffer(jb->outputPorts[i], nframes);
-                if(!out)
-                    continue;
-                for(uint j = 0; j < nframes ; j++){
-                    out[j] = 0;
-                }
-            }
-            jack_cycle_signal(jb->client,0);
-            continue;
-        }
-        assert(jb->status == Measuring);
 
-        uint size_to_copy = std::min<uint>(nframes, jb->currentInput[0].size() - jb->idx);
-
-        for(uint i = 0; i < jb->outputPorts.size(); i++){
-            auto out = static_cast<jack_default_audio_sample_t*>
-                (jack_port_get_buffer(jb->outputPorts[i], nframes));
-            double factor = pow(10,jb->getOutputGain()/20);
-            for(uint j = 0; j < size_to_copy; j++){
-                out[j] = factor * static_cast<jack_default_audio_sample_t>(jb->currentInput[i][jb->idx+j]);
-            }
-            for(uint j = size_to_copy; j < nframes; j++){
-                out[j]=0;
-            }
-        }
+        vector<float*> inputs;
         for(uint i = 0; i < jb->inputPorts.size(); i++) {
-            auto in = static_cast<jack_default_audio_sample_t*>
-                (jack_port_get_buffer(jb->inputPorts[i], nframes));
-            if(!in)
-                continue;
-            for(uint j = 0; j < size_to_copy; j++){
-                jb->currentOutput[i][jb->idx+j] = static_cast<double>(in[j]);
-            }
+            auto in = (float*)jack_port_get_buffer(jb->inputPorts[i], nframes);
+            inputs.push_back(in);
         }
-        jb->idx += size_to_copy;
-        if(jb->idx >= jb->currentInput[0].size()){
-            assert(jb->idx == jb->currentInput[0].size());
+
+        vector<float *> outputs;
+        for(uint i = 0; i < jb->outputPorts.size(); i++){
+            auto out= (float*) jack_port_get_buffer(jb->outputPorts[i], nframes);
+            outputs.push_back(out);
         }
+
+        jb->rt_process(nframes,inputs,outputs);
 
         jack_cycle_signal(jb->client,0);
+        jb->rt_after_process();
     }
 }
 
