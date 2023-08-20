@@ -7,15 +7,13 @@
 #define APPNAME "ATSAHSNA"
 #define APPVERS "0.0.1"
 
-enum signal_gen_type {UNDEFSIGNAL, CHIRP, IMPULSE};
-enum backend_type {UNDEFBACKEND, FAUST, JACK};
-enum computation_type {UNDEFCOMPUTATION, RESPONSE, HARMONICS, SPECTROGRAM};
 
 using std::vector;
 using std::complex;
 
 typedef vector<complex<double>> VCD;
 typedef vector<double> VD;
+typedef vector<float> VF;
 
 #ifndef ZEROISH
 #define ZEROISH 1e-20
@@ -25,6 +23,5 @@ typedef vector<double> VD;
 #define MAXFREQ 100000
 #define MINFREQ 1
 
-#define DEFAULTSR 44100
-
+#define DEFAULTSR 48000
 

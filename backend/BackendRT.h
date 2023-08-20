@@ -73,3 +73,66 @@ public:
     int sampleRate;
     moodycamel::ConcurrentQueue<RTModule *> modulequeue;
 };
+
+
+#include "concurrentqueue.h"
+#include "backend.h"
+#include "backendRingBuffer.h"
+#include <signalAnalysis.h>
+
+class ControlModule {
+
+    struct RTModule{
+        void init(int sampleRate);
+        void process(const vector<VD> & inputs, vector<VD> & outputs);
+        void after_process();
+
+        void recieveCommand();
+        void sendResponse();
+    };
+
+    void sendCommand();
+    void recieveResponse();
+};
+
+class BackendRT : public Backend{
+
+};
+
+
+
+class BackendResponse
+{
+public:
+    BackendResponse():state(DISABLED){
+    }
+
+    void init(size_t sampleRate, const VCD & signal);
+    void process(size_t frame, float * input, float * output);
+    void start(){
+        state |= SENDING;
+        state |= WAITRESPONSE;
+        sending_index = 0;
+    }
+
+protected:
+    enum state_t {
+        DISABLED = 0
+        ,WAITRESPONSE = 1
+        ,SENDING = 2
+    };
+
+    uint state;
+    uint sending_index;
+    void process_sending(size_t frames, float * input, float * output);
+
+
+    uint max_wait_response;
+    uint time_waited;
+    void process_wait_response(size_t frames, float * input,float * output);
+
+    RingBuffer<double> rb;
+    DelayComputer dc;
+    VF signal;
+};
+

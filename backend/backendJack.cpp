@@ -67,10 +67,10 @@ void * BackendJack::audio_thread(void * arg){
             outputs.push_back(out);
         }
 
-        jb->rt_process(nframes,inputs,outputs);
+        //jb->rt_process(nframes,inputs,outputs);
 
         jack_cycle_signal(jb->client,0);
-        jb->rt_after_process();
+        //jb->rt_after_process();
     }
 }
 

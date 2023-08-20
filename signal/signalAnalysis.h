@@ -1,20 +1,15 @@
 #pragma once
 
 #include "../constants.h"
-
+#include "signalFFT.h"
+#include "cassert"
+#include <algorithm>
 enum window_type {
     RECTANGLE = 0, BOXCAR = 0 // TODO: , DIRICHLET = 0, UNIFORM = 0
     ,HANN = 1, HANNING = 1
     ,HAMMING
 };
 
-template<typename T>
-void multiply_vector(T & a, const T &b){
-    assert(a.size() == b.size());
-    for(auto i = 0; i < a.size(); i++){
-        a[i] *= b[i];
-    }
-}
 
 
 VD window(uint size, window_type t);
@@ -26,21 +21,38 @@ VD correlation_fft(const VD&a, const VD&b);
 
 VCD reverse_and_conj(const VCD & v);
 
-template<typename T>
-class CorrelationByConstant{
+class ConvolutionByConstant {
 public:
-    CorrelationByConstant(const T & v,int size)
-        :fft_const(fft(reverse_and_conj(v),size))
-    {}
+    ConvolutionByConstant();
+    void setOperand(const VCD &v);
+    VCD convolution_fft(const VCD &v);
+    uint getSize() const;
 
-    T correlation_fft(const T & v){
-        T res = fft(v,fft_const.size());
-        multiply_vector(res,fft_const);
-        return rfft(res);
-    }
 private:
-    const T fft_const ;
+    std::complex<double> *fft_const;
+    DFT dft;
 };
+
+
+
+
+class DelayComputer
+{
+public:
+    DelayComputer();
+
+    void setReference(const VCD &c);
+    std::pair<uint, double> getDelays(const VCD &s);
+    uint getSize() const{
+        return conv.getSize();
+    }
+
+private:
+    ConvolutionByConstant conv;
+};
+
+
+
 
 template<typename T>
 int compute_delay_fft(const T & s, const T & k){
@@ -49,7 +61,6 @@ int compute_delay_fft(const T & s, const T & k){
     int diff = (m - res.begin()) - k.size() + 1;
     return diff;
  }
-
 
 int compute_delay(const VD & out, const VD & in);
 

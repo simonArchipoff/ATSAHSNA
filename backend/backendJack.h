@@ -34,7 +34,7 @@ struct ParamJack {
 
 
 
-class BackendJack : public Backend, public HandleRTModule
+class BackendJack : public Backend
 {
 public:
     BackendJack();

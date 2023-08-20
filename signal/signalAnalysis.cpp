@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <numeric>
 #include <cmath>
-
+#include <cstring>
 
 #include <fstream>
 #include <iomanip>
@@ -23,6 +23,7 @@ inline double window_sample(const enum window_type t, double s){
         break;
     case HANN:
         a0 = a1 = 0.5; //hann paremeters
+        [[fallthrough]];
     case HAMMING:
         return a0 - a1 * cos(2*M_PI*s);
         break;
@@ -90,11 +91,7 @@ VD convolution_fft(const VD&a, const VD&b){
 }
 
 
-/*
-VCD convolution_fft(const VCD&a, const VCD&b){
-    return _convolution_fft<VCD>(a,b);
-}
-*/
+
 
 void find_maximums(const VD & in, vector<int> & idx, vector<double> & maxs, double minimum_max){
     idx.resize(0);
@@ -142,4 +139,63 @@ VD try_make_phase_continuous(const VD &v){
 
 
 
+
+ConvolutionByConstant::ConvolutionByConstant():fft_const(nullptr){}
+
+void ConvolutionByConstant::setOperand(const VCD & v){
+    fft_const = (std::complex<double>*) fftw_alloc_complex(v.size());
+    dft.init(v.size());
+    auto * in = (std::complex<double> *) dft.getInput();
+    memcpy(in,v.data(),v.size() * sizeof(*in));
+    dft.fft();
+    memcpy((void*)fft_const, (void*) dft.getOutput(), dft.getSize() * sizeof(*fft_const));
+}
+
+VCD ConvolutionByConstant::convolution_fft(const VCD & v){
+    auto * in = (std::complex<double>*) dft.getInput();
+    for(uint i = 0; i < v.size(); i++){
+        in[i] = v[i];
+    }
+    for(uint i = v.size(); i < dft.getSize(); i++){
+        in[i] = 0;
+    }
+    //fft
+    dft.fft();
+    auto * out = (std::complex<double>*) dft.getOutput();
+    // multiply
+    for(uint i = 0; i < dft.getSize() ; i++){
+        in[i] = out[i] * fft_const[i];
+    }
+    dft.rfft();
+    VCD o(dft.getSize());
+    for(uint i = 0; i < o.size(); i++){
+        o[i] = out[i]/double(dft.getSize());
+    }
+    return o;
+}
+
+uint ConvolutionByConstant::getSize() const{
+    return dft.getSize();
+}
+
+
+
+DelayComputer::DelayComputer(){}
+void DelayComputer::setReference(const VCD & c){
+    VCD tmp = reverse_and_conj(c);
+    tmp.resize(c.size()*2);
+    conv.setOperand(tmp);
+}
+
+std::pair<uint,double> DelayComputer::getDelays(const VCD &s){
+    auto tmp = conv.convolution_fft(s);
+    VD vd(tmp.size());
+    std::transform(tmp.begin()
+                   ,tmp.end()
+                   ,vd.begin()
+                   ,[](std::complex<double> c){return std::abs(c);});
+    auto m = std::max_element(vd.begin(),vd.end());
+    auto d = m-vd.begin();
+    return std::pair{d - conv.getSize()/2  + 1,*m };
+}
 

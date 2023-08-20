@@ -27,7 +27,6 @@ TEST_CASE("Ring buffer") {
 
 }
 
-
 //tests made by chatGPT (and fixed by me)
 
 TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
@@ -92,3 +91,29 @@ TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
         REQUIRE(rb.freespace() == 3);
     }
 }
+
+#include <signalGeneration.h>
+#include "BackendRT.h"
+TEST_CASE("BackendResponse") {
+    BackendResponse b;
+    int delay=142;
+    RingBuffer<float> rb(delay);
+    rb.write(VF(142));
+
+    auto foo = chirp_complex(10,1000,1,3000);
+
+    b.init(3000,foo);
+    VCD bar(foo);
+    b.start();
+
+    const uint frames = 32;
+    VF in(frames);
+    for(uint i = 0; i < 10000; i += frames){
+        VF out(32);
+        b.process(frames,in.data(), rb.read(frames).data());
+        rb.write(in);
+    }
+}
+
+
+

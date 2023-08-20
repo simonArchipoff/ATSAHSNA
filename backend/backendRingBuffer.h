@@ -6,7 +6,7 @@ template<typename T>
 class RingBuffer
 {
 public:
-    RingBuffer():size(0),begin(0),end(0){}
+    RingBuffer():begin(0),end(0),size(0){}
     RingBuffer(int size):RingBuffer(){
         reset(size);
     }
@@ -35,28 +35,34 @@ public:
         begin %= buff.size();
         this->size -= size;
     }
-    void write(const std::vector<T> &b){
-        assert(freespace() >= b.size());
-        if(b.size() <= buff.size() - end){
-            std::copy(b.begin(),b.end(),buff.begin() + end);
-            end += b.size();
+    void write(const std::vector<T> & b){
+        write(b.data(), b.size());
+    }
+
+    void write(const T * b, uint size){
+        if(freespace() < size){
+            pop(size - freespace());
+        }
+        if(size <= buff.size() - end){
+            std::copy(b,b+size,buff.begin() + end);
+            end += size;
             end %= buff.size();
         } else {
             int tmp = buff.size() - end;
-            std::copy(b.begin(),b.begin() + tmp, buff.begin() + end);
-            std::copy(b.begin() + tmp, b.end(),buff.begin());
-            end = b.size() - tmp;
+            std::copy(b,b + tmp, buff.begin() + end);
+            std::copy(b + tmp, b+size,buff.begin());
+            end = size - tmp;
         }
-        this->size += b.size();
+        this->size += size;
     }
-    int available() const {
+    uint available() const {
         return size;
     }
-    int freespace() const {
+    uint freespace() const {
         return buff.size() - size;
     }
 
 private:
     std::vector<T> buff;
-    int begin,end,size;
+    uint begin,end,size;
 };
