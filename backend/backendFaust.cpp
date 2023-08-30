@@ -4,7 +4,7 @@
 #include <iostream>
 #include <mutex>
 #include <signalGeneration.h>
-
+#include <variant>
 
 using namespace std;
 BackendFaust::~BackendFaust(){

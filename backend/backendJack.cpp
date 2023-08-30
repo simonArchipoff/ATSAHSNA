@@ -55,22 +55,26 @@ void * BackendJack::audio_thread(void * arg){
     while(1) {
         jack_nframes_t nframes = jack_cycle_wait(jb->client);
 
-        vector<float*> inputs;
+        vector<VD> inputs;
         for(uint i = 0; i < jb->inputPorts.size(); i++) {
             auto in = (float*)jack_port_get_buffer(jb->inputPorts[i], nframes);
-            inputs.push_back(in);
+            inputs.push_back(VD(in,in+nframes));
         }
 
-        vector<float *> outputs;
+        int nbOutput = jb->outputPorts.size();
+        vector<VD> outputs(nbOutput);
+        for(auto &i : outputs){
+            i.resize(nframes);
+        }
+
+        jb->rt_process(inputs,outputs);
         for(uint i = 0; i < jb->outputPorts.size(); i++){
             auto out= (float*) jack_port_get_buffer(jb->outputPorts[i], nframes);
-            outputs.push_back(out);
+            std::transform(outputs[i].begin(),outputs[i].end(),out,[](double x){return float(x);});
         }
 
-        //jb->rt_process(nframes,inputs,outputs);
-
         jack_cycle_signal(jb->client,0);
-        //jb->rt_after_process();
+        jb->rt_after_process();
     }
 }
 

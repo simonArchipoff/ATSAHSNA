@@ -1,114 +1,51 @@
 #pragma once
 
-#include "concurrentqueue.h"
 #include "../constants.h"
+#include "backendRingBuffer.h"
+#include <signalAnalysis.h>
+#include <signalHarmonics.h>
+#include <signalResponse.h>
+
+#include "concurrentqueue.h"
+
 
 class RTModule{
-public:
-    virtual void rt_process(int nframe, const vector<float *> & inputs, vector<float *> & outputs)= 0;
-    virtual void rt_after_process() = 0;
-};
-
-template<class request, class response>
-class RTModuleWithControl : public RTModule{
-    typedef request Request;
-    typedef response Response;
-
+    void requestResponse(ParamResponse p);
+    void setContinuous(bool);
+    void setIntegrationSize(int s=1);
+    bool tryGetResponse(vector<ResultResponse> & v){
+        return responseQueue.try_dequeue(v);
+    }
 
 
 protected:
-    virtual void rt_handleRequest(Request &r);
-    virtual void handleResponse(Response &);
 
-    void rt_recieveCommand(){
-        Request r;
-        if(requests.try_dequeue(&r))
-            rt_handleRequest(r);
-    }
-    void rt_sendResponse(Response &r){
-        responses.enqueue(r);
-    }
-
-    void sendCommand(Request &r){
-        requests.enqueue(r);
-    }
-    void recieveResponse(){
-        Response r;
-        if(responses.try_dequeue(&r))
-            handleResponse(r);
-    }
-
-    moodycamel::ConcurrentQueue<Request>  requests;
-    moodycamel::ConcurrentQueue<Response> responses;
+    void rt_init(int sampleRate);
+    void rt_process(vector<VD> & inputs, const vector<VD> & outputs);
+    void rt_after_process();
+    moodycamel::ConcurrentQueue<vector<ResultResponse>> responseQueue;
 };
 
 
-class HandleRTModule : public RTModule{
+
+
+class Acquisition{
 public:
-    HandleRTModule():module(nullptr){}
-
-    virtual void rt_process(int nframe, const vector<float *> & inputs, vector<float *> & outputs) override{
-        if(module)
-            module->rt_process(nframe, inputs,outputs);
-    }
-    virtual void rt_after_process() override{
-        if(module)
-            module->rt_after_process();
+    Acquisition():state(DISABLED){
     }
 
+    struct result {
+        double level;
+        int idx;
 
-    void rt_recieveModule(){
-        RTModule *m;
-        if(modulequeue.try_dequeue(m)){
-            module = m;
-        }
-    }
-
-    void sendModule(RTModule * m){
-        modulequeue.enqueue(m);
-    }
-
-
-    RTModule * module;
-    int sampleRate;
-    moodycamel::ConcurrentQueue<RTModule *> modulequeue;
-};
-
-
-#include "concurrentqueue.h"
-#include "backend.h"
-#include "backendRingBuffer.h"
-#include <signalAnalysis.h>
-
-class ControlModule {
-
-    struct RTModule{
-        void init(int sampleRate);
-        void process(const vector<VD> & inputs, vector<VD> & outputs);
-        void after_process();
-
-        void recieveCommand();
-        void sendResponse();
+        VD result_uncroped;
+        int delay_result;
     };
 
-    void sendCommand();
-    void recieveResponse();
-};
-
-class BackendRT : public Backend{
-
-};
-
-
-
-class BackendResponse
-{
-public:
-    BackendResponse():state(DISABLED){
-    }
-
     void init(size_t sampleRate, const VCD & signal);
-    void process(size_t frame, float * input, float * output);
+
+    void rt_process(VD & input, const VD & output);
+
     void start(){
         state |= SENDING;
         state |= WAITRESPONSE;
@@ -116,23 +53,29 @@ public:
     }
 
 protected:
+    struct params {
+        VD signal;
+        DelayComputer dc;
+        int recurences;
+        int sample_between_iteration;
+    };
+
+
     enum state_t {
         DISABLED = 0
         ,WAITRESPONSE = 1
         ,SENDING = 2
     };
 
-    uint state;
+    volatile uint state;
     uint sending_index;
-    void process_sending(size_t frames, float * input, float * output);
 
-
+    void rt_process_sending(VD & input);
     uint max_wait_response;
     uint time_waited;
-    void process_wait_response(size_t frames, float * input,float * output);
+    void rt_process_wait_response(const VD & output);
 
     RingBuffer<double> rb;
-    DelayComputer dc;
-    VF signal;
+    params p;
 };
 

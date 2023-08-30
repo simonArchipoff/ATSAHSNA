@@ -3,8 +3,8 @@
 #include <sys/types.h>
 #include <signalHarmonics.h>
 #include <signalResponse.h>
-#include <variant>
 #include <vector>
+#include "concurrentqueue.h"
 
 class Backend {
 public:
@@ -13,7 +13,6 @@ public:
     virtual uint numberOutput() const = 0;
     virtual uint getSampleRate() const = 0;
     virtual bool isReady() const = 0;
-
 
     void setParamHarmonics(ParamHarmonics p){
         paramHarmonics = p;
@@ -27,8 +26,12 @@ protected:
     ParamResponse paramResponse;
 };
 
-/*
-void setLatency(int l);
-uint getLatence() const{
-    return latency;
-}*/
+
+class MeasureSync{
+    const vector<ResultHarmonics> getResultHarmonics();
+    const vector<ResultResponse>  getResultResponse();
+
+};
+
+
+

@@ -34,7 +34,7 @@ struct ParamJack {
 
 
 
-class BackendJack : public Backend
+class BackendJack : public Backend, protected RTModule
 {
 public:
     BackendJack();
@@ -76,9 +76,6 @@ public:
     void setLatencyAutomatic(bool b=true){
         latency_automatic = b;
     }
-
-    vector<VD> acquisition(const vector<VD> &input);
-
 
 protected:
     int latency = 0;

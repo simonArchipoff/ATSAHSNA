@@ -14,7 +14,7 @@ public:
         buff.resize(size);
     }
 
-    std::vector<T> read(int size) const{
+    std::vector<T> read(uint size) const{
         assert(size <= available());
         std::vector<T> res;
         res.resize(size,42);
@@ -22,14 +22,14 @@ public:
             std::copy(buff.cbegin() + begin, buff.cbegin() + begin + size,res.begin());
         } else {
             int tmp = buff.size() - begin;
-            assert(tmp < size);
+            assert(tmp < int(size));
             std::copy(buff.cbegin() + begin, buff.end(), res.begin());
             std::copy(buff.cbegin(), buff.cbegin() + (size - tmp)  , res.begin() + tmp);
         }
         return res;
     }
 
-    void pop(int size){
+    void pop(uint size){
         assert(size <= available());
         begin += size;
         begin %= buff.size();

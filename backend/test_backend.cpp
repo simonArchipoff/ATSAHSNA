@@ -110,7 +110,7 @@ TEST_CASE("BackendResponse") {
     VF in(frames);
     for(uint i = 0; i < 10000; i += frames){
         VF out(32);
-        b.process(frames,in.data(), rb.read(frames).data());
+        b.rt_process(frames,in.data(), rb.read(frames).data());
         rb.write(in);
     }
 }

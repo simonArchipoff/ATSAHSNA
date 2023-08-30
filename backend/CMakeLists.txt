@@ -22,19 +22,15 @@ set(BACKEND_SOURCES
     BackendRT.h
     BackendRT.cpp
     backendJack.cpp
-    backendComputeResponse.h
-    backendComputeResponse.cpp
-    backendResponse.cpp
-    backendResponse.h
 )
 
 
 
-#cmake_print_variables(BACKEND_SOURCES)
+#bles(BACKEND_SOURCES)
 
 
 add_library(backend ${BACKEND_SOURCES}
-    backendComputeResponse.h backendComputeResponse.cpp)
+)
 target_include_directories(backend PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(backend PUBLIC faust signal jack Qt6::Core Qt6::Widgets )
 

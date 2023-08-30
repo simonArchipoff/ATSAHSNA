@@ -5,6 +5,7 @@
 #include <cstring>
 #include <faust/gui/APIUI.h>
 #include <mutex>
+#include <variant>
 #include "backend.h"
 
 using namespace std;
