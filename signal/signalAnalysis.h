@@ -4,6 +4,7 @@
 #include "signalFFT.h"
 #include "cassert"
 #include <algorithm>
+#include <numeric>
 enum window_type {
     RECTANGLE = 0, BOXCAR = 0 // TODO: , DIRICHLET = 0, UNIFORM = 0
     ,HANN = 1, HANNING = 1
@@ -40,7 +41,6 @@ class DelayComputer
 {
 public:
     DelayComputer();
-
     void setReference(const VCD &c);
     std::pair<uint, double> getDelays(const VCD &s);
     uint getSize() const{
@@ -65,6 +65,8 @@ int compute_delay_fft(const T & s, const T & k){
 int compute_delay(const VD & out, const VD & in);
 
 double mean(const VD &v);
+
+
 double stddev(const VD &v);
 
 //add 2*k*pi to each sample so that it's as close as possible to the previous one

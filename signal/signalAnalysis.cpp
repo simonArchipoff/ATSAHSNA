@@ -196,6 +196,8 @@ std::pair<uint,double> DelayComputer::getDelays(const VCD &s){
                    ,[](std::complex<double> c){return std::abs(c);});
     auto m = std::max_element(vd.begin(),vd.end());
     auto d = m-vd.begin();
+    if(d < conv.getSize()/2)
+        return std::pair{0,0};
     return std::pair{d - conv.getSize()/2  + 1,*m };
 }
 

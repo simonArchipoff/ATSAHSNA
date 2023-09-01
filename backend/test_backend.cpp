@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/benchmark/catch_benchmark.hpp>
-
+#include <cstdlib>
 #include "backendRingBuffer.h"
 #include <vector>
 
@@ -90,28 +90,80 @@ TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
         REQUIRE(rb.available() == 2);
         REQUIRE(rb.freespace() == 3);
     }
+
+
+    SECTION("Write and Read Randomly Sized Sequence") {
+        RingBuffer<int> fifo(std::rand()%50+1);
+        int iwrite=0;
+        int iread=iwrite;
+        int total_read_write = 1000;
+        int available=0;
+
+        while(total_read_write--){
+            //write
+            uint swrite = std::rand() % fifo.freespace();
+            std::vector<int> v;
+            for(int i = 0; i < swrite; i++){
+                v.push_back(iwrite++);
+            }
+
+            fifo.write(v);
+            available+=swrite;
+            REQUIRE(fifo.available() == available);
+
+
+
+            uint sread = std::rand()%fifo.available();
+            v = fifo.read(sread);
+            for(int i = 0; i < sread; i++){
+                REQUIRE(v[i] == (iread++));
+            }
+            fifo.pop(sread);
+            available-=sread;
+            REQUIRE(fifo.available() == available);
+
+        }
+    }
 }
+
 
 #include <signalGeneration.h>
 #include "BackendRT.h"
-TEST_CASE("BackendResponse") {
-    BackendResponse b;
-    int delay=142;
-    RingBuffer<float> rb(delay);
-    rb.write(VF(142));
+#include <iostream>
+TEST_CASE("Acquisition") {
+    Acquisition b;
+    int delay=42;
+    RingBuffer<double> rb(1000);
+    rb.write(VD(delay));
+    const uint sr = 3000;
+    const uint frames = 8;
+    auto foo = chirp_complex(10,1000,0.5,sr);
+    //VCD foo = {1,2,3,4,0,0,0,0,0,0,0};
+    b.init(sr,foo);
 
-    auto foo = chirp_complex(10,1000,1,3000);
-
-    b.init(3000,foo);
-    VCD bar(foo);
     b.start();
 
-    const uint frames = 32;
-    VF in(frames);
+    VD in(frames);
     for(uint i = 0; i < 10000; i += frames){
-        VF out(32);
-        b.rt_process(frames,in.data(), rb.read(frames).data());
+
+        for(int j = 0; j < frames; j++){
+            if(i+j < foo.size())
+                in[j] = std::real(foo[i+j]);
+            else
+                in[j] = 0;
+        }
+
+
         rb.write(in);
+        auto out = rb.read(frames);
+        rb.pop(frames);
+        auto r = b.rt_process(in, out);
+        if(r.level >0.5 ){
+            REQUIRE(r.idx + r.delay_result == delay);
+            //std::cerr<< r.idx + r.delay_result << " " << r.level <<std::endl;
+        }
+
+
     }
 }
 

@@ -2,6 +2,7 @@
 #include <vector>
 #include <cassert>
 
+typedef unsigned int uint;
 template<typename T>
 class RingBuffer
 {

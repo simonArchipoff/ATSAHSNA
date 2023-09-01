@@ -5,6 +5,7 @@
 #include <signalAnalysis.h>
 #include <signalHarmonics.h>
 #include <signalResponse.h>
+#include <tuple>
 
 #include "concurrentqueue.h"
 
@@ -35,8 +36,8 @@ public:
     }
 
     struct result {
-        double level;
-        int idx;
+        double level = 0.0;
+        int idx = -1;
 
         VD result_uncroped;
         int delay_result;
@@ -44,7 +45,7 @@ public:
 
     void init(size_t sampleRate, const VCD & signal);
 
-    void rt_process(VD & input, const VD & output);
+    result rt_process(VD & input, const VD & output);
 
     void start(){
         state |= SENDING;
@@ -73,7 +74,7 @@ protected:
     void rt_process_sending(VD & input);
     uint max_wait_response;
     uint time_waited;
-    void rt_process_wait_response(const VD & output);
+    result rt_process_wait_response(const VD & output);
 
     RingBuffer<double> rb;
     params p;

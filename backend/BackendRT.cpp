@@ -38,17 +38,19 @@ void Acquisition::init(size_t sampleRate, const VCD & s){
 }
 
 
-void Acquisition::rt_process(VD & input, const VD & output){
+Acquisition::result Acquisition::rt_process(VD & input, const VD & output){
+    result r={.level=0};
     if(state == 0){
         memset(input.data(),0,sizeof(input[0])*input.size());
-        return;
+        return r;
     }
     if(state & SENDING){
         rt_process_sending(input);
     }
     if(state & WAITRESPONSE){
-        rt_process_wait_response(output);
+        return rt_process_wait_response(output);
     }
+    abort();
 }
 
 
@@ -67,25 +69,34 @@ void Acquisition::rt_process_sending(VD &input){
 }
 
 #include <iostream>
-void Acquisition::rt_process_wait_response(const VD & output){
+Acquisition::result Acquisition::rt_process_wait_response(const VD & output){
+
     uint frames=output.size();
     if(rb.freespace() < frames){
         rb.pop(frames-rb.freespace());
     }
+    result res;
     rb.write(output);
     time_waited += frames;
     //std::cerr << rb.available() << std::endl;
     if(rb.available() >= p.dc.getSize()){
-        auto r = p.dc.getDelays(array_VD_to_VCD(rb.read(p.dc.getSize())));
-        if(r.second > 0 * 0.1 * p.dc.getSize()/2){
+        auto tab = rb.read(p.dc.getSize());
+        auto r = p.dc.getDelays(array_VD_to_VCD(tab));
+        if(true || r.second > 0 * 0.1 * p.dc.getSize()/2){
             rb.pop(p.dc.getSize());
             //send result
-            std::cerr << "result " <<  r.first + time_waited - p.dc.getSize() << std::endl;
+            res.level = r.second;
+            res.idx = r.first;
+            res.result_uncroped = tab;
+            res.delay_result = time_waited - p.dc.getSize();
+            return res;
         } else {
             if(time_waited > max_wait_response){
                 //std::cerr << "something fucked up"<< std::endl;
             }
         }
+
     }
-}
+    return res;
+} 
 
