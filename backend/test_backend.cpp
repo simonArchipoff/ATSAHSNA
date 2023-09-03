@@ -148,7 +148,7 @@ TEST_CASE("Acquisition") {
 
         for(int j = 0; j < frames; j++){
             if(i+j < foo.size())
-                in[j] = std::real(foo[i+j]);
+                in[j] = std::real(foo[i+j])*2;
             else
                 in[j] = 0;
         }
@@ -158,11 +158,9 @@ TEST_CASE("Acquisition") {
         auto out = rb.read(frames);
         rb.pop(frames);
         auto r = b.rt_process(in, out);
-        if(r.level >0.5 ){
+        if(r.level >0.1 ){
             REQUIRE(r.idx + r.delay_result == delay);
-            //std::cerr<< r.idx + r.delay_result << " " << r.level <<std::endl;
         }
-
 
     }
 }

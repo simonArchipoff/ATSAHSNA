@@ -49,6 +49,7 @@ public:
 
 private:
     ConvolutionByConstant conv;
+    double refLevel;
 };
 
 
@@ -65,6 +66,15 @@ int compute_delay_fft(const T & s, const T & k){
 int compute_delay(const VD & out, const VD & in);
 
 double mean(const VD &v);
+
+template<typename T>
+double rms(const vector<T> & v){
+    double sq_sum = std::inner_product(v.begin(), v.end(), v.begin(), 0.0,
+        [](auto const & x, auto const & y) { return x + y; },
+        [](auto const & x, auto const & y) { return std::abs(x*y); });
+    return std::sqrt(sq_sum / v.size());
+}
+
 
 
 double stddev(const VD &v);

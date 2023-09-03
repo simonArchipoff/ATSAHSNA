@@ -185,10 +185,15 @@ void DelayComputer::setReference(const VCD & c){
     VCD tmp = reverse_and_conj(c);
     tmp.resize(c.size()*2);
     conv.setOperand(tmp);
+    this->refLevel = 1; // bit ugly hack, this allows to compute un-normalized delay
+    auto r= getDelays(c);
+    assert(r.first == 0);
+    this->refLevel = r.second;
 }
 
 std::pair<uint,double> DelayComputer::getDelays(const VCD &s){
     auto tmp = conv.convolution_fft(s);
+    auto r = rms(s);
     VD vd(tmp.size());
     std::transform(tmp.begin()
                    ,tmp.end()
@@ -196,8 +201,8 @@ std::pair<uint,double> DelayComputer::getDelays(const VCD &s){
                    ,[](std::complex<double> c){return std::abs(c);});
     auto m = std::max_element(vd.begin(),vd.end());
     auto d = m-vd.begin();
-    if(d < conv.getSize()/2)
+    if(d - conv.getSize()/2 + 1 < 0)
         return std::pair{0,0};
-    return std::pair{d - conv.getSize()/2  + 1,*m };
+    return std::pair{d - conv.getSize()/2  + 1,(*m/this->refLevel) / r};
 }
 

@@ -82,7 +82,7 @@ Acquisition::result Acquisition::rt_process_wait_response(const VD & output){
     if(rb.available() >= p.dc.getSize()){
         auto tab = rb.read(p.dc.getSize());
         auto r = p.dc.getDelays(array_VD_to_VCD(tab));
-        if(true || r.second > 0 * 0.1 * p.dc.getSize()/2){
+        if(true){
             rb.pop(p.dc.getSize());
             //send result
             res.level = r.second;
