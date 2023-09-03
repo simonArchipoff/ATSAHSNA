@@ -34,7 +34,7 @@ struct ParamJack {
 
 
 
-class BackendJack : public Backend, protected RTModule
+class BackendJack : public Backend, protected RTModuleHandler
 {
 public:
     BackendJack();

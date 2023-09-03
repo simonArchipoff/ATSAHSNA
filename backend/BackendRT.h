@@ -10,8 +10,15 @@
 
 #include "concurrentqueue.h"
 
+class RTModule {
+public:
+    virtual void rt_process(vector<VD> & inputs, const vector<VD> & outputs) = 0;
+    virtual void rt_after_process(){};
+};
 
-class RTModule{
+
+class RTModuleHandler{
+
     void requestResponse(ParamResponse p);
     void setContinuous(bool);
     void setIntegrationSize(int s=1);
@@ -21,11 +28,18 @@ class RTModule{
 
 
 protected:
-
-    void rt_init(int sampleRate);
     void rt_process(vector<VD> & inputs, const vector<VD> & outputs);
     void rt_after_process();
     moodycamel::ConcurrentQueue<vector<ResultResponse>> responseQueue;
+
+    moodycamel::ConcurrentQueue<RTModule *> toRTQueue,fromRTQueue;
+
+    RTModule * module;
+
+    RTModule * setModule(RTModule *);
+
+private:
+    void rt_updateModule();
 };
 
 

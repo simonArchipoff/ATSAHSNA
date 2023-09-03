@@ -97,13 +97,13 @@ TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
         int iwrite=0;
         int iread=iwrite;
         int total_read_write = 1000;
-        int available=0;
+        uint available=0;
 
         while(total_read_write--){
             //write
             uint swrite = std::rand() % fifo.freespace();
             std::vector<int> v;
-            for(int i = 0; i < swrite; i++){
+            for(uint i = 0; i < swrite; i++){
                 v.push_back(iwrite++);
             }
 
@@ -115,7 +115,7 @@ TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
 
             uint sread = std::rand()%fifo.available();
             v = fifo.read(sread);
-            for(int i = 0; i < sread; i++){
+            for(uint i = 0; i < sread; i++){
                 REQUIRE(v[i] == (iread++));
             }
             fifo.pop(sread);
@@ -146,9 +146,9 @@ TEST_CASE("Acquisition") {
     VD in(frames);
     for(uint i = 0; i < 10000; i += frames){
 
-        for(int j = 0; j < frames; j++){
+        for(uint j = 0; j < frames; j++){
             if(i+j < foo.size())
-                in[j] = std::real(foo[i+j])*2;
+                in[j] = std::real(foo[i+j])*4;
             else
                 in[j] = 0;
         }
@@ -160,6 +160,7 @@ TEST_CASE("Acquisition") {
         auto r = b.rt_process(in, out);
         if(r.level >0.1 ){
             REQUIRE(r.idx + r.delay_result == delay);
+            REQUIRE(r.level > 0.99);
         }
 
     }

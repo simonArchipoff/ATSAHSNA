@@ -5,25 +5,40 @@
 
 
 
-void RTModule::requestResponse(ParamResponse p){
+void RTModuleHandler::requestResponse(ParamResponse p){
 
 }
-void RTModule::setContinuous(bool){
+void RTModuleHandler::setContinuous(bool){
 
 }
-void RTModule::setIntegrationSize(int s){
+void RTModuleHandler::setIntegrationSize(int s){
 
 }
-void RTModule::rt_init(int sampleRate){
+
+void RTModuleHandler::rt_process(vector<VD> & inputs, const vector<VD> & outputs){
+    rt_updateModule();
+    if(!module){
+        for(auto & v:inputs){
+            std::fill(v.begin(),v.end(),0.0);
+        }
+        return;
+    }
 
 }
-void RTModule::rt_process(vector<VD> & inputs, const vector<VD> & outputs){
-
+void RTModuleHandler::rt_after_process(){
+    if(module){
+        module->rt_after_process();
+    }
 }
-void RTModule::rt_after_process(){
-    
-}
 
+
+void RTModuleHandler::rt_updateModule(){
+    RTModule * m = nullptr;
+    if(toRTQueue.try_dequeue(m)){
+        fromRTQueue.enqueue(module);
+        module = m;
+    }
+}
 
 
 void Acquisition::init(size_t sampleRate, const VCD & s){

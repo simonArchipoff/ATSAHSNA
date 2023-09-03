@@ -15,6 +15,7 @@ typedef vector<complex<double>> VCD;
 typedef vector<double> VD;
 typedef vector<float> VF;
 
+
 #ifndef ZEROISH
 #define ZEROISH 1e-20
 //if 1 is 0db, this is -460db
