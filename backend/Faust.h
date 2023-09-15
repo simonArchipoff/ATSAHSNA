@@ -69,11 +69,11 @@ public:
 
 protected:
     mutex lock;
-    dsp * dspInstance;
+    dsp * dspInstance = nullptr;
     APIUI  apiui;
     DetectChange detectChange;
     string errorString;
-    llvm_dsp_factory * factory;
+    llvm_dsp_factory * factory = nullptr;
 };
 
 BackendFaust * make_faust_backend(ParamFaust p);

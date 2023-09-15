@@ -8,8 +8,10 @@
 
 using namespace std;
 BackendFaust::~BackendFaust(){
-    delete dspInstance;
-    deleteDSPFactory(factory);
+    if(dspInstance)
+        delete dspInstance;
+    if(factory)
+        deleteDSPFactory(factory);
 }
 
 

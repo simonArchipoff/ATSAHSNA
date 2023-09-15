@@ -174,14 +174,6 @@ TEST_CASE("Acquisition") {
         } catch (const std::bad_variant_access& ex){
 
         }
-        /*if(r.level >0.1 ){
-            REQUIRE(r.idx + r.delay_result == delay);
-            REQUIRE(r.level > 0.99);
-        }*/
-
     }
     REQUIRE(res_delay == delay);
 }
-
-
-

@@ -31,7 +31,7 @@ protected:
 
     moodycamel::ConcurrentQueue<RTModule *> toRTQueue,fromRTQueue;
 
-    RTModule * module;
+    RTModule * module = nullptr;
 
 private:
     void rt_updateModule();
