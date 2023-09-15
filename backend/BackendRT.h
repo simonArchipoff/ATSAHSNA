@@ -6,7 +6,9 @@
 #include <signalHarmonics.h>
 #include <signalResponse.h>
 #include <tuple>
+#include <variant>
 
+#include <set>
 
 #include "concurrentqueue.h"
 
@@ -17,31 +19,29 @@ public:
 };
 
 
+
 class RTModuleHandler{
 
-    void requestResponse(ParamResponse p);
-    void setContinuous(bool);
-    void setIntegrationSize(int s=1);
-    bool tryGetResponse(vector<ResultResponse> & v){
-        return responseQueue.try_dequeue(v);
-    }
-
+    RTModule * setModule(RTModule *);
 
 protected:
     void rt_process(vector<VD> & inputs, const vector<VD> & outputs);
     void rt_after_process();
-    moodycamel::ConcurrentQueue<vector<ResultResponse>> responseQueue;
+
 
     moodycamel::ConcurrentQueue<RTModule *> toRTQueue,fromRTQueue;
 
     RTModule * module;
 
-    RTModule * setModule(RTModule *);
-
 private:
     void rt_updateModule();
 };
 
+
+struct SystemDescriptor{
+    std::set<int> inputs;
+    std::set<int> outputs;
+};
 
 
 
@@ -50,17 +50,31 @@ public:
     Acquisition():state(DISABLED){
     }
 
-    struct result {
-        double level = 0.0;
-        int idx = -1;
-
-        VD result_uncroped;
-        int delay_result;
+    struct no_result{
+        int dummy;
+    };
+    struct timeout{
+        int dummy;
     };
 
-    void init(size_t sampleRate, const VCD & signal);
+    struct result {
+        double level = 0.0;
+        VD result;
+        int delay;
+    };
 
-    result rt_process(VD & input, const VD & output);
+    typedef std::variant<result,no_result,timeout> ret_type;
+
+    void init(size_t sampleRate, const VCD & signal,double threshold=0.9);
+
+    void reset(){
+        state = SENDING;
+        time_waited = 0;
+        sending_index = 0;
+        rb.reset();
+    }
+
+    ret_type rt_process(VD & input, const VD & output);
 
     void start(){
         state |= SENDING;
@@ -72,6 +86,8 @@ protected:
     struct params {
         VD signal;
         DelayComputer dc;
+        double threshold_level;
+        int timeout;
         int recurences;
         int sample_between_iteration;
     };
@@ -87,11 +103,35 @@ protected:
     uint sending_index;
 
     void rt_process_sending(VD & input);
-    uint max_wait_response;
     uint time_waited;
-    result rt_process_wait_response(const VD & output);
+    Acquisition::ret_type rt_process_wait_response(const VD & output);
 
     RingBuffer<double> rb;
     params p;
 };
 
+
+
+class RTModuleResponse : public RTModule {
+public:
+    RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number = 1);
+
+    void startResponse();
+    bool tryGetResponse(VD & v);
+
+    void setContinuous(bool);
+    void setIntegrationSize(int s=1);
+
+
+    virtual void rt_process(vector<VD> & inputs, const vector<VD> & outputs) override ;
+    virtual void rt_after_process() override;
+
+private:
+    VCD chirp;
+    Acquisition acq;
+    uint sampleRate;
+    ParamResponse paramResponse;
+    bool continuous;
+    int integration_number;
+    moodycamel::ConcurrentQueue<VD> responseQueue;
+};

@@ -132,8 +132,8 @@ TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
 #include <iostream>
 TEST_CASE("Acquisition") {
     Acquisition b;
-    int delay=42;
-    RingBuffer<double> rb(1000);
+    int delay=6654;
+    RingBuffer<double> rb(10000);
     rb.write(VD(delay));
     const uint sr = 3000;
     const uint frames = 8;
@@ -144,6 +144,7 @@ TEST_CASE("Acquisition") {
     b.start();
 
     VD in(frames);
+    int res_delay = -1;
     for(uint i = 0; i < 10000; i += frames){
 
         for(uint j = 0; j < frames; j++){
@@ -158,12 +159,28 @@ TEST_CASE("Acquisition") {
         auto out = rb.read(frames);
         rb.pop(frames);
         auto r = b.rt_process(in, out);
-        if(r.level >0.1 ){
-            REQUIRE(r.idx + r.delay_result == delay);
-            REQUIRE(r.level > 0.99);
+
+        try {
+            auto res = std::get<Acquisition::result>(r);
+            REQUIRE(res_delay == -1);
+            res_delay = res.delay;
+        } catch (const std::bad_variant_access& ex){
+
         }
 
+        try {
+            auto res = std::get<Acquisition::timeout>(r);
+
+        } catch (const std::bad_variant_access& ex){
+
+        }
+        /*if(r.level >0.1 ){
+            REQUIRE(r.idx + r.delay_result == delay);
+            REQUIRE(r.level > 0.99);
+        }*/
+
     }
+    REQUIRE(res_delay == delay);
 }
 
 

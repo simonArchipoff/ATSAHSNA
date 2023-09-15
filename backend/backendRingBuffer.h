@@ -63,6 +63,10 @@ public:
         return buff.size() - size;
     }
 
+    void reset(){
+        begin = end = 0;
+    }
+
 private:
     std::vector<T> buff;
     uint begin,end,size;

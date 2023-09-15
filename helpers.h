@@ -42,3 +42,30 @@ void to_file(const std::string & s, const std::vector<T> & v){
     out.write((char*)v.data(), sizeof(T)*v.size());
     out.close();
 }
+
+
+template<typename C, typename T>
+class Accumulate{
+public:
+    C acc;
+    int size = 0;
+    void reset(){
+        acc = C();
+        size = 0;
+    }
+    void add(C &v){
+        if(acc.size() == 0){
+            acc = v;
+        } else {
+            std::transform(acc.begin(),acc.end(),acc.begin(),v.end(),std::plus<T>());
+        }
+    }
+    C get(){
+        C res = acc;
+        std::transform(res.begin(), res.end(), res.begin(),[this](const T & v){
+            return v/T(size);
+        });
+        return res;
+    }
+
+};

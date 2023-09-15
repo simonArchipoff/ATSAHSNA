@@ -4,18 +4,8 @@
 
 
 
-
-void RTModuleHandler::requestResponse(ParamResponse p){
-
-}
-void RTModuleHandler::setContinuous(bool){
-
-}
-void RTModuleHandler::setIntegrationSize(int s){
-
-}
-
 void RTModuleHandler::rt_process(vector<VD> & inputs, const vector<VD> & outputs){
+    (void)outputs;
     rt_updateModule();
     if(!module){
         for(auto & v:inputs){
@@ -41,19 +31,20 @@ void RTModuleHandler::rt_updateModule(){
 }
 
 
-void Acquisition::init(size_t sampleRate, const VCD & s){
+void Acquisition::init(size_t sampleRate, const VCD & s,double threshold){
     uint size = s.size();
     p.signal.resize(size);
+    p.threshold_level=threshold;
     std::transform(s.begin()
                    ,s.end()
                    ,p.signal.begin(),[](std::complex<double> c){return c.real();});
     p.dc.setReference(s);
+    time_waited = 0;
     rb.reset(2*size);
-    max_wait_response = sampleRate + size;
 }
 
 
-Acquisition::result Acquisition::rt_process(VD & input, const VD & output){
+Acquisition::ret_type Acquisition::rt_process(VD & input, const VD & output){
     result r={.level=0};
     if(state == 0){
         memset(input.data(),0,sizeof(input[0])*input.size());
@@ -83,8 +74,7 @@ void Acquisition::rt_process_sending(VD &input){
     }
 }
 
-#include <iostream>
-Acquisition::result Acquisition::rt_process_wait_response(const VD & output){
+Acquisition::ret_type Acquisition::rt_process_wait_response(const VD & output){
 
     uint frames=output.size();
     if(rb.freespace() < frames){
@@ -93,25 +83,53 @@ Acquisition::result Acquisition::rt_process_wait_response(const VD & output){
     result res;
     rb.write(output);
     time_waited += frames;
-    //std::cerr << rb.available() << std::endl;
+
     if(rb.available() >= p.dc.getSize()){
         auto tab = rb.read(p.dc.getSize());
         auto r = p.dc.getDelays(array_VD_to_VCD(tab));
-        if(true){
-            rb.pop(p.dc.getSize());
-            //send result
-            res.level = r.second;
-            res.idx = r.first;
-            res.result_uncroped = tab;
-            res.delay_result = time_waited - p.dc.getSize();
-            return res;
-        } else {
-            if(time_waited > max_wait_response){
-                //std::cerr << "something fucked up"<< std::endl;
-            }
-        }
+        //send result
+        res.level = r.second;
 
+        if(res.level > p.threshold_level){
+            res.result.resize(p.signal.size());
+            std::copy(tab.begin() + r.first, tab.begin() + r.first + p.signal.size(),res.result.begin());
+            res.delay = r.first + time_waited - rb.available(); //r.first + time_waited - p.dc.getSize();
+            //reset or something
+            rb.pop(p.signal.size()+r.first);
+            return ret_type(res);
+        } else {
+            if(time_waited > p.timeout){
+                return ret_type(timeout());
+            }
+            rb.pop(output.size());
+        }
     }
-    return res;
-} 
+    return ret_type(no_result());
+}
+
+
+
+
+RTModuleResponse::RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number){
+    this->integration_number = integration_number;
+    this->sampleRate = sampleRate;
+    auto s =  computeChirp(p,  sampleRate);
+    acq.init(sampleRate,s);
+
+}
+
+
+void RTModuleResponse::rt_process(vector<VD> & inputs, const vector<VD> & outputs){
+    auto r = acq.rt_process(inputs[0],outputs[0]);
+    try{
+        responseQueue.enqueue(std::get<Acquisition::result>(r).result);
+    } catch(const std::bad_variant_access& ex){
+    }
+
+}
+//std::transform(res.begin(),res.end(),v.begin(),res.begin(),std::plus<double>());
+void RTModuleResponse::rt_after_process(){
+}
+
+
 
