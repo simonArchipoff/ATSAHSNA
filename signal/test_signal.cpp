@@ -2,9 +2,9 @@
 #include <catch2/benchmark/catch_benchmark.hpp>
 
 #include "helpers.h"
-#include "signalHarmonics.h"
-#include "signalAnalysis.h"
-#include "signalGeneration.h"
+#include "Harmonics.h"
+#include "Analysis.h"
+#include "Generation.h"
 /*
 #include <fftw3.h>
 TEST_CASE("fftw)"){

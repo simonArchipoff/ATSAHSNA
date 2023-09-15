@@ -14,8 +14,8 @@
 #include <QPushButton>
 #include <QSpinBox>
 
-#include <backendJack.h>
-#include <backendFaust.h>
+#include <Jack.h>
+#include <Faust.h>
 #include <faust/gui/QTUI.h>
 
 

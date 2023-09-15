@@ -6,9 +6,9 @@
 #include <QPushButton>
 #include <QFormLayout>
 
-#include <signalHarmonics.h>
-#include <signalResponse.h>
-#include <signalSpectrogram.h>
+#include <Harmonics.h>
+#include <Response.h>
+#include <Spectrogram.h>
 
 
 class ParamResponseWidget : public QWidget

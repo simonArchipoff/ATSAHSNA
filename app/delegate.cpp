@@ -1,6 +1,6 @@
  #include "delegate.h"
 #include "mainwindow.h"
-#include "signalHarmonics.h"
+#include "Harmonics.h"
 #include <faust/gui/QTUI.h>
 
 #include <BodePlot.h>

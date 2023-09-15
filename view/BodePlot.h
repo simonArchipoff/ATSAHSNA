@@ -17,8 +17,8 @@
 #include <vector>
 #include <set>
 
-#include <signalResponse.h>
-#include <signalHarmonics.h>
+#include <Response.h>
+#include <Harmonics.h>
 
 class RoundRobinColor{
 public:

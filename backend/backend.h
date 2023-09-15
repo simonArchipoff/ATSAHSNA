@@ -1,8 +1,8 @@
 #pragma once
 
 #include <sys/types.h>
-#include <signalHarmonics.h>
-#include <signalResponse.h>
+#include <Harmonics.h>
+#include <Response.h>
 #include <vector>
 #include "concurrentqueue.h"
 

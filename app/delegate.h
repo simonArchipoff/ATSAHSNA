@@ -1,8 +1,8 @@
 #pragma once
 
 #include <mainwindow.h>
-#include "signalHarmonics.h"
-#include <backendFaust.h>
+#include "Harmonics.h"
+#include <Faust.h>
 #include <qbackend.h>
 #include <QWeakPointer>
 

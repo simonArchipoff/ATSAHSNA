@@ -7,9 +7,9 @@
 #include "qbackend.h"
 #include <widget_chatgpt.h>
 
-#include <signalHarmonics.h>
-#include <signalResponse.h>
-#include <signalSpectrogram.h>
+#include <Harmonics.h>
+#include <Response.h>
+#include <Spectrogram.h>
 #include <BodePlot.h>
 
 class MainWindow : public QMainWindow {

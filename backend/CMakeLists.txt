@@ -13,15 +13,20 @@ set(BACKEND_SOURCES
     ${HEADER_FAUST_QTUI}
     backend.h
     backend.cpp
+
     backendFaust.h
     backendFaust.cpp
-    backendRingBuffer.h
-    backendRingBuffer.cpp
-    concurrentqueue.h
+
     backendJack.h
-    BackendRT.h
-    BackendRT.cpp
     backendJack.cpp
+
+    RingBuffer.h
+    RingBuffer.cpp
+
+    RTModule.h
+    RTModule.cpp
+
+    concurrentqueue.h
 )
 
 

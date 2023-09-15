@@ -1,7 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <cstdlib>
-#include "backendRingBuffer.h"
+#include "RingBuffer.h"
 #include <vector>
 
 TEST_CASE("Ring buffer") {
@@ -127,8 +127,8 @@ TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
 }
 
 
-#include <signalGeneration.h>
-#include "BackendRT.h"
+#include <Generation.h>
+#include "RTModule.h"
 #include <iostream>
 TEST_CASE("Acquisition") {
     Acquisition b;

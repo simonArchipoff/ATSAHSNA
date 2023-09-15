@@ -10,9 +10,9 @@
 #include <QFormLayout>
 #include <QBoxLayout>
 
-#include <signalResponse.h>
-#include <signalHarmonics.h>
-#include <signalSpectrogram.h>
+#include <Response.h>
+#include <Harmonics.h>
+#include <Spectrogram.h>
 
 
 

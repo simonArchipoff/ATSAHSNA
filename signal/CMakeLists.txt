@@ -7,22 +7,21 @@ pkg_search_module(FFTW REQUIRED fftw3 IMPORTED_TARGET)
 
 #include(CMakePrintHelpers)
 set(SIGNAL_SOURCES
-    signalIncrementalResponse.h
-    signalIncrementalResponse.cpp
-    signalFFT.h
-    signalFFT.cpp
-    signalAnalysis.h
-    signalAnalysis.cpp
-    signalGeneration.h
-    signalGeneration.cpp
-    signalHarmonics.h
-    signalHarmonics.cpp
-    signalResponse.h
-    signalResponse.cpp
-    signalSpectrogram.h
-    signalSpectrogram.cpp
-    signalFrequencyDomain.cpp
-    signalFrequencyDomain.h)
+    FFT.h
+    FFT.cpp
+    Analysis.h
+    Analysis.cpp
+    Generation.h
+    Generation.cpp
+    Harmonics.h
+    Harmonics.cpp
+    Response.h
+    Response.cpp
+    Spectrogram.h
+    Spectrogram.cpp
+    FrequencyDomain.cpp
+    FrequencyDomain.h
+)
 
 
 
