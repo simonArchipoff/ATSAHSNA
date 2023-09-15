@@ -7,7 +7,7 @@
 #include <signalResponse.h>
 #include <tuple>
 #include <variant>
-
+#include "../helpers.h"
 #include <set>
 
 #include "concurrentqueue.h"
@@ -65,10 +65,10 @@ public:
 
     typedef std::variant<result,no_result,timeout> ret_type;
 
-    void init(size_t sampleRate, const VCD & signal,double threshold=0.9);
+    void init(const VCD & signal,double threshold=0.9);
 
-    void reset(){
-        state = SENDING;
+    void start(){
+        state = ENABLED;
         time_waited = 0;
         sending_index = 0;
         rb.reset();
@@ -76,27 +76,20 @@ public:
 
     ret_type rt_process(VD & input, const VD & output);
 
-    void start(){
-        state |= SENDING;
-        state |= WAITRESPONSE;
-        sending_index = 0;
-    }
 
 protected:
     struct params {
         VD signal;
         DelayComputer dc;
         double threshold_level;
-        int timeout;
-        int recurences;
+        uint timeout;
         int sample_between_iteration;
     };
 
 
     enum state_t {
         DISABLED = 0
-        ,WAITRESPONSE = 1
-        ,SENDING = 2
+        ,ENABLED = 2
     };
 
     volatile uint state;
@@ -117,7 +110,7 @@ public:
     RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number = 1);
 
     void startResponse();
-    bool tryGetResponse(VD & v);
+    bool tryGetResponse(ResultResponse & v);
 
     void setContinuous(bool);
     void setIntegrationSize(int s=1);
@@ -133,5 +126,8 @@ private:
     ParamResponse paramResponse;
     bool continuous;
     int integration_number;
-    moodycamel::ConcurrentQueue<VD> responseQueue;
+    moodycamel::ConcurrentQueue<Acquisition::result> responseQueue;
+
+    //accumulate results
+    Accumulate<VD,double> acc;
 };

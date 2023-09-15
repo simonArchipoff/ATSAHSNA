@@ -34,6 +34,14 @@ static VCD array_VD_to_VCD(const VD & input){
     return out;
 }
 
+__attribute__((unused))
+static VD array_VCD_to_VD(const VCD & input){
+    VD out(input.size());
+    for(uint i = 0; i < input.size(); i++){
+        out[i] = input[i].real();
+    }
+    return out;
+}
 
 template<typename T>
 void to_file(const std::string & s, const std::vector<T> & v){

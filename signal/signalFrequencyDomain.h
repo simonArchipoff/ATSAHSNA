@@ -16,7 +16,7 @@ class FDF
 {
 public:
     FDF();
-    FDF(const FDF&) = default;
+    //FDF(const FDF&) = default;
     FDF(const vector<complex<double>> &v, uint sampleRate):response(v),
         sampleRate(sampleRate),
         f1(sampleRate / ((double) response.size())){}

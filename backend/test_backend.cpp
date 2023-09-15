@@ -139,7 +139,7 @@ TEST_CASE("Acquisition") {
     const uint frames = 8;
     auto foo = chirp_complex(10,1000,0.5,sr);
     //VCD foo = {1,2,3,4,0,0,0,0,0,0,0};
-    b.init(sr,foo);
+    b.init(foo);
 
     b.start();
 
