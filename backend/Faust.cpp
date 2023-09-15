@@ -1,4 +1,4 @@
-#include "backendFaust.h"
+#include "Faust.h"
 #include <faust/dsp/llvm-dsp.h>
 #include <list>
 #include <iostream>

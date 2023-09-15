@@ -14,11 +14,11 @@ set(BACKEND_SOURCES
     backend.h
     backend.cpp
 
-    backendFaust.h
-    backendFaust.cpp
+    Faust.h
+    Faust.cpp
 
-    backendJack.h
-    backendJack.cpp
+    Jack.h
+    Jack.cpp
 
     RingBuffer.h
     RingBuffer.cpp
