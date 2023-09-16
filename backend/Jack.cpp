@@ -8,7 +8,6 @@
 #include <mutex>
 #include <stdio.h>
 #if __has_include("QThread")
-#define WE_HAVE_QT
 #include <QThread>
 #include <QDebug>
 #endif

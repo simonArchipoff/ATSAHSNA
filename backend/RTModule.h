@@ -68,7 +68,7 @@ public:
     void init(const VCD & signal,double threshold=0.9);
 
     void start(){
-        state = ENABLED;
+        state = SEND | RECIEVE;
         time_waited = 0;
         sending_index = 0;
         rb.reset();
@@ -89,7 +89,8 @@ protected:
 
     enum state_t {
         DISABLED = 0
-        ,ENABLED = 2
+        ,SEND = 2
+        ,RECIEVE = 4
     };
 
     volatile uint state;

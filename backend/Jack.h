@@ -181,8 +181,6 @@ protected:
         return backend->jack_xrun();
     }
 
-
-
     //int 	jack_set_latency_callback (jack_client_t *, JackLatencyCallback latency_callback, void *) JACK_WEAK_EXPORT
     //static void jackLatencyCallback(jack_latency_callback_mode_t mode, BackendJack * backend);
 

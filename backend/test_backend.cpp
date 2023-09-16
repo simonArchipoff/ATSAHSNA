@@ -132,7 +132,7 @@ TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
 #include <iostream>
 TEST_CASE("Acquisition") {
     Acquisition b;
-    int delay=6654;
+    int delay=45;
     RingBuffer<double> rb(10000);
     rb.write(VD(delay));
     const uint sr = 3000;

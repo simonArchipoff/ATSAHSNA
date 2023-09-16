@@ -46,30 +46,30 @@ void Acquisition::init(const VCD & s, double threshold){
 
 
 Acquisition::ret_type Acquisition::rt_process(VD & input, const VD & output){
-    result r={.level=0};
-    switch(state){
-    case DISABLED:
+    no_result r;
+    if(state == DISABLED){
         memset(input.data(),0,sizeof(input[0])*input.size());
         return r;
-        break;
-    case ENABLED:
-        rt_process_sending(input);
-        return rt_process_wait_response(output);
-        break;
-    default:
-        abort();
     }
+    if(state & SEND){
+        rt_process_sending(input);
+    }
+    if(state & RECIEVE){
+        return rt_process_wait_response(output);
+    }
+
+    abort();
 }
 
 
 void Acquisition::rt_process_sending(VD &input){
-    assert(state & ENABLED);
+    assert(state & SEND);
     uint remSize = p.signal.size() - sending_index;
     uint frames = input.size();
     memcpy(input.data(), p.signal.data()+sending_index, std::min<uint>(remSize,frames));
     if(remSize <= frames){
         memset(input.data()+remSize, 0, frames-remSize);
-        state &= ~ENABLED;
+        state &= ~SEND;
         sending_index = 0;
     }else{
         sending_index+=frames;
@@ -97,7 +97,7 @@ Acquisition::ret_type Acquisition::rt_process_wait_response(const VD & output){
             std::copy(tab.begin() + r.first, tab.begin() + r.first + p.signal.size(),res.result.begin());
             res.delay = r.first + time_waited - rb.available(); //r.first + time_waited - p.dc.getSize();
             //rb.pop(p.signal.size()+r.first);
-            state = DISABLED;
+            state &= ~RECIEVE;
             return ret_type(res);
         } else {
             if(time_waited > p.timeout){
