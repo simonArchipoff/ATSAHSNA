@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Response.h"
 #include "qlineedit.h"
 #include "qmeasure.h"
 #include "qscopedpointer.h"
@@ -22,10 +23,10 @@
 
 
 
-class QFaustDsp : public QWidget{
+class QFaustView : public QWidget{
     Q_OBJECT
 public:
-    explicit QFaustDsp(QWidget *parent = nullptr);
+    explicit QFaustView(QWidget *parent = nullptr);
 
     void setDSPUI(QWidget * ui);
     void setErrorMessage(QString);
@@ -44,36 +45,38 @@ public:
 
 
 
-class QBackendJack : public QWidget {
-  Q_OBJECT
+class QJackView : public QWidget {
+    Q_OBJECT
 public:
-  QBackendJack(QWidget * parent=nullptr);
-
+    QJackView(QWidget * parent=nullptr);
+    void set_sample_rate(uint);
+    void set_buffer_size(uint);
 signals:
-  void requestNewInputPort(QString);
-  void requestNewOutputPort(QString);
+    void requestNewInputPort(QString);
+    void requestNewOutputPort(QString);
+
+    void requestResponse(ParamResponse p, bool continuous, int integration=1);
+    void requestHarmonics(ParamHarmonics p, bool continuous);
+
 
 
 protected:
 
-  void set_sample_rate(uint);
-  void set_buffer_size(uint);
-
-  QPushButton * inputButton, * outputButton;
-  QLabel * sampleRate, *bufferSize;
-  QLineEdit * inputName, *outputName;
-  QDoubleSpinBox * gain;
+    QPushButton * inputButton, * outputButton;
+    QLabel * sampleRate, *bufferSize;
+    QLineEdit * inputName, *outputName;
+    QDoubleSpinBox * gain;
 };
 
 
 
 class QBackends : public QTabWidget{
-  public:
-  QBackends(QWidget * parents):QTabWidget(parents){
-  }
-  QSharedPointer<QFaustDsp> addFaust();
-  QSharedPointer<QBackendJack> addJack();
-  protected:
-  std::vector<QSharedPointer<QFaustDsp>> fausts;
-  std::vector<QSharedPointer<QBackendJack>> jacks;
+public:
+    QBackends(QWidget * parents):QTabWidget(parents){
+    }
+    QSharedPointer<QFaustView> addFaust();
+    QSharedPointer<QJackView> addJack();
+protected:
+    std::vector<QSharedPointer<QFaustView>> fausts;
+    std::vector<QSharedPointer<QJackView>> jacks;
 };

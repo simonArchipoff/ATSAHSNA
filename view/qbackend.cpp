@@ -11,7 +11,7 @@
 #include <QSpinBox>
 #include <QFormLayout>
 
-QFaustDsp::QFaustDsp(QWidget *parent)
+QFaustView::QFaustView(QWidget *parent)
     : QWidget{parent}
     ,dspUi{nullptr}
     ,codeEdit{new QTextEdit{this}}
@@ -38,16 +38,16 @@ QFaustDsp::QFaustDsp(QWidget *parent)
         "fc = hslider(\"frequency\",100,100,20000,1);\n" \
         "q = hslider(\"quality\",1,0.1,10,0.1);\n" \
         "process=fi.resonlp(fc,q,1);\n");
-    connect(compile_button,&QPushButton::clicked,this, &QFaustDsp::compile);
+    connect(compile_button,&QPushButton::clicked,this, &QFaustView::compile);
     connect(codeEdit,&QTextEdit::textChanged, this, [this](){compile_button->setDisabled(false);});
     connect(sr,&QLineEdit::textChanged, this, [this](){compile_button->setDisabled(false);});
 }
 
-void QFaustDsp::compile(){
+void QFaustView::compile(){
     emit setFaustCode(codeEdit->toPlainText(),sr->text().toInt());
 }
 
-void QFaustDsp::setDSPUI(QWidget * ui)
+void QFaustView::setDSPUI(QWidget * ui)
 {
     if(dspUi == nullptr) {
         dspUi.reset(ui);
@@ -61,14 +61,14 @@ void QFaustDsp::setDSPUI(QWidget * ui)
     errorLabel->setText("");
 }
 
-void QFaustDsp::setErrorMessage(QString s)
+void QFaustView::setErrorMessage(QString s)
 {
     compile_button->setDisabled(false);
     errorLabel->setText(s);
 }
 
 
-QBackendJack::QBackendJack(QWidget * parent)
+QJackView::QJackView(QWidget * parent)
     : QWidget{parent}
     ,inputButton{new QPushButton{tr("new input"),this}}
     ,outputButton{new QPushButton{tr("new output"),this}}
@@ -118,12 +118,12 @@ QBackendJack::QBackendJack(QWidget * parent)
     //connect(b,&BackendJack::sample_rate_change,this,&QBackendJack::set_sample_rate);
 }
 
-void QBackendJack::set_sample_rate(uint n){
+void QJackView::set_sample_rate(uint n){
     QString str;
     str.setNum(n);
     sampleRate->setText(str);
 }
-void QBackendJack::set_buffer_size(uint n){
+void QJackView::set_buffer_size(uint n){
     QString str;
     str.setNum(n);
     bufferSize->setText(str);
@@ -169,16 +169,16 @@ Backend * QBackends::getSelectedBackend(){
 */
 
 
-QSharedPointer<QFaustDsp> QBackends::addFaust(){
-    auto f = QSharedPointer<QFaustDsp>(new QFaustDsp);
+QSharedPointer<QFaustView> QBackends::addFaust(){
+    auto f = QSharedPointer<QFaustView>(new QFaustView);
     addTab(f.data(),"faust"+QString::number(fausts.size()));
     fausts.push_back(f);
     return f;
 }
 
 
-QSharedPointer<QBackendJack> QBackends::addJack(){
-    auto f = QSharedPointer<QBackendJack>(new QBackendJack);
+QSharedPointer<QJackView> QBackends::addJack(){
+    auto f = QSharedPointer<QJackView>(new QJackView);
     addTab(f.data(),"jack"+QString::number(jacks.size()));
     jacks.push_back(f);
     return f;

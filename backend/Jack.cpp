@@ -7,10 +7,7 @@
 #include <jack/jack.h>
 #include <mutex>
 #include <stdio.h>
-#if __has_include("QThread")
-#include <QThread>
-#include <QDebug>
-#endif
+
 
 
 //#include <QtConcurrent/QtConcurrent>
@@ -28,21 +25,23 @@ BackendJack::BackendJack()
         exit(1);
     } else {
         jack_set_process_thread(client,audio_thread,this);
-
         jack_on_shutdown(client, jackShutdownCallback, this);
         jack_on_info_shutdown (client, jackInfoShutdownCallback, this);
         jack_set_buffer_size_callback (client, jackBufferSizeCallback, this);
+        jack_set_sample_rate_callback(client, jackSampleRateCallback,this);
         jack_set_client_registration_callback (client, jackClientRegistrationCallback, this);
         jack_set_port_registration_callback (client, jackPortRegistrationCallback, this);
         jack_set_port_rename_callback (client, jackPortRenameCallback, this);
         jack_set_port_connect_callback (client, jackPortConnectCallback, this);
         jack_set_xrun_callback(client, jackXRunCallback,this);
-        ready = !jack_activate(client);
         outputGain = -3;
     }
 }
 
 
+void BackendJack::start(){
+    ready = !jack_activate(client);
+}
 
 BackendJack::~BackendJack(){
     jack_client_close(client);

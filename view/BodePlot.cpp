@@ -28,7 +28,7 @@ void  transform(QLineSeries *s, const VD & x,const VD & y){
     assert(x.size() == y.size());
     s->clear();
     QList<QPointF> l;
-    for(uint i = 1; i < x.size(); i+= ceil(i/100)+1 ){
+    for(uint i = 1; i < x.size(); i+= ceil(i/100)+1 ){ //TODO : fix that with a proper algorithm
         l.push_back(QPointF(x[i],y[i]));
     }
     s->append(l);
