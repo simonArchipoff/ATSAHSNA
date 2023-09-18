@@ -61,20 +61,8 @@ public:
         return outputGain;
     }
 
-    virtual void setLatency(uint l){
-        latency = l;
-    }
-    uint getLatencySample(){
-        return latency;
-    }
-
-    void setLatencyAutomatic(bool b=true){
-        latency_automatic = b;
-    }
 
 protected:
-    int latency = 0;
-    bool latency_automatic = true;
 
     static void * audio_thread(void*);
 
@@ -188,7 +176,7 @@ protected:
     bool ready = false;
     jack_client_t * client;
     std::vector<jack_port_t *> inputPorts,outputPorts;
-    float outputGain;
+    float outputGain = 0;
 };
 
 
@@ -205,7 +193,6 @@ signals:
     void jack_port_connect_s(jack_port_id_t a, jack_port_id_t b, int connect);
     //int 	jack_set_port_connect_callback (jack_client_t *, JackPortConnectCallback connect_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
     void jack_xrun_s();
-
 
 protected:
     virtual void jack_shutdown(){
@@ -227,14 +214,14 @@ protected:
         BackendJack::jack_client_registration(name,i);
     }
     virtual void jack_port_registration(jack_port_id_t port, int i,std::string name){
+        emit jack_port_registration_s(port,i,QString(name.c_str()));
         BackendJack::jack_port_registration(port,i,name);
     }
     virtual void jack_port_rename(jack_port_id_t port, const char *old_name, const char *new_name){
         BackendJack::jack_port_rename(port,old_name,new_name);
     }
     virtual void jack_port_connect(jack_port_id_t a, jack_port_id_t b, int connect){
-        auto na = jack_port_name(jack_port_by_id(client,a));
-        auto nb = jack_port_name(jack_port_by_id(client,b));
+        emit jack_port_connect_s(a,b,connect);
         BackendJack::jack_port_connect(a,b,connect);
     }
     //int 	jack_set_port_connect_callback (jack_client_t *, JackPortConnectCallback connect_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT

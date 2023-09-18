@@ -1,16 +1,12 @@
 #include "qbackend.h"
+#include "qboxlayout.h"
 #include "qnamespace.h"
 #include "qpushbutton.h"
 
 #include <faust/gui/QTUI.h>
 
-#include <QDebug>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QValidator>
-#include <QSpinBox>
-#include <QFormLayout>
 
+std::list<GUI*> GUI::fGuiList;
 QFaustView::QFaustView(QWidget *parent)
     : QWidget{parent}
     ,dspUi{nullptr}
@@ -66,107 +62,6 @@ void QFaustView::setErrorMessage(QString s)
     compile_button->setDisabled(false);
     errorLabel->setText(s);
 }
-
-
-QJackView::QJackView(QWidget * parent)
-    : QWidget{parent}
-    ,inputButton{new QPushButton{tr("new input"),this}}
-    ,outputButton{new QPushButton{tr("new output"),this}}
-    ,sampleRate{new QLabel{this}}
-    ,bufferSize{new QLabel{this}}
-    ,inputName{new QLineEdit{this}}
-    ,outputName{new QLineEdit{this}}
-    ,gain{new QDoubleSpinBox{this}}
-{
-    QFormLayout * l = new QFormLayout{this};
-    l->addRow(tr("sample rate"),sampleRate);
-    l->addRow(tr("buffer size"),bufferSize);
-    l->addRow(inputButton,inputName);
-    l->addRow(outputButton,outputName);
-
-    inputName->setText(tr("input"));
-    outputName->setText(tr("output"));
-
-
-    l->addRow(tr("gain"),gain);
-    gain->setMaximum(20);
-    gain->setMinimum(-40);
-    gain->setValue(0);
-    //connect(gain,QOverload<double>::of(&QDoubleSpinBox::valueChanged),this,[b](auto d){b->setOutputGain(d);});
-
-    //connect(latency,QOverload<int>::of(&QSpinBox::valueChanged),this,[b](int i){b->setLatency(i);});
-    //connect(b,&BackendJackQt::new_latency ,latency, &QSpinBox::setValue);
-    /*
-  connect(automatic_latency,&QCheckBox::stateChanged,this,[this,b](int i){
-      latency->setDisabled(i);
-      b->setLatencyAutomatic(i);
-    });
-*/
-
-    setLayout(l);
-    //setMaximumWidth(minimumSizeHint().width());
-    connect(inputButton,&QPushButton::clicked,this,[this](){emit requestNewInputPort(inputName->text());});
-    connect(outputButton,&QPushButton::clicked,this,[this](){emit requestNewOutputPort(outputName->text());});
-    QString str;
-    //str.setNum(b->getSampleRate());
-    sampleRate->setText(str);
-
-    //str.setNum(b->getBufferSize());
-    bufferSize->setText(str);
-
-    //connect(b,&BackendJack::buffer_size_change,this,&QBackendJack::set_buffer_size);
-    //connect(b,&BackendJack::sample_rate_change,this,&QBackendJack::set_sample_rate);
-}
-
-void QJackView::set_sample_rate(uint n){
-    QString str;
-    str.setNum(n);
-    sampleRate->setText(str);
-}
-void QJackView::set_buffer_size(uint n){
-    QString str;
-    str.setNum(n);
-    bufferSize->setText(str);
-}
-
-
-/*
-QBackends::QBackends(QWidget * parent)
-  :QTabWidget{parent} {
-  setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-}
-
-*/
-std::list<GUI*> GUI::fGuiList;
-/*
-BackendFaustQT * QBackends::addFaustBackend(){
-  auto b = new BackendFaustQT{this};
-  auto bv = new QFaustDsp{b};
-  addTab(bv,"faust");
-  fausts.push_back(bv);
-  bv->compile();
-  return b;
-}
-*/
-/*
-BackendJackQt * QBackends::addJackBackend(){
-  auto b = new BackendJackQt;
-  auto bv = new QBackendJack{b,this};
-  addTab(bv,"jack");
-  backends.push_back(bv);
-  return b;
-}
-*/
-/*
-Backend * QBackends::getSelectedBackend(){
-  auto i = this->currentIndex();
-  if(i < 0)
-    return nullptr;
-  assert(static_cast<uint>(i) < fausts.size());
-  return fausts[i]->getBackend();
-}
-
-*/
 
 
 QSharedPointer<QFaustView> QBackends::addFaust(){

@@ -3,6 +3,8 @@
 add_library(view
     qbackend.h
     qbackend.cpp
+    QJackView.h
+    QJackView.cpp
     qmeasure.h
     qmeasure.cpp
     BodePlot.cpp
@@ -11,6 +13,7 @@ add_library(view
     mainwindow.h
     widget_chatgpt.h
     widget_chatgpt.cpp
+    QJackView.h QJackView.cpp
 )
 
 target_link_libraries(view PUBLIC Qt${QT_VERSION_MAJOR}::Widgets backend Qt6::Charts)

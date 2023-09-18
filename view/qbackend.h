@@ -1,9 +1,6 @@
 #pragma once
 
-#include "Response.h"
 #include "qlineedit.h"
-#include "qmeasure.h"
-#include "qscopedpointer.h"
 #include <QSharedPointer>
 #include "qwidget.h"
 #include <QWidget>
@@ -19,7 +16,7 @@
 #include <Faust.h>
 #include <faust/gui/QTUI.h>
 
-
+#include <QJackView.h>
 
 
 
@@ -45,28 +42,8 @@ public:
 
 
 
-class QJackView : public QWidget {
-    Q_OBJECT
-public:
-    QJackView(QWidget * parent=nullptr);
-    void set_sample_rate(uint);
-    void set_buffer_size(uint);
-signals:
-    void requestNewInputPort(QString);
-    void requestNewOutputPort(QString);
-
-    void requestResponse(ParamResponse p, bool continuous, int integration=1);
-    void requestHarmonics(ParamHarmonics p, bool continuous);
 
 
-
-protected:
-
-    QPushButton * inputButton, * outputButton;
-    QLabel * sampleRate, *bufferSize;
-    QLineEdit * inputName, *outputName;
-    QDoubleSpinBox * gain;
-};
 
 
 
