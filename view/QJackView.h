@@ -34,7 +34,7 @@ public:
 
     void add(jack_port_id_t port, QString portName);
     void remove(jack_port_id_t port);
-    void connectPort(jack_port_id_t a, jack_port_id_t b);
+    void connectPort(jack_port_id_t a, jack_port_id_t b,QString nameb);
     void disconnectPort(jack_port_id_t a, jack_port_id_t b);
     QJackPortView * getPort(jack_port_id_t  port);
 

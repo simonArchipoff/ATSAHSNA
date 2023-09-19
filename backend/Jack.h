@@ -1,6 +1,7 @@
 #pragma once
 
 #include "backend.h"
+#include <cstring>
 #include <jack/jack.h>
 #include "RTModule.h"
 #include "qtmetamacros.h"
@@ -8,7 +9,7 @@
 #include <mutex>
 #include <variant>
 #include <optional>
-
+#include <string.h>
 #include <iostream>
 
 #include <QtCore>
@@ -215,8 +216,10 @@ protected:
     }
     virtual void jack_port_registration(jack_port_id_t port, int i,std::string port_name){
         jack_port_t *p = jack_port_by_id(client, port);
-        emit jack_port_registration_s(port,i,QString(jack_port_name(p)));
-        BackendJack::jack_port_registration(port,i,port_name);
+        if(p && 0==strncmp(jack_port_name(p),APPNAME,strlen(APPNAME))){
+            emit jack_port_registration_s(port,i,QString(jack_port_short_name(p)));
+            BackendJack::jack_port_registration(port,i,port_name);
+        }
     }
     virtual void jack_port_rename(jack_port_id_t port, const char *old_name, const char *new_name){
         BackendJack::jack_port_rename(port,old_name,new_name);
@@ -224,8 +227,17 @@ protected:
     virtual void jack_port_connect(jack_port_id_t a, jack_port_id_t b, int connect){
         auto na = jack_port_name(jack_port_by_id(client,a));
         auto nb = jack_port_name(jack_port_by_id(client,b));
-        emit jack_port_connect_s(a,b,connect, QString(na),QString(nb));
-        BackendJack::jack_port_connect(a,b,connect);
+        auto nsa = jack_port_short_name(jack_port_by_id(client,a));
+        auto nsb = jack_port_short_name(jack_port_by_id(client,b));
+        if(0==strncmp(na,APPNAME,strlen(APPNAME))) {
+            emit jack_port_connect_s(a,b,connect, QString(nsa),QString(nb));
+            BackendJack::jack_port_connect(a,b,connect);
+        }
+
+        if(0==strncmp(nb,APPNAME,strlen(APPNAME))) {
+            emit jack_port_connect_s(b,a,connect, QString(nsb),QString(na));
+            BackendJack::jack_port_connect(b,a,connect);
+        }
     }
     //int 	jack_set_port_connect_callback (jack_client_t *, JackPortConnectCallback connect_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
     virtual int jack_xrun(){

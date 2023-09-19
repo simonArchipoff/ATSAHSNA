@@ -39,7 +39,6 @@ void PlotAmplitudePhase::setCurve(const VD&f, const VD&a, const VD&p, QString na
     transform(amplitude.data(),f,a);
     amplitude.data()->setName(name);
 //phase.data()->setName(name + "_phase");
-
     transform(phase.data(),f,p);
 }
 

@@ -81,7 +81,8 @@ void QJackView::removePort(jack_port_id_t port){
 }
 
 void QJackView::connectPort(jack_port_id_t a, jack_port_id_t b, QString namea, QString nameb){
-    portManager->connectPort(a,b);
+    (void)namea;
+    portManager->connectPort(a,b,nameb);
 
 }
 void QJackView::disconnectPort(jack_port_id_t a, jack_port_id_t b){
@@ -185,16 +186,16 @@ QJackPortView* QJackPortManager::getPort(jack_port_id_t port) {
     return nullptr;
 }
 
-void QJackPortManager::connectPort(jack_port_id_t a, jack_port_id_t b){
+void QJackPortManager::connectPort(jack_port_id_t a, jack_port_id_t b,QString nameb){
     auto pa = getPort(a);
-    auto name = "todo : connect"; //TODO : finish
+    auto name = nameb;
     if(pa){
         pa->setConnexionName(name);
     }
 }
 void QJackPortManager::disconnectPort(jack_port_id_t a, jack_port_id_t b){
     auto pa = getPort(a);
-    auto name = "todo : disconnect"; //TODO : finish
+    auto name = "";
     if(pa){
         pa->setConnexionName(name);
     }
