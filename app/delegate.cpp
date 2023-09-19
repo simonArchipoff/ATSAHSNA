@@ -40,7 +40,7 @@ bool faust_backend::setCode(QString dspCode, uint sampleRate){
         backend->buildUserInterface((QTGUI*)ui);
         faust_gui.toStrongRef()->setDSPUI(ui);
         backend->init(sampleRate);
-        startTimer(100);
+        startTimer(100*1./30);
         return true;
     }
     faust_gui.toStrongRef().data()->setErrorMessage(QString(backend->getErrorMessage().c_str()));

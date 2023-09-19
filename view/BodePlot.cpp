@@ -26,12 +26,11 @@ void clean_spectrum(VD &s){
 
 void  transform(QLineSeries *s, const VD & x,const VD & y){
     assert(x.size() == y.size());
-    s->clear();
     QList<QPointF> l;
-    for(uint i = 1; i < x.size(); i+= ceil(i/100)+1 ){ //TODO : fix that with a proper algorithm
+    for(uint i = 1; i < x.size(); i+= ceil(i/1000)+1 ){ //TODO : fix that with a proper algorithm
         l.push_back(QPointF(x[i],y[i]));
     }
-    s->append(l);
+    s->replace(l);
 }
 
 void PlotAmplitudePhase::setCurve(const VD&f, const VD&a, const VD&p, QString name){
