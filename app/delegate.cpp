@@ -74,16 +74,16 @@ void delegate::addJackBackend(){
     connect(jack.data(),&QJack::jack_samplerate_s,j.data(),&QJackView::set_sample_rate);
     connect(jack.data(),&QJack::jack_buffer_size_s,j.data(),&QJackView::set_buffer_size);
 
-    connect(jack.data(),&QJack::jack_port_registration_s,this,[j](jack_port_id_t port, int i,QString name){
+    connect(jack.data(),&QJack::jack_port_registration_s,this,[j](jack_port_id_t port, int i, QString name){
         if(i)
             j->addPort(port,name);
         else
             j->removePort(port);
     });
 
-    connect(jack.data(),&QJack::jack_port_connect_s, this,[j](jack_port_id_t a, jack_port_id_t b, int connect){
+    connect(jack.data(),&QJack::jack_port_connect_s, this,[j](jack_port_id_t a, jack_port_id_t b, int connect, QString namea, QString nameb){
         if(connect)
-            j->connectPort(a,b);
+            j->connectPort(a,b,namea, nameb);
         else
             j->disconnectPort(a,b);
     });

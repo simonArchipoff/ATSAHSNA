@@ -80,7 +80,7 @@ void QJackView::removePort(jack_port_id_t port){
     portManager->remove(port);
 }
 
-void QJackView::connectPort(jack_port_id_t a, jack_port_id_t b){
+void QJackView::connectPort(jack_port_id_t a, jack_port_id_t b, QString namea, QString nameb){
     portManager->connectPort(a,b);
 
 }

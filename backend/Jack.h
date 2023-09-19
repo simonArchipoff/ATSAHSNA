@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include <QtCore>
+#include <QSet>
 
 
 using std::vector;
@@ -125,8 +126,7 @@ protected:
         return backend->jack_client_registration(name,i);
     }
 
-    virtual void jack_port_registration(jack_port_id_t port, int i, std::string port_name){
-
+    virtual void jack_port_registration(jack_port_id_t port, int i,std::string port_name){
         std::cerr << "new port " << port << " " << i  << " " <<  port_name << std::endl ;
     }
 
@@ -190,7 +190,7 @@ signals:
     void jack_client_registration_s(QString name, int i);
     void jack_port_registration_s(jack_port_id_t port, int i,QString name);
     void jack_port_rename_s(jack_port_id_t port,  QString old_name, QString new_name);
-    void jack_port_connect_s(jack_port_id_t a, jack_port_id_t b, int connect);
+    void jack_port_connect_s(jack_port_id_t a, jack_port_id_t b, int connect, QString porta, QString portb);
     //int 	jack_set_port_connect_callback (jack_client_t *, JackPortConnectCallback connect_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
     void jack_xrun_s();
 
@@ -213,15 +213,18 @@ protected:
         emit jack_client_registration_s(QString(name),i);
         BackendJack::jack_client_registration(name,i);
     }
-    virtual void jack_port_registration(jack_port_id_t port, int i,std::string name){
-        emit jack_port_registration_s(port,i,QString(name.c_str()));
-        BackendJack::jack_port_registration(port,i,name);
+    virtual void jack_port_registration(jack_port_id_t port, int i,std::string port_name){
+        jack_port_t *p = jack_port_by_id(client, port);
+        emit jack_port_registration_s(port,i,QString(jack_port_name(p)));
+        BackendJack::jack_port_registration(port,i,port_name);
     }
     virtual void jack_port_rename(jack_port_id_t port, const char *old_name, const char *new_name){
         BackendJack::jack_port_rename(port,old_name,new_name);
     }
     virtual void jack_port_connect(jack_port_id_t a, jack_port_id_t b, int connect){
-        emit jack_port_connect_s(a,b,connect);
+        auto na = jack_port_name(jack_port_by_id(client,a));
+        auto nb = jack_port_name(jack_port_by_id(client,b));
+        emit jack_port_connect_s(a,b,connect, QString(na),QString(nb));
         BackendJack::jack_port_connect(a,b,connect);
     }
     //int 	jack_set_port_connect_callback (jack_client_t *, JackPortConnectCallback connect_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT

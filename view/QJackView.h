@@ -52,7 +52,7 @@ public:
     void set_buffer_size(uint);
     void addPort(jack_port_id_t port, QString portName);
     void removePort(jack_port_id_t port);
-    void connectPort(jack_port_id_t a, jack_port_id_t b);
+    void connectPort(jack_port_id_t a, jack_port_id_t b, QString namea, QString nameb);
     void disconnectPort(jack_port_id_t a, jack_port_id_t b);
 
 
