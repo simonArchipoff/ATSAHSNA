@@ -19,9 +19,8 @@ public:
 };
 
 
-
 class RTModuleHandler{
-
+public:
     RTModule * setModule(RTModule *);
 
 protected:
@@ -132,3 +131,4 @@ private:
     //accumulate results
     Accumulate<VD,double> acc;
 };
+

@@ -112,12 +112,10 @@ public:
     }
 
     void updatePlot(QString name, const FDF&v){
-        setUpdatesEnabled(false);
         auto * p = plots[name];
         assert(p);
         p->setCurve(v.getFrequency(),v.getAmplitude20log10(),v.getPhase(),name);
         chart.update();
-        setUpdatesEnabled(true);
     }
 
     QMap<QString,PlotAmplitudePhase *> plots;

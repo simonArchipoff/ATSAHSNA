@@ -1,4 +1,5 @@
 #include "QJackView.h"
+#include "qboxlayout.h"
 #include <QDebug>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -89,55 +90,20 @@ void QJackView::disconnectPort(jack_port_id_t a, jack_port_id_t b){
     portManager->disconnectPort(a,b);
 }
 
-/*
-QBackends::QBackends(QWidget * parent)
-  :QTabWidget{parent} {
-  setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-}
-
-*/
-
-/*
-BackendFaustQT * QBackends::addFaustBackend(){
-  auto b = new BackendFaustQT{this};
-  auto bv = new QFaustDsp{b};
-  addTab(bv,"faust");
-  fausts.push_back(bv);
-  bv->compile();
-  return b;
-}
-*/
-/*
-BackendJackQt * QBackends::addJackBackend(){
-  auto b = new BackendJackQt;
-  auto bv = new QBackendJack{b,this};
-  addTab(bv,"jack");
-  backends.push_back(bv);
-  return b;
-}
-*/
-/*
-Backend * QBackends::getSelectedBackend(){
-  auto i = this->currentIndex();
-  if(i < 0)
-    return nullptr;
-  assert(static_cast<uint>(i) < fausts.size());
-  return fausts[i]->getBackend();
-}
-*/
 
 
 
 
-QJackPortView::QJackPortView(QWidget *parent) : QWidget(parent) {
+QJackPortView::QJackPortView(QWidget *parent) : QWidget(parent), spectrum{new MiniSpectrum{parent}} {
     name = new QLabel(this);
     nameConnexion = new QLabel(this);
 
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->addWidget(name);
-    layout->addWidget(nameConnexion);
+    QHBoxLayout * hlayout = new QHBoxLayout(this);
+    setLayout(hlayout);
+    hlayout->addWidget(name);
+    hlayout->addWidget(nameConnexion);
+    //hlayout->addWidget(spectrum);
 
-    setLayout(layout);
 }
 
 void QJackPortView::setName(QString portName) {

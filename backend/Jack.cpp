@@ -49,11 +49,11 @@ BackendJack::~BackendJack(){
 
 void * BackendJack::audio_thread(void * arg){
     BackendJack * jb = static_cast<BackendJack *>(arg);
-
+#warning TODO : fix this non RT safe things with vector
     while(1) {
         jack_nframes_t nframes = jack_cycle_wait(jb->client);
 
-        vector<VD> inputs;
+        vector<VD> inputs; // I think it's not RT-safe to use this allocator
         for(uint i = 0; i < jb->inputPorts.size(); i++) {
             auto in = (float*)jack_port_get_buffer(jb->inputPorts[i], nframes);
             inputs.push_back(VD(in,in+nframes));
@@ -98,7 +98,6 @@ bool BackendJack::addInputPort(std::string name, std::string connect){
     if(client){
         std::string n;
         int i=0;
-        std::string{n};
         do{
             n =name + std::to_string(i++);
         }while(does_port_exists(client,n.c_str()));

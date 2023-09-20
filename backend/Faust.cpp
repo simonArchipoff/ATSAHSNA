@@ -25,7 +25,7 @@ inline bool file_exists (const std::string& name) {
 }
 
 BackendFaust * make_faust_backend(ParamFaust p){
-    BackendFaust * f = new BackendFaust();
+    BackendFaust * f = new BackendFaust(p.name);
     f->setCode(p.file_or_code,p.sample_rate);
     if(f->isReady()){
         for(auto & p : p.params){
@@ -145,7 +145,8 @@ bool BackendFaust::didSomethingChanged(){
 
 std::variant<const std::vector<ResultResponse>> BackendFaust::getResultResponse(){
     const std::lock_guard<std::mutex> g(this->lock);
-    reinit(this,getSampleRate());
+    dspInstance->instanceClear();
+    //reinit(this,getSampleRate());
     std::vector<ResultResponse> res;
     auto in = impulse(paramResponse.freqMin, paramResponse.duration, getSampleRate());
     auto out = acquisition(vector<VD>(numberInput(),in));
@@ -159,7 +160,7 @@ std::variant<const std::vector<ResultResponse>> BackendFaust::getResultResponse(
 
 }
 std::variant<const std::vector<ResultHarmonics>>  BackendFaust::getResultHarmonics(){
-    reinit(this,getSampleRate());
+    dspInstance->instanceClear();
     vector<ResultHarmonics> res;
     auto in = sinusoid(paramHarmonics.frequency, 1, getSampleRate());
     auto out = acquisition(vector<VD>(numberInput(),in));

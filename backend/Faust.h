@@ -11,6 +11,7 @@
 using namespace std;
 
 struct ParamFaust {
+    string name;
     string file_or_code;
     uint sample_rate;
     vector<pair<string,double>> params;
@@ -52,7 +53,7 @@ public:
     bool isReady()       const override;
 
     vector<VD> acquisition(const vector<VD> &input);
-    BackendFaust(){}
+    BackendFaust(string nameInstance):nameInstance(nameInstance){}
     ~BackendFaust();
     bool setCode(string dspCode,int sampleRate);
     void init(uint sampleRate);
@@ -70,6 +71,7 @@ public:
 protected:
     mutex lock;
     dsp * dspInstance = nullptr;
+    string nameInstance;
     APIUI  apiui;
     DetectChange detectChange;
     string errorString;

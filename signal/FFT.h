@@ -38,11 +38,9 @@ public:
     void fft();
     void rfft();
 
-
 private:
     size_t size;
     fftw_plan pf;
     fftw_plan pb;
     fftw_complex * input, * output;
 };
-

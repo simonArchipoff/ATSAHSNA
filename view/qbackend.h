@@ -50,10 +50,13 @@ public:
 class QBackends : public QTabWidget{
 public:
     QBackends(QWidget * parents):QTabWidget(parents){
+        setTabsClosable(true);
     }
     QSharedPointer<QFaustView> addFaust();
     QSharedPointer<QJackView> addJack();
+
+
 protected:
     std::vector<QSharedPointer<QFaustView>> fausts;
-    std::vector<QSharedPointer<QJackView>> jacks;
+    std::vector<QSharedPointer<QJackView>>  jacks;
 };

@@ -11,6 +11,27 @@
 #include <jack/types.h>
 
 
+#include <QtCharts>
+#include <QPointF>
+
+class MiniSpectrum : public QChartView {
+public:
+    MiniSpectrum(QWidget * parent):QChartView(parent){
+        setChart(&chart);
+        chart.addSeries(&amplitude);
+    }
+    void setData(QVector<std::pair<double,double>> & v){
+        QList<QPointF> a;
+        for(int i = 0; i < v.size(); i++){
+            a.append(QPointF(v[i].first, i == 0 ? 0 : v[i].second) );
+        }
+        amplitude.replace(a);
+    }
+
+private:
+    QLineSeries amplitude;
+    QChart chart;
+};
 
 class QJackPortView : public QWidget{
     Q_OBJECT
@@ -24,6 +45,7 @@ public:
 protected:
     QLabel * name;
     QLabel * nameConnexion;
+    MiniSpectrum * spectrum;
 };
 
 class QJackPortManager : public QWidget {

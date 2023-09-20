@@ -12,7 +12,7 @@ delegate::delegate(MainWindow * m):mw{m}
 }
 
 faust_backend::faust_backend(QSharedPointer<QFaustView> gui):QObject{},faust_gui{gui}{
-    backend.reset(new BackendFaust);
+    backend.reset(new BackendFaust("faust"));
     connectGUI();
 }
 faust_backend::~faust_backend(){
