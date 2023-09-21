@@ -169,3 +169,27 @@ std::variant<const std::vector<ResultHarmonics>>  BackendFaust::getResultHarmoni
     }
     return std::variant<const std::vector<ResultHarmonics>>(res);
 }
+
+void BackendFaust::buildUserInterface(UI * ui){
+    dspInstance->buildUserInterface(ui);
+}
+
+DetectChange::DetectChange(){}
+void DetectChange::setAPIUI(APIUI*ui){
+    faustZones.resize(0);
+    ref.resize(0);
+    for(int i = 0; i < ui->getParamsCount(); i++){
+        faustZones.push_back(ui->getParamZone(i));
+        ref.push_back(0);//ui->getParamValue(i));
+    }
+}
+
+bool DetectChange::isSomethingChanged(){
+    bool changed=false;
+    for(uint i = 0; i<faustZones.size(); i++){
+        changed |= *faustZones[i] != ref[i];
+        ref[i] = *faustZones[i];
+    }
+    return changed;
+}
+

@@ -4,6 +4,7 @@
 #include <Harmonics.h>
 #include <Response.h>
 #include <vector>
+
 #include "concurrentqueue.h"
 
 class Backend {
@@ -28,10 +29,12 @@ protected:
 
 
 class MeasureSync{
-    const vector<ResultHarmonics> getResultHarmonics();
-    const vector<ResultResponse>  getResultResponse();
-
+    vector<ResultHarmonics> getResultHarmonics();
+    vector<ResultResponse>  getResultResponse();
 };
 
 
-
+class MeasureASync {
+    const vector<ResultHarmonics> getResultHarmonics();
+    const vector<ResultResponse>  getResultResponse();
+};

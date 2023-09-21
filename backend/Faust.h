@@ -19,24 +19,10 @@ struct ParamFaust {
 
 class DetectChange {
 public:
-    DetectChange(){}
-    void setAPIUI(APIUI*ui){
-        faustZones.resize(0);
-        ref.resize(0);
-        for(int i = 0; i < ui->getParamsCount(); i++){
-            faustZones.push_back(ui->getParamZone(i));
-            ref.push_back(0);//ui->getParamValue(i));
-        }
-    }
+    DetectChange();
+    void setAPIUI(APIUI*ui);
 
-    bool isSomethingChanged(){
-        bool changed=false;
-        for(uint i = 0; i<faustZones.size(); i++){
-            changed |= *faustZones[i] != ref[i];
-            ref[i] = *faustZones[i];
-        }
-        return changed;
-    }
+    bool isSomethingChanged();
 
 private:
 
@@ -64,10 +50,7 @@ public:
 
     variant<const vector<ResultHarmonics>> getResultHarmonics();
     variant<const vector<ResultResponse>>  getResultResponse();
-    void buildUserInterface(UI * ui){
-        dspInstance->buildUserInterface(ui);
-    }
-
+    void buildUserInterface(UI * ui);
 protected:
     mutex lock;
     dsp * dspInstance = nullptr;

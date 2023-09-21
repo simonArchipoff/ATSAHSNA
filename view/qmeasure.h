@@ -81,7 +81,7 @@ public:
 };
 
 
-typedef class QResult<QParamResponse> QResponse;
+typedef class QResult<QParamResponse>   QResponse;
 typedef class QResult<QParamDistortion> QDistortion;
 //typedef class QResult<QParamSpectrogram,QDisplaySpectrogram> QSpectrogram;
 

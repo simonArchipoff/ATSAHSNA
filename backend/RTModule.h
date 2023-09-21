@@ -10,6 +10,10 @@
 #include "../helpers.h"
 #include <set>
 
+#include <memory>
+
+#include "Response.h"
+
 #include "concurrentqueue.h"
 
 class RTModule {
@@ -19,21 +23,32 @@ public:
 };
 
 
+class RTModuleResponse;
+class RTModuleHarmonics;
+
 class RTModuleHandler{
 public:
-    RTModule * setModule(RTModule *);
+    void setModule(std::shared_ptr<RTModule>);
+    void startResponse(ParamResponse p);
+    void startHarmonics();
+
+    bool getResultHarmonics(vector<ResultHarmonics>& result);
+    bool getResultResponse(vector<ResultResponse>& result);
 
 protected:
+    void setSampleRate(uint);
+
     void rt_process(vector<VD> & inputs, const vector<VD> & outputs);
     void rt_after_process();
 
+    moodycamel::ConcurrentQueue<std::shared_ptr<RTModule>> toRTQueue;
 
-    moodycamel::ConcurrentQueue<RTModule *> toRTQueue,fromRTQueue;
-
-    RTModule * module = nullptr;
+    std::shared_ptr<RTModule> module;
 
 private:
     void rt_updateModule();
+    uint sampleRate = 0;
+    std::shared_ptr<RTModuleResponse> responseRTModule;
 };
 
 
@@ -87,9 +102,9 @@ protected:
 
 
     enum state_t {
-        DISABLED = 0
-        ,SEND = 2
-        ,RECIEVE = 4
+         DISABLED = 0
+        ,SEND     = 2
+        ,RECIEVE  = 4
     };
 
     volatile uint state;
@@ -116,7 +131,7 @@ public:
     void setIntegrationSize(int s=1);
 
 
-    virtual void rt_process(vector<VD> & inputs, const vector<VD> & outputs) override ;
+    virtual void rt_process(vector<VD> & inputs, const vector<VD> & outputs) override;
     virtual void rt_after_process() override;
 
 private:
@@ -127,7 +142,6 @@ private:
     bool continuous;
     int integration_number;
     moodycamel::ConcurrentQueue<Acquisition::result> responseQueue;
-
     //accumulate results
     Accumulate<VD,double> acc;
 };

@@ -1,6 +1,8 @@
 #include "RTModule.h"
 #include <cstring>
+#include <memory>
 #include "../helpers.h"
+
 
 
 
@@ -16,6 +18,10 @@ void RTModuleHandler::rt_process(vector<VD> & inputs, const vector<VD> & outputs
 
 }
 
+void RTModuleHandler::setSampleRate(uint sr){
+    sampleRate = sr;
+}
+
 void RTModuleHandler::rt_after_process(){
     if(module){
         module->rt_after_process();
@@ -24,12 +30,32 @@ void RTModuleHandler::rt_after_process(){
 
 
 void RTModuleHandler::rt_updateModule(){
-    RTModule * m = nullptr;
+    std::shared_ptr<RTModule> m;
     if(toRTQueue.try_dequeue(m)){
-        fromRTQueue.enqueue(module);
         module = m;
     }
 }
+
+
+
+
+
+void RTModuleHandler::startResponse(ParamResponse p){
+}
+void RTModuleHandler::startHarmonics(){
+
+}
+
+bool RTModuleHandler::getResultHarmonics(vector<ResultHarmonics>& result){
+    result.clear();
+    return false;
+}
+bool RTModuleHandler::getResultResponse(vector<ResultResponse>& result){
+    result.clear();
+    return false;
+}
+
+
 
 
 void Acquisition::init(const VCD & s, double threshold){
@@ -148,5 +174,7 @@ bool RTModuleResponse::tryGetResponse(ResultResponse & response){
 
     return false;
 }
+
+
 
 
