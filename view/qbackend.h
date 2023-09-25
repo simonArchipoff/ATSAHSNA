@@ -42,19 +42,13 @@ public:
 
 
 
-
-
-
-
-
 class QBackendsView : public QTabWidget{
 public:
     QBackendsView(QWidget * parents):QTabWidget(parents){
-        setTabsClosable(true);
+        //setTabsClosable(true);
     }
     QSharedPointer<QFaustView>  addFaust(QString name);
     QSharedPointer<QJackView>   addJack();
-
 
 protected:
     QVector<QSharedPointer<QFaustView>> fausts;

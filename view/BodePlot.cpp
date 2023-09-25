@@ -3,12 +3,127 @@
 
 #include <cmath>
 
-#include <QObject>
-#include <QEvent>
-#include <QWheelEvent>
+#include <QLegendMarker>
 
-#include <algorithm>
-#include <QDebug>
+
+
+
+
+RoundRobinColor::RoundRobinColor(std::initializer_list<QColor> &l):color(l),i(0){}
+RoundRobinColor::RoundRobinColor():i(0){
+    using namespace Qt;
+    for(auto & i : {green,
+                    red,
+                    blue,
+                    cyan,
+                    magenta,
+                    yellow,
+                    black,
+                    darkGray,
+                    gray,
+                    darkRed,
+                    darkGreen,
+                    darkBlue,
+                    darkCyan,
+                    darkMagenta,
+                    darkYellow}){ //QColor::colorNames()){
+        color.push_back(QColor(i));
+    }
+}
+QColor RoundRobinColor::getNext(){
+    i  %= color.size();
+    return color[i++];
+}
+
+
+
+PlotAmplitudePhase::PlotAmplitudePhase(QString name, QColor c):amplitude(new QLineSeries),phase(new QLineSeries),color(c),name(name)
+{
+    QPen p = amplitude->pen();
+    p.setColor(c);
+    p.setStyle(Qt::PenStyle::SolidLine);
+    p.setWidth(2);
+    amplitude->setPen(p);
+    p.setStyle(Qt::PenStyle::DotLine);
+    phase->setPen(p);
+
+}
+
+FrequencyPlot::FrequencyPlot(QWidget * parent):QChartView(parent)
+    ,amplitude_axis(new QValueAxis)
+    ,phase_axis(new QValueAxis)
+    ,frequency_axis(new QLogValueAxis){
+    chart.addAxis(frequency_axis, Qt::AlignBottom);
+    chart.addAxis(amplitude_axis, Qt::AlignLeft);
+    chart.addAxis(phase_axis,Qt::AlignRight);
+    frequency_axis->setBase(10);
+    phase_axis->setRange(-180,180);
+    amplitude_axis->setRange(-100,20);
+    frequency_axis->setRange(20,20000);
+    setChart(&chart);
+}
+
+void FrequencyPlot::addPlot(const FDF & f, QString name){
+    if(plots.count(name) == 0) {
+        auto c = color_round_robin.getNext();
+        PlotAmplitudePhase * p = new PlotAmplitudePhase(name,c);
+        plots.insert(name,p);
+        chart.addSeries(p->amplitude.data());
+
+        p->amplitude->attachAxis(amplitude_axis);
+        p->amplitude->attachAxis(frequency_axis);
+
+        chart.addSeries(p->phase.data());
+        p->phase->attachAxis(phase_axis);
+        p->phase->attachAxis(frequency_axis);
+        chart.legend()->markers(p->phase.data())[0]->setVisible(false);
+    }
+    updatePlot(name,f);
+}
+
+void FrequencyPlot::updatePlot(QString name, const FDF&v){
+    auto * p = plots[name];
+    assert(p);
+    p->setCurve(v.getFrequency(),v.getAmplitude20log10(),v.getPhase(),name);
+    chart.update();
+}
+
+
+
+BodePlot::BodePlot(QWidget*parent):FrequencyPlot(parent){}
+void BodePlot::setResponses(std::variant<const std::vector<ResultResponse>> & r){
+    std::vector<ResultResponse> v = get<const std::vector<ResultResponse>>(r);
+    for(uint i = 0; i < v.size(); i++){
+        addPlot(v[i].response,QString{v[i].name.data()});
+    }
+
+}
+
+
+THDPlot::THDPlot(QWidget* parent):FrequencyPlot(parent){
+}
+void THDPlot::setResult(std::variant<const std::vector<ResultHarmonics>> & r){
+    auto v = get<const std::vector<ResultHarmonics>>(r);
+    for(uint i = 0; i < v.size(); i++){
+        auto name = QString{v[i].name.data()};
+        addPlot(v[i].harmonicSpectrum, name);
+        plots[name]->phaseDisplayed = false;
+    }
+}
+
+
+QDisplays::QDisplays(QWidget * parents):QTabWidget(parents){
+}
+
+bool QDisplays::isBodeInit(){
+    return !bodePlot.isNull();
+}
+bool QDisplays::isTHDinit(){
+    return !thdPlot.isNull();
+}
+
+
+
 
 
 void clean_spectrum(VD &s){
