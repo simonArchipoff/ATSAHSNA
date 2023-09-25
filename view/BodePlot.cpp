@@ -45,9 +45,11 @@ void PlotAmplitudePhase::setCurve(const VD&f, const VD&a, const VD&p, QString na
 
 
 
-QSharedPointer<BodePlot> QDisplays::addBodePlot(){
-    bodePlot.reset(new BodePlot(this));
-    addTab(bodePlot.data(),"response");
+QSharedPointer<BodePlot> QDisplays::getBodePlot(){
+    if(!bodePlot){
+        bodePlot.reset(new BodePlot(this));
+        addTab(bodePlot.data(),"response");
+    }
     return bodePlot;
 }
 

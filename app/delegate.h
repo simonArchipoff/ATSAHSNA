@@ -11,7 +11,7 @@
 class faust_backend  :  public QObject {
     Q_OBJECT
 public:
-    faust_backend(QSharedPointer<QFaustView> gui);
+    faust_backend(QSharedPointer<QFaustView> gui, QString name);
     ~faust_backend();
 
     void connectGUI();
@@ -31,7 +31,7 @@ signals:
 protected:
     void timerEvent(QTimerEvent * e) override;
     QScopedPointer<BackendFaust> backend;
-    QWeakPointer<QFaustView> faust_gui;
+    QScopedPointer<QFaustView> faust_gui;
 };
 
 
@@ -55,7 +55,7 @@ public:
     void addResponseDisplay();
     void addHarmonicsDisplay();
 
-    QScopedPointer<faust_backend> faust;
+    QVector<QSharedPointer<faust_backend>> faust;
     QScopedPointer<QJack> jack;
     MainWindow * mw;
 };

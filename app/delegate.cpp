@@ -11,8 +11,8 @@ delegate::delegate(MainWindow * m):mw{m}
     connect(m,&MainWindow::addFaustBackendRequested,this, &delegate::addFaustBackend);
 }
 
-faust_backend::faust_backend(QSharedPointer<QFaustView> gui):QObject{},faust_gui{gui}{
-    backend.reset(new BackendFaust("faust"));
+faust_backend::faust_backend(QSharedPointer<QFaustView> gui, QString name):QObject{},faust_gui{gui.data()}{
+    backend.reset(new BackendFaust(name.toStdString()));
     connectGUI();
 }
 faust_backend::~faust_backend(){
@@ -28,7 +28,7 @@ void faust_backend::timerEvent(QTimerEvent * e){
 }
 
 void faust_backend::connectGUI(){
-    connect(faust_gui.toStrongRef().data(),&QFaustView::setFaustCode,
+    connect(faust_gui.data(),&QFaustView::setFaustCode,
             this,&faust_backend::setCode);
 
 }
@@ -36,14 +36,14 @@ void faust_backend::connectGUI(){
 bool faust_backend::setCode(QString dspCode, uint sampleRate){
     if(backend->setCode(dspCode.toStdString(),sampleRate)){
         QTGUI * ui = new QTGUI{nullptr};
-        ui->setParent(faust_gui.toStrongRef().data());
+        ui->setParent(faust_gui.data());
         backend->buildUserInterface((QTGUI*)ui);
-        faust_gui.toStrongRef()->setDSPUI(ui);
+        faust_gui->setDSPUI(ui);
         backend->init(sampleRate);
         startTimer(100*1./30);
         return true;
     }
-    faust_gui.toStrongRef().data()->setErrorMessage(QString(backend->getErrorMessage().c_str()));
+    faust_gui->setErrorMessage(QString(backend->getErrorMessage().c_str()));
     return false;
 }
 
@@ -55,10 +55,11 @@ bool faust_backend::isReady() const{
 
 
 void delegate::addFaustBackend(){
-    auto f = mw->backends->addFaust();
-    auto d = mw->displays->addBodePlot();
-    faust.reset(new faust_backend{f});
-    connect(faust.data()
+    QString name = "faust" + QString::number(faust.size());
+    auto f = mw->backends->addFaust(name);
+    auto d = mw->displays->getBodePlot();
+    faust.push_back(QSharedPointer<faust_backend>{new faust_backend(f,name)});
+    connect(faust.rbegin()->data()
             ,&faust_backend::resultResponse
             ,d.data()
             ,&BodePlot::setResponses
@@ -96,7 +97,7 @@ void delegate::addJackBackend(){
 
 void delegate::addResponseDisplay(){
     if(!mw->displays->isBodeInit()){
-        auto bode = mw->displays->addBodePlot();
+        auto bode = mw->displays->getBodePlot();
 
     }
 }

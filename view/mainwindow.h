@@ -17,7 +17,7 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    QSharedPointer<QBackends> backends;
+    QSharedPointer<QBackendsView> backends;
     QSharedPointer<QDisplays> displays;
 
 private:

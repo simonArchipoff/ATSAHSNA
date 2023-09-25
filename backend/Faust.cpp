@@ -153,7 +153,7 @@ std::variant<const std::vector<ResultResponse>> BackendFaust::getResultResponse(
     int i=0;
     for(auto & o : out){
         auto tmp = computeResponse(paramResponse,in, o, getSampleRate());
-        tmp.name = std::string("faust_") + std::to_string(i++) ;
+        tmp.name = nameInstance + "_" +std::to_string(i++) ;
         res.push_back(tmp);
     }
     return std::variant<const std::vector<ResultResponse>>(res);

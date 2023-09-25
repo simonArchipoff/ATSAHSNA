@@ -159,7 +159,7 @@ public:
     void setResponses(std::variant<const std::vector<ResultResponse>> & r){
         std::vector<ResultResponse> v = get<const std::vector<ResultResponse>>(r);
         for(uint i = 0; i < v.size(); i++){
-            addPlot(v[i].response,QString{v[i].name.data()}+ "_" + QString::number(i));
+            addPlot(v[i].response,QString{v[i].name.data()});
         }
 
     }
@@ -174,7 +174,7 @@ public:
     void setResult(std::variant<const std::vector<ResultHarmonics>> & r){
         auto v = get<const std::vector<ResultHarmonics>>(r);
         for(uint i = 0; i < v.size(); i++){
-            auto name = QString{v[i].name.data()}+ "_" + QString::number(i);
+            auto name = QString{v[i].name.data()};
             addPlot(v[i].harmonicSpectrum, name);
             plots[name]->phaseDisplayed = false;
         }
@@ -194,7 +194,7 @@ public:
         return !thdPlot.isNull();
     }
 
-    QSharedPointer<BodePlot> addBodePlot();
+    QSharedPointer<BodePlot> getBodePlot();
     QSharedPointer<THDPlot> addTHDPlot();
 protected:
     QSharedPointer<BodePlot> bodePlot;

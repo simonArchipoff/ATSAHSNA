@@ -16,7 +16,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     :QMainWindow{parent}
-    ,backends{new QBackends(this)}
+    ,backends{new QBackendsView(this)}
     ,displays{new QDisplays{this}}
   //,measures{new QMeasure{this}}
 {

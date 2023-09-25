@@ -64,15 +64,16 @@ void QFaustView::setErrorMessage(QString s)
 }
 
 
-QSharedPointer<QFaustView> QBackends::addFaust(){
-    auto f = QSharedPointer<QFaustView>(new QFaustView);
-    addTab(f.data(),"faust"+QString::number(fausts.size()));
+QSharedPointer<QFaustView> QBackendsView::addFaust(QString name){
+    QSharedPointer<QFaustView> f{new QFaustView};
+    addTab(f.data(),name);
     fausts.push_back(f);
+    setCurrentIndex(count()-1);
     return f;
 }
 
 
-QSharedPointer<QJackView> QBackends::addJack(){
+QSharedPointer<QJackView> QBackendsView::addJack(){
     auto f = QSharedPointer<QJackView>(new QJackView);
     addTab(f.data(),"jack"+QString::number(jacks.size()));
     jacks.push_back(f);
