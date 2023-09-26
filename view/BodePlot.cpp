@@ -112,14 +112,14 @@ void THDPlot::setResult(std::variant<const std::vector<ResultHarmonics>> & r){
 }
 
 
-QDisplays::QDisplays(QWidget * parents):QTabWidget(parents){
+QDisplays::QDisplays(QWidget * parents):QTabWidget(parents),bodePlot{nullptr},thdPlot{nullptr}{
 }
 
 bool QDisplays::isBodeInit(){
-    return !bodePlot.isNull();
+    return bodePlot;
 }
 bool QDisplays::isTHDinit(){
-    return !thdPlot.isNull();
+    return thdPlot;
 }
 
 
@@ -160,17 +160,19 @@ void PlotAmplitudePhase::setCurve(const VD&f, const VD&a, const VD&p, QString na
 
 
 
-QSharedPointer<BodePlot> QDisplays::getBodePlot(){
+BodePlot * QDisplays::getBodePlot(){
     if(!bodePlot){
-        bodePlot.reset(new BodePlot(this));
-        addTab(bodePlot.data(),"response");
+        bodePlot = new BodePlot(this);
+        addTab(bodePlot,"response");
     }
     return bodePlot;
 }
 
-QSharedPointer<THDPlot> QDisplays::addTHDPlot(){
-    thdPlot.reset(new THDPlot(this));
-    addTab(thdPlot.data(),"harmonics");
+THDPlot * QDisplays::addTHDPlot(){
+    if(!thdPlot){
+        thdPlot = new THDPlot(this);
+        addTab(thdPlot,"harmonics");
+    }
     return thdPlot;
 }
 

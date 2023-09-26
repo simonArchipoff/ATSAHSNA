@@ -11,8 +11,8 @@ delegate::delegate(MainWindow * m):mw{m}
     connect(m,&MainWindow::addFaustBackendRequested,this, &delegate::addFaustBackend);
 }
 
-faust_backend::faust_backend(QSharedPointer<QFaustView> gui, QString name):QObject{},faust_gui{gui.data()}{
-    backend.reset(new BackendFaust(name.toStdString()));
+faust_backend::faust_backend(QFaustView * gui, QString name):QObject{},faust_gui{gui}{
+    backend = new BackendFaust(name.toStdString());
     connectGUI();
 }
 faust_backend::~faust_backend(){
@@ -28,7 +28,7 @@ void faust_backend::timerEvent(QTimerEvent * e){
 }
 
 void faust_backend::connectGUI(){
-    connect(faust_gui.data(),&QFaustView::setFaustCode,
+    connect(faust_gui,&QFaustView::setFaustCode,
             this,&faust_backend::setCode);
 
 }
@@ -36,7 +36,7 @@ void faust_backend::connectGUI(){
 bool faust_backend::setCode(QString dspCode, uint sampleRate){
     if(backend->setCode(dspCode.toStdString(),sampleRate)){
         QTGUI * ui = new QTGUI{nullptr};
-        ui->setParent(faust_gui.data());
+        ui->setParent(faust_gui);
         backend->buildUserInterface((QTGUI*)ui);
         faust_gui->setDSPUI(ui);
         backend->init(sampleRate);
@@ -58,31 +58,32 @@ void delegate::addFaustBackend(){
     QString name = "faust" + QString::number(faust.size());
     auto f = mw->backends->addFaust(name);
     auto d = mw->displays->getBodePlot();
-    faust.push_back(QSharedPointer<faust_backend>{new faust_backend(f,name)});
-    connect(faust.rbegin()->data()
+    auto fb = new faust_backend(f,name);
+    faust.push_back(fb);
+    connect(fb
             ,&faust_backend::resultResponse
-            ,d.data()
+            ,d
             ,&BodePlot::setResponses
             ,Qt::UniqueConnection);
 }
 
 void delegate::addJackBackend(){
     auto j = mw->backends->addJack();
-    jack.reset(new QJack);
-    connect(j.data(),&QJackView::requestNewInputPort, this,[this](QString s){jack->addInputPort(s.toStdString());});
-    connect(j.data(),&QJackView::requestNewOutputPort,this,[this](QString s){jack->addOutputPort(s.toStdString());});
+    jack = new QJack;
+    connect(j,&QJackView::requestNewInputPort, this,[this](QString s){jack->addInputPort(s.toStdString());});
+    connect(j,&QJackView::requestNewOutputPort,this,[this](QString s){jack->addOutputPort(s.toStdString());});
 
-    connect(jack.data(),&QJack::jack_samplerate_s,j.data(),&QJackView::set_sample_rate);
-    connect(jack.data(),&QJack::jack_buffer_size_s,j.data(),&QJackView::set_buffer_size);
+    connect(jack,&QJack::jack_samplerate_s,j,&QJackView::set_sample_rate);
+    connect(jack,&QJack::jack_buffer_size_s,j,&QJackView::set_buffer_size);
 
-    connect(jack.data(),&QJack::jack_port_registration_s,this,[j](jack_port_id_t port, int i, QString name){
+    connect(jack,&QJack::jack_port_registration_s,this,[j](jack_port_id_t port, int i, QString name){
         if(i)
             j->addPort(port,name);
         else
             j->removePort(port);
     });
 
-    connect(jack.data(),&QJack::jack_port_connect_s, this,[j](jack_port_id_t a, jack_port_id_t b, int connect, QString namea, QString nameb){
+    connect(jack,&QJack::jack_port_connect_s, this,[j](jack_port_id_t a, jack_port_id_t b, int connect, QString namea, QString nameb){
         if(connect)
             j->connectPort(a,b,namea, nameb);
         else

@@ -83,11 +83,11 @@ public:
     bool isBodeInit();
     bool isTHDinit();
 
-    QSharedPointer<BodePlot> getBodePlot();
-    QSharedPointer<THDPlot> addTHDPlot();
+    BodePlot * getBodePlot();
+    THDPlot * addTHDPlot();
 protected:
-    QSharedPointer<BodePlot> bodePlot;
-    QSharedPointer<THDPlot> thdPlot;
+    BodePlot * bodePlot;
+    THDPlot * thdPlot;
 };
 
 

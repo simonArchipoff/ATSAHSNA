@@ -46,13 +46,13 @@ void QFaustView::compile(){
 void QFaustView::setDSPUI(QWidget * ui)
 {
     if(dspUi == nullptr) {
-        dspUi.reset(ui);
+        dspUi = ui;
     } else {
-        layout->removeWidget(dspUi.data());
-        dspUi.reset(ui);
+        layout->removeWidget(dspUi);
+        dspUi = ui;
         ui->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
     }
-    layout->addWidget(dspUi.data(),5);
+    layout->addWidget(dspUi,5);
     compile_button->setDisabled(true);
     errorLabel->setText("");
 }
@@ -64,18 +64,18 @@ void QFaustView::setErrorMessage(QString s)
 }
 
 
-QSharedPointer<QFaustView> QBackendsView::addFaust(QString name){
-    QSharedPointer<QFaustView> f{new QFaustView};
-    addTab(f.data(),name);
+QFaustView * QBackendsView::addFaust(QString name){
+    QFaustView * f{new QFaustView};
+    addTab(f,name);
     fausts.push_back(f);
     setCurrentIndex(count()-1);
     return f;
 }
 
 
-QSharedPointer<QJackView> QBackendsView::addJack(){
-    auto f = QSharedPointer<QJackView>(new QJackView);
-    addTab(f.data(),"jack"+QString::number(jacks.size()));
+QJackView * QBackendsView::addJack(){
+    auto f = new QJackView;
+    addTab(f,"jack"+QString::number(jacks.size()));
     jacks.push_back(f);
     return f;
 }

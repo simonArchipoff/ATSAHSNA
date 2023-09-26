@@ -28,8 +28,8 @@ MainWindow::MainWindow(QWidget *parent)
   auto s = new QSplitter{this};
 
   setCentralWidget(s);
-  s->addWidget(backends.data());
-  s->addWidget(displays.data());
+  s->addWidget(backends);
+  s->addWidget(displays);
 //  backends->setWidth(backends->minimumSizeHint().width());
   //auto l = new QVBoxLayout;
   //s->addWidget(backends.data());

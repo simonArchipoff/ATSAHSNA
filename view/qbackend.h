@@ -1,7 +1,6 @@
 #pragma once
 
 #include "qlineedit.h"
-#include <QSharedPointer>
 #include "qwidget.h"
 #include <QWidget>
 #include <QGroupBox>
@@ -32,7 +31,7 @@ signals:
     void setFaustCode(QString code, uint sampleRate);
 
 public:
-    QSharedPointer<QWidget> dspUi;
+    QWidget * dspUi;
     QLineEdit * sr;
     QTextEdit * codeEdit;
     QLabel * errorLabel;
@@ -47,10 +46,10 @@ public:
     QBackendsView(QWidget * parents):QTabWidget(parents){
         //setTabsClosable(true);
     }
-    QSharedPointer<QFaustView>  addFaust(QString name);
-    QSharedPointer<QJackView>   addJack();
+    QFaustView *  addFaust(QString name);
+    QJackView  * addJack();
 
 protected:
-    QVector<QSharedPointer<QFaustView>> fausts;
-    std::vector<QSharedPointer<QJackView>>  jacks;
+    QVector<QFaustView *> fausts;
+    std::vector<QJackView *>  jacks;
 };
