@@ -1,6 +1,7 @@
 #include "BodePlot.h"
 
 
+#include <algorithm>
 #include <cmath>
 
 #include <QLegendMarker>
@@ -88,6 +89,7 @@ void FrequencyPlot::updatePlot(QString name, const FDF&v){
     auto * p = plots[name];
     assert(p);
     p->setCurve(v.getFrequency(),v.getAmplitude20log10(),v.getPhase(),name);
+    amplitude_axis->setRange(p->minAmplitude - 5,p->maxAmplitude + 5);
     chart.update();
 }
 
@@ -155,9 +157,13 @@ void  transform(QLineSeries *s, const VD & x,const VD & y){
 void PlotAmplitudePhase::setCurve(const VD&f, const VD&a, const VD&p, QString name){
     assert(this->name == name);
     transform(amplitude.data(),f,a);
+    auto minmax = std::minmax_element(a.begin(), a.end());
+    minAmplitude = std::isinf(*minmax.first) ? -400 : *minmax.first;
+    maxAmplitude = *minmax.second;
     amplitude.data()->setName(name);
 //phase.data()->setName(name + "_phase");
     transform(phase.data(),f,p);
+
     if(!phaseDisplayed)
         phase->hide();
 }
