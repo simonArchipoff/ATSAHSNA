@@ -63,11 +63,12 @@ FrequencyPlot::FrequencyPlot(QWidget * parent):QChartView(parent)
     setChart(&chart);
 }
 
-void FrequencyPlot::addPlot(const FDF & f, QString name){
+void FrequencyPlot::addPlot(const FDF & f, QString name,bool phaseDisp){
     if(plots.count(name) == 0) {
         auto c = color_round_robin.getNext();
         PlotAmplitudePhase * p = new PlotAmplitudePhase(name,c);
         plots.insert(name,p);
+        plots[name]->phaseDisplayed=phaseDisp;
         chart.addSeries(p->amplitude.data());
 
         p->amplitude->attachAxis(amplitude_axis);
@@ -76,6 +77,8 @@ void FrequencyPlot::addPlot(const FDF & f, QString name){
         chart.addSeries(p->phase.data());
         p->phase->attachAxis(phase_axis);
         p->phase->attachAxis(frequency_axis);
+        if(!phaseDisp)
+            p->phase->hide();
         chart.legend()->markers(p->phase.data())[0]->setVisible(false);
     }
     updatePlot(name,f);
@@ -106,8 +109,9 @@ void THDPlot::setResult(std::variant<const std::vector<ResultHarmonics>> & r){
     auto v = get<const std::vector<ResultHarmonics>>(r);
     for(uint i = 0; i < v.size(); i++){
         auto name = QString{v[i].name.data()};
-        addPlot(v[i].harmonicSpectrum, name);
+        addPlot(v[i].harmonicSpectrum, name,false);
         plots[name]->phaseDisplayed = false;
+        
     }
 }
 
@@ -154,6 +158,8 @@ void PlotAmplitudePhase::setCurve(const VD&f, const VD&a, const VD&p, QString na
     amplitude.data()->setName(name);
 //phase.data()->setName(name + "_phase");
     transform(phase.data(),f,p);
+    if(!phaseDisplayed)
+        phase->hide();
 }
 
 
@@ -168,7 +174,7 @@ BodePlot * QDisplays::getBodePlot(){
     return bodePlot;
 }
 
-THDPlot * QDisplays::addTHDPlot(){
+THDPlot * QDisplays::getTHDPlot(){
     if(!thdPlot){
         thdPlot = new THDPlot(this);
         addTab(thdPlot,"harmonics");
@@ -177,7 +183,6 @@ THDPlot * QDisplays::addTHDPlot(){
 }
 
 /*
-
 BodeCurve::BodeCurve(const QColor c) : color(c) {
     c_phase.reset(new QwtPlotCurve());
     c_phase->setRenderHint(QwtPlotItem::RenderAntialiased);

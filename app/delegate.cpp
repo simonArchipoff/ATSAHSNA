@@ -4,6 +4,7 @@
 #include <faust/gui/QTUI.h>
 
 #include <BodePlot.h>
+#include <qnamespace.h>
 
 delegate::delegate(MainWindow * m):mw{m}
 {
@@ -52,19 +53,17 @@ bool faust_backend::isReady() const{
     return backend->isReady();
 }
 
-
-
-void delegate::addFaustBackend(){
+void delegate::addFaustBackend() {
     QString name = "faust" + QString::number(faust.size());
     auto f = mw->backends->addFaust(name);
     auto d = mw->displays->getBodePlot();
-    auto fb = new faust_backend(f,name);
+    auto h = mw->displays->getTHDPlot();
+    auto fb = new faust_backend(f, name);
     faust.push_back(fb);
-    connect(fb
-            ,&faust_backend::resultResponse
-            ,d
-            ,&BodePlot::setResponses
-            ,Qt::UniqueConnection);
+    connect(fb, &faust_backend::resultResponse, d, &BodePlot::setResponses,
+            Qt::UniqueConnection);
+    connect(fb, &faust_backend::resultHarmonics, h, &THDPlot::setResult,
+            Qt::UniqueConnection);
 }
 
 void delegate::addJackBackend(){
@@ -104,7 +103,7 @@ void delegate::addResponseDisplay(){
 }
 void delegate::addHarmonicsDisplay(){
     if(!mw->displays->isTHDinit()){
-        auto thd = mw->displays->addTHDPlot();
+        auto thd = mw->displays->getTHDPlot();
 
     }
 

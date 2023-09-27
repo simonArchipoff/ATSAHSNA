@@ -46,7 +46,7 @@ class FrequencyPlot : public QChartView
 public:
     FrequencyPlot(QWidget * parent=nullptr);
 
-    void addPlot(const FDF & f, QString name);
+    void addPlot(const FDF & f, QString name, bool phaseDisp = true);
 
     void updatePlot(QString name, const FDF&v);
 
@@ -84,7 +84,7 @@ public:
     bool isTHDinit();
 
     BodePlot * getBodePlot();
-    THDPlot * addTHDPlot();
+    THDPlot * getTHDPlot();
 protected:
     BodePlot * bodePlot;
     THDPlot * thdPlot;
