@@ -89,7 +89,19 @@ void FrequencyPlot::updatePlot(QString name, const FDF&v){
     auto * p = plots[name];
     assert(p);
     p->setCurve(v.getFrequency(),v.getAmplitude20log10(),v.getPhase(),name);
-    amplitude_axis->setRange(p->minAmplitude - 5,p->maxAmplitude + 5);
+
+    double minAmp = 1e80, maxAmp=-1e80;
+    for(const auto & i : plots){
+        if(i->maxAmplitude > maxAmp){
+            maxAmp =  i->maxAmplitude;
+        }
+        if(i->minAmplitude < minAmp){
+            minAmp = i->minAmplitude;
+        }
+
+    }
+
+    amplitude_axis->setRange(minAmp - 5,maxAmp + 5);
     chart.update();
 }
 
@@ -154,12 +166,25 @@ void  transform(QLineSeries *s, const VD & x,const VD & y){
     s->replace(l);
 }
 
+void setMinMaxAmplitude(double & minA, double & maxA, const VD&a, const VD & f, const double & maxF){
+    minA = 400;
+    maxA = -400;
+    for(uint i = 0; i < f.size(); i++){
+        if(f[i] > maxF)
+            return;
+        if(a[i] < minA && std::isfinite(a[i])){
+            minA = a[i];
+        }
+        if(a[i] > maxA && std::isfinite(a[i])){
+            maxA = a[i];
+        }
+    }
+}
+
 void PlotAmplitudePhase::setCurve(const VD&f, const VD&a, const VD&p, QString name){
     assert(this->name == name);
     transform(amplitude.data(),f,a);
-    auto minmax = std::minmax_element(a.begin(), a.end());
-    minAmplitude = std::isinf(*minmax.first) ? -400 : *minmax.first;
-    maxAmplitude = *minmax.second;
+    setMinMaxAmplitude(minAmplitude,maxAmplitude,a,f,20000.0);
     amplitude.data()->setName(name);
 //phase.data()->setName(name + "_phase");
     transform(phase.data(),f,p);
