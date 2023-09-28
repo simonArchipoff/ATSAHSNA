@@ -160,6 +160,7 @@ std::variant<const std::vector<ResultResponse>> BackendFaust::getResultResponse(
 
 }
 std::variant<const std::vector<ResultHarmonics>>  BackendFaust::getResultHarmonics(){
+    const std::lock_guard<std::mutex> g(this->lock);
     dspInstance->instanceClear();
     vector<ResultHarmonics> res;
     auto in = sinusoid(paramHarmonics.frequency, 1, getSampleRate());
