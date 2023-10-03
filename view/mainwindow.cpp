@@ -29,8 +29,11 @@ MainWindow::MainWindow(QWidget *parent)
 
   setCentralWidget(s);
   s->addWidget(backends);
+
   s->addWidget(displays);
-//  backends->setWidth(backends->minimumSizeHint().width());
+  s->setStretchFactor(0,1);
+  s->setStretchFactor(1,4);
+  // setWidth(backends->minimumSizeHint().width());
   //auto l = new QVBoxLayout;
   //s->addWidget(backends.data());
   createMenus();

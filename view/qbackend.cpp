@@ -4,6 +4,7 @@
 #include "qpushbutton.h"
 
 #include <faust/gui/QTUI.h>
+#include <qt/QtWidgets/qscrollarea.h>
 
 
 std::list<GUI*> GUI::fGuiList;
@@ -37,6 +38,7 @@ QFaustView::QFaustView(QWidget *parent)
     connect(compile_button,&QPushButton::clicked,this, &QFaustView::compile);
     connect(codeEdit,&QTextEdit::textChanged, this, [this](){compile_button->setDisabled(false);});
     connect(sr,&QLineEdit::textChanged, this, [this](){compile_button->setDisabled(false);});
+
 }
 
 void QFaustView::compile(){
@@ -66,8 +68,12 @@ void QFaustView::setErrorMessage(QString s)
 
 
 QFaustView * QBackendsView::addFaust(QString name){
-    QFaustView * f{new QFaustView};
-    addTab(f,name);
+    auto * f{new QFaustView};
+    QScrollArea * s = new QScrollArea; 
+
+    s->setWidget(f);
+    s->setWidgetResizable(true); 
+    addTab(s,name);
     fausts.push_back(f);
     setCurrentIndex(count()-1);
     return f;
@@ -76,7 +82,10 @@ QFaustView * QBackendsView::addFaust(QString name){
 
 QJackView * QBackendsView::addJack(){
     auto f = new QJackView;
-    addTab(f,"jack"+QString::number(jacks.size()));
+    QScrollArea * s = new QScrollArea;
+    s->setWidget(f);
+    s->setWidgetResizable(true); 
+    addTab(s,"jack"+QString::number(jacks.size()));
     jacks.push_back(f);
     return f;
 }

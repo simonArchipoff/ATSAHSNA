@@ -37,6 +37,7 @@ void faust_backend::connectGUI(){
 bool faust_backend::setCode(QString dspCode, uint sampleRate){
     if(backend->setCode(dspCode.toStdString(),sampleRate)){
         QTGUI * ui = new QTGUI{nullptr};
+        ui->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
         ui->setParent(faust_gui);
         backend->buildUserInterface((QTGUI*)ui);
         faust_gui->setDSPUI(ui);
