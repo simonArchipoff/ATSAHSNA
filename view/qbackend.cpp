@@ -49,10 +49,11 @@ void QFaustView::setDSPUI(QWidget * ui)
         dspUi = ui;
     } else {
         layout->removeWidget(dspUi);
+        delete dspUi;
         dspUi = ui;
         ui->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
     }
-    layout->addWidget(dspUi,5);
+        layout->addWidget(dspUi,5);
     compile_button->setDisabled(true);
     errorLabel->setText("");
 }

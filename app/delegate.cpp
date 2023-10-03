@@ -23,7 +23,7 @@ void faust_backend::timerEvent(QTimerEvent * e){
     if(backend->didSomethingChanged()){
         auto response = backend->getResultResponse();
         auto harmonics = backend->getResultHarmonics();
-        emit resultResponse(response);
+                emit resultResponse(response);
         emit resultHarmonics(harmonics);
     }
 }
