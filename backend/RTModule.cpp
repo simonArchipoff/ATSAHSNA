@@ -36,11 +36,18 @@ void RTModuleHandler::rt_updateModule(){
     }
 }
 
-
+void RTModuleHandler::setModule(std::shared_ptr<RTModule> m){
+    toRTQueue.enqueue(m);
+}
 
 
 
 void RTModuleHandler::startResponse(ParamResponse p){
+    if(this->responseRTModule){
+        responseRTModule.reset();
+    }
+    responseRTModule = std::make_shared<RTModuleResponse>(sampleRate, p, 10);
+    setModule(responseRTModule);
 }
 void RTModuleHandler::startHarmonics(){
 

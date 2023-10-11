@@ -130,7 +130,6 @@ public:
     void setContinuous(bool);
     void setIntegrationSize(int s=1);
 
-
     virtual void rt_process(vector<VD> & inputs, const vector<VD> & outputs) override;
     virtual void rt_after_process() override;
 
