@@ -176,7 +176,7 @@ void BackendFaust::buildUserInterface(UI * ui){
 }
 
 DetectChange::DetectChange(){}
-void DetectChange::setAPIUI(APIUI*ui){
+void DetectChange::setAPIUI(APIUI * ui){
     faustZones.resize(0);
     ref.resize(0);
     for(int i = 0; i < ui->getParamsCount(); i++){

@@ -55,11 +55,21 @@ void RTModuleHandler::startHarmonics(){
 
 bool RTModuleHandler::getResultHarmonics(vector<ResultHarmonics>& result){
     result.clear();
+    abort();
     return false;
 }
 bool RTModuleHandler::getResultResponse(vector<ResultResponse>& result){
     result.clear();
-    return false;
+    result.resize(1);
+    ResultResponse r;
+    if(responseRTModule->tryGetResponse(r)){
+        result[0] = r;
+        return true;
+    } else {
+        result.clear();
+        return false;  
+    }
+
 }
 
 

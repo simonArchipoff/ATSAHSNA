@@ -2,17 +2,20 @@
 
 #include <mainwindow.h>
 #include "Harmonics.h"
+#include "Jack.h"
+#include "QJackView.h"
 #include <Faust.h>
 #include <qbackend.h>
 #include <QWeakPointer>
+#include <qtmetamacros.h>
 
 
 
-class faust_backend  :  public QObject {
+class QBackendFaust :  public QObject {
     Q_OBJECT
 public:
-    faust_backend(QFaustView * gui, QString name);
-    ~faust_backend();
+    QBackendFaust(QFaustView * gui, QString name);
+    ~QBackendFaust();
 
     void connectGUI();
 
@@ -32,6 +35,23 @@ protected:
     void timerEvent(QTimerEvent * e) override;
     BackendFaust * backend;
     QFaustView * faust_gui;
+};
+
+// TODO : factorize this
+class QBackendJack : public QObject {
+    Q_OBJECT
+public:
+    QBackendJack(QJackView * gui, QString name);
+    ~QBackendJack();
+signals:
+    void changed();
+    void resultResponse(std::variant<const std::vector<ResultResponse>>& response);
+    void resultHarmonics(std::variant< const std::vector<ResultHarmonics>>& harmonics);
+
+protected:
+    void timerEvent(QTimerEvent * e) override;
+    BackendJack * backend;
+    QJackView * jack_gui;
 };
 
 
@@ -55,7 +75,7 @@ public:
     void addResponseDisplay();
     void addHarmonicsDisplay();
 
-    QVector<faust_backend *> faust;
+    QVector<QBackendFaust *> faust;
     QJack * jack;
     MainWindow * mw;
 };

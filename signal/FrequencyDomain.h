@@ -15,7 +15,7 @@ using std::vector;
 class FDF
 {
 public:
-    FDF();
+    FDF(){}
     //FDF(const FDF&) = default;
     FDF(const vector<complex<double>> &v, uint sampleRate):response(v),
         sampleRate(sampleRate),

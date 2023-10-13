@@ -1,6 +1,9 @@
 #include "delegate.h"
+#include "delegate.moc"
+#include "Jack.h"
 #include "mainwindow.h"
 #include "Harmonics.h"
+
 #include <faust/gui/QTUI.h>
 
 #include <BodePlot.h>
@@ -12,14 +15,14 @@ delegate::delegate(MainWindow * m):mw{m}
     connect(m,&MainWindow::addFaustBackendRequested,this, &delegate::addFaustBackend);
 }
 
-faust_backend::faust_backend(QFaustView * gui, QString name):QObject{},faust_gui{gui}{
+QBackendFaust::QBackendFaust(QFaustView * gui, QString name):QObject{},faust_gui{gui}{
     backend = new BackendFaust(name.toStdString());
     connectGUI();
 }
-faust_backend::~faust_backend(){
+QBackendFaust::~QBackendFaust(){
   //  ui->stop();
 }
-void faust_backend::timerEvent(QTimerEvent * e){
+void QBackendFaust::timerEvent(QTimerEvent * e){
     if(backend->didSomethingChanged()){
         auto response = backend->getResultResponse();
         auto harmonics = backend->getResultHarmonics();
@@ -28,13 +31,13 @@ void faust_backend::timerEvent(QTimerEvent * e){
     }
 }
 
-void faust_backend::connectGUI(){
+void QBackendFaust::connectGUI(){
     connect(faust_gui,&QFaustView::setFaustCode,
-            this,&faust_backend::setCode);
+            this,&QBackendFaust::setCode);
 
 }
 
-bool faust_backend::setCode(QString dspCode, uint sampleRate){
+bool QBackendFaust::setCode(QString dspCode, uint sampleRate){
     if(backend->setCode(dspCode.toStdString(),sampleRate)){
         QTGUI * ui = new QTGUI{nullptr};
         ui->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
@@ -50,20 +53,49 @@ bool faust_backend::setCode(QString dspCode, uint sampleRate){
 }
 
 
-bool faust_backend::isReady() const{
+bool QBackendFaust::isReady() const{
     return backend->isReady();
 }
+
+QBackendJack::QBackendJack(QJackView * gui, QString name):backend(new BackendJack()),jack_gui{gui}{}
+QBackendJack::~QBackendJack(){
+    delete backend;
+}
+
+
+void QBackendJack::timerEvent(QTimerEvent * e){
+
+}
+
+/*
+class QBackendJack : public QObject {
+    Q_OBJECT
+public:
+
+
+signals:
+    void changed();
+    void resultResponse(std::variant<const std::vector<ResultResponse>>& response);
+    void resultHarmonics(std::variant< const std::vector<ResultHarmonics>>& harmonics);
+
+protected:
+ 
+    BackendJack * backend;
+    QBackendJack * jack_gui;
+};
+*/
+
 
 void delegate::addFaustBackend() {
     QString name = "faust" + QString::number(faust.size());
     auto f = mw->backends->addFaust(name);
     auto d = mw->displays->getBodePlot();
     auto h = mw->displays->getTHDPlot();
-    auto fb = new faust_backend(f, name);
+    auto fb = new QBackendFaust(f, name);
     faust.push_back(fb);
-    connect(fb, &faust_backend::resultResponse, d, &BodePlot::setResponses,
+    connect(fb, &QBackendFaust::resultResponse, d, &BodePlot::setResponses,
             Qt::UniqueConnection);
-    connect(fb, &faust_backend::resultHarmonics, h, &THDPlot::setResult,
+    connect(fb, &QBackendFaust::resultHarmonics, h, &THDPlot::setResult,
             Qt::UniqueConnection);
 }
 
@@ -112,9 +144,9 @@ void delegate::addHarmonicsDisplay(){
 
 
 /*
-std::variant<faust_backend *, QString>
+std::variant<QBackendFaust *, QString>
 create_faust_qt(QString dspCode, int sampleRate, QWidget * parent){
-    auto tmp = new faust_backend(parent);
+    auto tmp = new QBackendFaust(parent);
     tmp->setCode(dspCode, sampleRate);
     if(tmp->isReady())
         return dsp_or_error{tmp};
