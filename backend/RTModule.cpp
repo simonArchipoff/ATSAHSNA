@@ -62,7 +62,7 @@ bool RTModuleHandler::getResultResponse(vector<ResultResponse>& result){
     result.clear();
     result.resize(1);
     ResultResponse r;
-    if(responseRTModule->tryGetResponse(r)){
+    if(responseRTModule && responseRTModule->tryGetResponse(r)){
         result[0] = r;
         return true;
     } else {

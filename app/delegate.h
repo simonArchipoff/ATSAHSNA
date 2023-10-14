@@ -45,8 +45,8 @@ public:
     ~QBackendJack();
 signals:
     void changed();
-    void resultResponse(std::variant<const std::vector<ResultResponse>>& response);
-    void resultHarmonics(std::variant< const std::vector<ResultHarmonics>>& harmonics);
+    void resultResponse(const BackendJack::ResultResponseVar &);
+    void resultHarmonics(const BackendJack::ResultHarmonicsVar &);
 
 protected:
     void timerEvent(QTimerEvent * e) override;

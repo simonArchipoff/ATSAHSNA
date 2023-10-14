@@ -4,6 +4,8 @@
 #include <Harmonics.h>
 #include <Response.h>
 #include <vector>
+#include <variant>
+using std::variant;
 
 #include "concurrentqueue.h"
 
@@ -21,6 +23,8 @@ public:
     void setParamResponse(ParamResponse p){
         paramResponse = p;
     }
+    variant<const vector<ResultHarmonics>> getResultHarmonics();
+    variant<const vector<ResultResponse>>  getResultResponse();
 
 protected:
     ParamHarmonics paramHarmonics;

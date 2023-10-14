@@ -102,8 +102,11 @@ QJackPortView::QJackPortView(QWidget *parent) : QWidget(parent), spectrum{new Mi
     setLayout(hlayout);
     hlayout->addWidget(name);
     hlayout->addWidget(nameConnexion);
-    //hlayout->addWidget(spectrum);
-
+    hlayout->addWidget(spectrum);
+}
+QJackPortView::~QJackPortView(){
+    if(spectrum)
+        delete spectrum;
 }
 
 void QJackPortView::setName(QString portName) {
@@ -140,8 +143,9 @@ void QJackPortManager::add(jack_port_id_t port, QString portName) {
 void QJackPortManager::remove(jack_port_id_t port) {
     if (portMap.contains(port)) {
         QJackPortView *view = portMap[port];
-        delete view;
         portMap.remove(port);
+        layout->removeWidget(view);
+        //delete view;
     }
 }
 

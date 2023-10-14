@@ -1,4 +1,5 @@
 #include "delegate.h"
+#include "Response.h"
 #include "delegate.moc"
 #include "Jack.h"
 #include "mainwindow.h"
@@ -26,7 +27,7 @@ void QBackendFaust::timerEvent(QTimerEvent * e){
     if(backend->didSomethingChanged()){
         auto response = backend->getResultResponse();
         auto harmonics = backend->getResultHarmonics();
-                emit resultResponse(response);
+        emit resultResponse(response);
         emit resultHarmonics(harmonics);
     }
 }
@@ -62,9 +63,14 @@ QBackendJack::~QBackendJack(){
     delete backend;
 }
 
+template<class... Ts>
+struct overloaded : Ts... { using Ts::operator()...; };
 
 void QBackendJack::timerEvent(QTimerEvent * e){
-
+    auto r = backend->getResultResponse();
+    emit resultResponse(r);
+    auto h = backend->getResultHarmonics();
+    emit resultHarmonics(h);
 }
 
 /*

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Harmonics.h"
 #include "backend.h"
 #include <cstring>
 #include <jack/jack.h>
@@ -18,6 +19,7 @@
 
 using std::vector;
 using std::string;
+using std::monostate;
 
 
 
@@ -30,7 +32,7 @@ struct ParamJack {
 };
 
 
-class BackendJack : public Backend, public MeasureASync, protected RTModuleHandler {
+class BackendJack : public Backend, public RTModuleHandler {
 public:
     BackendJack();
     virtual ~BackendJack();
@@ -61,8 +63,11 @@ public:
     double getOutputGain(){
         return outputGain;
     }
+    typedef variant<const vector<ResultResponse>, std::monostate>  ResultResponseVar ;
+    ResultResponseVar getResultResponse();
 
-
+    typedef variant<const vector<ResultHarmonics>, std::monostate> ResultHarmonicsVar;
+    ResultHarmonicsVar getResultHarmonics();
 
 
 protected:

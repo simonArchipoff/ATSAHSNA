@@ -13,31 +13,37 @@
 
 #include <QtCharts>
 #include <QPointF>
+#include <qlogging.h>
 
 class MiniSpectrum : public QChartView {
-public:
+    public:
     MiniSpectrum(QWidget * parent):QChartView(parent){
-        setChart(&chart);
-        chart.addSeries(&amplitude);
+        chart = new QChart;
+        setChart(chart);
+        chart->addSeries(&amplitude);
+        setFixedSize(100, 20);
+        chart->legend()->hide();
     }
-    void setData(QVector<std::pair<double,double>> & v){
+        void setData(QVector<std::pair<double,double>> & v){
         QList<QPointF> a;
         for(int i = 0; i < v.size(); i++){
             a.append(QPointF(v[i].first, i == 0 ? 0 : v[i].second) );
         }
         amplitude.replace(a);
     }
+    ~MiniSpectrum(){
+    }
 
 private:
     QLineSeries amplitude;
-    QChart chart;
+    QChart * chart;
 };
 
 class QJackPortView : public QWidget{
     Q_OBJECT
 public:
     QJackPortView(QWidget *parent);
-
+    ~QJackPortView();
     void setName(QString);
     void setConnexionName(QString);
 

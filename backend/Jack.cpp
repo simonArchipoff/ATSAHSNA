@@ -1,12 +1,17 @@
 #include "Jack.h"
 
 #include "../constants.h"
+#include "Harmonics.h"
+#include "RTModule.h"
+#include "Response.h"
+
 #include <string.h>
 
 #include <jack/types.h>
 #include <jack/jack.h>
 #include <mutex>
 #include <stdio.h>
+#include <variant>
 
 
 
@@ -134,3 +139,19 @@ bool BackendJack::addOutputPort(std::string name,std::string connect){
 
 
 
+BackendJack::ResultHarmonicsVar BackendJack::getResultHarmonics(){
+    vector<ResultHarmonics> r;
+    if(RTModuleHandler::getResultHarmonics(r)){
+        return ResultHarmonicsVar(r);
+    } else {
+        return ResultHarmonicsVar(std::monostate());
+    }
+}
+BackendJack::ResultResponseVar BackendJack::getResultResponse(){
+    vector<ResultResponse> r;
+    if(RTModuleHandler::getResultResponse(r)){
+        return ResultResponseVar(r);
+    } else {
+        return ResultResponseVar(std::monostate());
+    }
+}
