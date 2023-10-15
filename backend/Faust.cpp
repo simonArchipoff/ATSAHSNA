@@ -1,4 +1,5 @@
 #include "Faust.h"
+#include "Harmonics.h"
 #include <faust/dsp/llvm-dsp.h>
 #include <list>
 #include <iostream>
@@ -159,6 +160,7 @@ std::variant<const std::vector<ResultResponse>> BackendFaust::getResultResponse(
     return std::variant<const std::vector<ResultResponse>>(res);
 
 }
+
 std::variant<const std::vector<ResultHarmonics>>  BackendFaust::getResultHarmonics(){
     const std::lock_guard<std::mutex> g(this->lock);
     dspInstance->instanceClear();
@@ -166,7 +168,8 @@ std::variant<const std::vector<ResultHarmonics>>  BackendFaust::getResultHarmoni
     auto in = sinusoid(paramHarmonics.frequency, 1, getSampleRate());
     auto out = acquisition(vector<VD>(numberInput(),in));
     for(auto & o : out){
-        res.push_back(computeTHD(paramHarmonics,o, getSampleRate()));
+        auto r = computeTHD(paramHarmonics,o , getSampleRate());
+        res.push_back(r);
     }
     return std::variant<const std::vector<ResultHarmonics>>(res);
 }

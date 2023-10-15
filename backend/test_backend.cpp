@@ -158,7 +158,7 @@ TEST_CASE("Acquisition") {
         rb.write(in);
         auto out = rb.read(frames);
         rb.pop(frames);
-        auto r = b.rt_process(in, out);
+        auto r = b.rt_process(out, in);
 
         try {
             auto res = std::get<Acquisition::result>(r);

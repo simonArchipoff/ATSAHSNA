@@ -159,13 +159,15 @@ public:
 
 
 ResultHarmonics computeTHD(const ParamHarmonics p, const VD& signal, int sampleRate){
+
     assert(p.duration > 0 && p.freqMin <= p.frequency && p.frequency <= p.freqMax);
     assert(signal.size() > 1);
+    double duration = signal.size() / sampleRate;
 
     VCD signalfft = computeDFT(signal);
     signalfft[0] = 0;//remove offset
-    uint smin = p.freqMin * p.duration;
-    uint smax = std::min<uint>(p.freqMax * p.duration, signal.size()/2);
+    uint smin = p.freqMin * duration;
+    uint smax = std::min<uint>(p.freqMax * duration, signal.size()/2);
 
 
     VD amplitude;
@@ -173,7 +175,7 @@ ResultHarmonics computeTHD(const ParamHarmonics p, const VD& signal, int sampleR
     for(uint i = 0; i < amplitude.size(); i++){
         amplitude[i] = abs(signalfft[i]);
     }
-    uint imax = p.frequency * p.duration;
+    uint imax = p.frequency * duration;
     assert(imax < amplitude.size());
     imax = std::distance(amplitude.begin(),std::max_element(amplitude.begin()+imax-1,amplitude.begin()+imax+1));
 
@@ -228,7 +230,7 @@ VD optimal_window(const VD & signal, double frequency, uint sampleRate){
     double max = *std::max_element(corr.begin(),corr.end());
     vector<uint> idx_max;
     for(uint i = 1; i < corr.size()-1; i++){
-        if(corr[i-1] < corr[i] && corr[i] > corr[i+1] && corr[i] > 0.96 * max){
+        if(corr[i-1] < corr[i] && corr[i] > corr[i+1] && corr[i] > 0.90 * max){
             idx_max.push_back(i - p.size() + 1);
         }
     }
