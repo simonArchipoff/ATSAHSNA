@@ -1,4 +1,5 @@
 #include "BodePlot.h"
+#include "qnamespace.h"
 
 
 #include <algorithm>
@@ -57,9 +58,21 @@ FrequencyPlot::FrequencyPlot(QWidget * parent):QChartView(parent)
     chart.addAxis(frequency_axis, Qt::AlignBottom);
     chart.addAxis(amplitude_axis, Qt::AlignLeft);
     chart.addAxis(phase_axis,Qt::AlignRight);
-    frequency_axis->setBase(10);
-    phase_axis->setRange(-180,180);
+
+
+    phase_axis->setRange(-180,0);
+    auto p = phase_axis->gridLinePen();
+    p.setStyle(Qt::DashLine);
+    p.setWidth(2);
+    phase_axis->setGridLinePen(p);
+    phase_axis->setLinePen(p);
+
     amplitude_axis->setRange(-100,20);
+    amplitude_axis->setTickType(QValueAxis::TicksDynamic);
+    amplitude_axis->setTickAnchor(0);
+    amplitude_axis->setTickInterval(10);
+
+    frequency_axis->setBase(10);
     frequency_axis->setRange(20,20000);
     setChart(&chart);
 }
@@ -125,7 +138,7 @@ void THDPlot::setResult(std::variant<const std::vector<ResultHarmonics>> & r){
         auto name = QString{v[i].name.data()};
         addPlot(v[i].harmonicSpectrum, name,false);
         plots[name]->phaseDisplayed = false;
-        
+        phase_axis->hide();
     }
 }
 

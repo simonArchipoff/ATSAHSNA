@@ -107,18 +107,18 @@ protected:
         std::cerr << "new buffer size " << nframes << std::endl;
         return 0;
     }
-
     static int jackBufferSizeCallback(jack_nframes_t nframes, void * b){
         BackendJack * backend = static_cast<BackendJack *>(b);
         return backend->jack_buffer_size(nframes);
     }
 
-    virtual int jack_samplerate(jack_nframes_t nframes){
+    virtual int jack_samplerate(jack_nframes_t nframes) {
         std::cerr << "new sample rate " << nframes << std::endl;
         return 0;
     }
     static int jackSampleRateCallback(jack_nframes_t nframes, void * b){
         BackendJack * backend = static_cast<BackendJack *>(b);
+        backend->RTModuleHandler::setSampleRate(nframes);
         return backend->jack_samplerate(nframes);
     }
 

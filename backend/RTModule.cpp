@@ -2,20 +2,21 @@
 #include <cstring>
 #include <memory>
 #include "../helpers.h"
+#include <iostream>
+#include <variant>
 
 
 
-
-void RTModuleHandler::rt_process(vector<VD> & inputs, const vector<VD> & outputs){
+void RTModuleHandler::rt_process(const vector<VD> & inputs, vector<VD> & outputs){
     (void)outputs;
     rt_updateModule();
     if(!module){
-        for(auto & v:inputs){
+        for(auto & v:outputs){
             std::fill(v.begin(),v.end(),0.0);
         }
-        return;
+    } else {
+        module->rt_process(inputs, outputs);
     }
-
 }
 
 void RTModuleHandler::setSampleRate(uint sr){
@@ -42,11 +43,11 @@ void RTModuleHandler::setModule(std::shared_ptr<RTModule> m){
 
 
 
-void RTModuleHandler::startResponse(ParamResponse p){
+void RTModuleHandler::startResponse(ParamResponse p, bool continuous, int integration){
     if(this->responseRTModule){
         responseRTModule.reset();
     }
-    responseRTModule = std::make_shared<RTModuleResponse>(sampleRate, p, 10);
+    responseRTModule = std::make_shared<RTModuleResponse>(sampleRate, p, integration);
     setModule(responseRTModule);
 }
 void RTModuleHandler::startHarmonics(){
@@ -88,17 +89,16 @@ void Acquisition::init(const VCD & s, double threshold){
 }
 
 
-Acquisition::ret_type Acquisition::rt_process(VD & input, const VD & output){
-    no_result r;
+Acquisition::ret_type Acquisition::rt_process(const VD & input, VD & output){
     if(state == DISABLED){
-        memset(input.data(),0,sizeof(input[0])*input.size());
-        return r;
+        memset(output.data(),0,sizeof(output[0])*output.size());
+        return ret_type(std::monostate());
     }
     if(state & SEND){
-        rt_process_sending(input);
+        rt_process_sending(output);
     }
     if(state & RECIEVE){
-        return rt_process_wait_response(output);
+        return rt_process_wait_response(input);
     }
 
     abort();
@@ -109,7 +109,8 @@ void Acquisition::rt_process_sending(VD &input){
     assert(state & SEND);
     uint remSize = p.signal.size() - sending_index;
     uint frames = input.size();
-    memcpy(input.data(), p.signal.data()+sending_index, std::min<uint>(remSize,frames));
+
+    memcpy(input.data(), p.signal.data()+sending_index, sizeof(input[0]) * std::min<uint>(remSize,frames));
     if(remSize <= frames){
         memset(input.data()+remSize, 0, frames-remSize);
         state &= ~SEND;
@@ -141,30 +142,34 @@ Acquisition::ret_type Acquisition::rt_process_wait_response(const VD & output){
             res.delay = r.first + time_waited - rb.available(); //r.first + time_waited - p.dc.getSize();
             //rb.pop(p.signal.size()+r.first);
             state &= ~RECIEVE;
+            std::cerr << "recieved\n";
             return ret_type(res);
         } else {
             if(time_waited > p.timeout){
                 state = DISABLED;
+                            std::cerr << "timeout\n";
                 return ret_type(timeout());
             }
             rb.pop(output.size());
         }
     }
-    return ret_type(no_result());
+    return ret_type(std::monostate());
 }
 
 
 
 
 RTModuleResponse::RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number){
+    assert(sampleRate > 0);
     this->integration_number = integration_number;
     this->sampleRate = sampleRate;
-    auto s =  computeChirp(p,  sampleRate);
+    auto s = computeChirp(p,  sampleRate);
     acq.init(s);
+    acq.start();
 }
 
 
-void RTModuleResponse::rt_process(vector<VD> & inputs, const vector<VD> & outputs){
+void RTModuleResponse::rt_process(const vector<VD> & inputs, vector<VD> & outputs){
     auto r = acq.rt_process(inputs[0],outputs[0]);
     try{
         responseQueue.enqueue(std::get<Acquisition::result>(r));

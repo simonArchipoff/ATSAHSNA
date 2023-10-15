@@ -39,15 +39,15 @@ MainWindow::MainWindow(QWidget *parent)
   createMenus();
   s->show();
 
-  paramResponseWidget = new ParamResponseWidget(this);
-  paramHarmonicsWidget = new ParamHarmonicsWidget(this);
-  spectrogramWidget = new ParamSpectrogramWidget(this);
+  //paramResponseWidget = new ParamResponseWidget(this);
+  //paramHarmonicsWidget = new ParamHarmonicsWidget(this);
+  //spectrogramWidget = new ParamSpectrogramWidget(this);
 
 
   // Configuration initiale : cacher les widgets
-  paramResponseWidget->hide();
-  paramHarmonicsWidget->hide();
-  spectrogramWidget->hide();
+  //paramResponseWidget->hide();
+  //paramHarmonicsWidget->hide();
+  //spectrogramWidget->hide();
 
 
   //setLayout(hb);

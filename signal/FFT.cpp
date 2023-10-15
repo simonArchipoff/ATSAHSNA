@@ -68,10 +68,10 @@ void DFT::init(size_t size){
     output = fftw_alloc_complex(size);
     if(pf)
         fftw_destroy_plan(pf);
-    pf = fftw_plan_dft_1d(size,input,output, FFTW_FORWARD,FFTW_MEASURE| FFTW_DESTROY_INPUT);
+    pf = fftw_plan_dft_1d(size,input,output, FFTW_FORWARD,FFTW_ESTIMATE| FFTW_DESTROY_INPUT);
     if(pb)
         fftw_destroy_plan(pb);
-    pb = fftw_plan_dft_1d(size,input,output,FFTW_BACKWARD, FFTW_MEASURE| FFTW_DESTROY_INPUT);
+    pb = fftw_plan_dft_1d(size,input,output,FFTW_BACKWARD, FFTW_ESTIMATE| FFTW_DESTROY_INPUT);
     plan_mutex.unlock();
 }
 

@@ -1,5 +1,7 @@
 #include "QJackView.h"
+#include "Response.h"
 #include "qboxlayout.h"
+#include "widget_chatgpt.h"
 #include <QDebug>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -37,6 +39,12 @@ QJackView::QJackView(QWidget * parent)
 
     l->addRow(tr("ports"),portManager);
 
+    auto r = new ParamResponseWidget(this);
+    l->addRow(tr("response"),r);
+
+    connect(r,&ParamResponseWidget::paramResponseChanged,this,[this](const ParamResponse & p){
+        emit requestResponse(p,false,10);
+        });
     //connect(gain,QOverload<double>::of(&QDoubleSpinBox::valueChanged),this,[b](auto d){b->setOutputGain(d);});
 
     //connect(latency,QOverload<int>::of(&QSpinBox::valueChanged),this,[b](int i){b->setLatency(i);});

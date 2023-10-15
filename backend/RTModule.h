@@ -9,19 +9,16 @@
 #include <variant>
 #include "../helpers.h"
 #include <set>
-
 #include <memory>
-
 #include "Response.h"
-
 #include "concurrentqueue.h"
+
 
 class RTModule {
 public:
-    virtual void rt_process(vector<VD> & inputs, const vector<VD> & outputs) = 0;
+    virtual void rt_process(const vector<VD> & inputs, vector<VD> & outputs) = 0;
     virtual void rt_after_process(){};
 };
-
 
 class RTModuleResponse;
 class RTModuleHarmonics;
@@ -29,7 +26,7 @@ class RTModuleHarmonics;
 class RTModuleHandler{
 public:
     void setModule(std::shared_ptr<RTModule>);
-    void startResponse(ParamResponse p);
+    void startResponse(ParamResponse p,bool continuous,int integration);
     void startHarmonics();
 
     bool getResultHarmonics(vector<ResultHarmonics>& result);
@@ -38,7 +35,7 @@ public:
 protected:
     void setSampleRate(uint);
 
-    void rt_process(vector<VD> & inputs, const vector<VD> & outputs);
+    void rt_process(const vector<VD> & inputs, vector<VD> & outputs);
     void rt_after_process();
 
     moodycamel::ConcurrentQueue<std::shared_ptr<RTModule>> toRTQueue;
@@ -64,9 +61,6 @@ public:
     Acquisition():state(DISABLED){
     }
 
-    struct no_result{
-        int dummy;
-    };
     struct timeout{
         int dummy;
     };
@@ -77,7 +71,7 @@ public:
         int delay;
     };
 
-    typedef std::variant<result,no_result,timeout> ret_type;
+    typedef std::variant<result,std::monostate,timeout> ret_type;
 
     void init(const VCD & signal,double threshold=0.9);
 
@@ -88,7 +82,7 @@ public:
         rb.reset();
     }
 
-    ret_type rt_process(VD & input, const VD & output);
+    ret_type rt_process(const VD & input, VD & output);
 
 
 protected:
@@ -107,7 +101,7 @@ protected:
         ,RECIEVE  = 4
     };
 
-    volatile uint state;
+    uint state = SEND|RECIEVE;
     uint sending_index;
 
     void rt_process_sending(VD & input);
@@ -130,7 +124,7 @@ public:
     void setContinuous(bool);
     void setIntegrationSize(int s=1);
 
-    virtual void rt_process(vector<VD> & inputs, const vector<VD> & outputs) override;
+    virtual void rt_process(const vector<VD> & inputs, vector<VD> & outputs) override;
     virtual void rt_after_process() override;
 
 private:

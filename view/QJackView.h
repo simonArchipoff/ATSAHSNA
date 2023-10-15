@@ -10,6 +10,7 @@
 #include <QVBoxLayout>
 #include <jack/types.h>
 
+#include "widget_chatgpt.h"
 
 #include <QtCharts>
 #include <QPointF>
@@ -87,13 +88,11 @@ public:
 signals:
     void requestNewInputPort(QString);
     void requestNewOutputPort(QString);
-
     void requestResponse(ParamResponse p, bool continuous, int integration=1);
     void requestHarmonics(ParamHarmonics p, bool continuous);
 
 
 protected:
-
     QPushButton * inputButton, * outputButton;
     QLabel * sampleRate, *bufferSize;
     QLineEdit * inputName, *outputName;

@@ -10,7 +10,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra")
 
@@ -51,12 +51,7 @@ add_subdirectory(app)
 add_executable(tests test_helpers.cpp signal/test_signal.cpp backend/test_backend.cpp )
 target_link_libraries(tests PRIVATE signal Catch2::Catch2WithMain fftw3 backend)
 
-set(PROJECT_SOURCES
-#  main.cpp
-#  commandlineparser.cpp
-#  commandlineparser.h
-#  constants.h
-)
+
 
 #if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 #    qt_add_executable(ATSAHSNA

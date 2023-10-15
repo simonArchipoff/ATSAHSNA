@@ -1,21 +1,22 @@
 #include "widget_chatgpt.h"
+#include <qspinbox.h>
 
 
 ParamHarmonicsWidget::ParamHarmonicsWidget(QWidget *parent) : QWidget(parent)
 {
-    freqMinSlider = new QSlider(Qt::Horizontal, this);
+    freqMinSlider = new QDoubleSpinBox(this);
     freqMinSlider->setRange(20, 50000);
     freqMinSlider->setValue(20);
 
-    freqMaxSlider = new QSlider(Qt::Horizontal, this);
+    freqMaxSlider = new QDoubleSpinBox( this);
     freqMaxSlider->setRange(20, 50000);
     freqMaxSlider->setValue(20000);
 
-    durationSlider = new QSlider(Qt::Horizontal, this);
+    durationSlider = new QDoubleSpinBox( this);
     durationSlider->setRange(1, 100);
     durationSlider->setValue(10);
 
-    gainSlider = new QSlider(Qt::Horizontal, this);
+    gainSlider = new QDoubleSpinBox( this);
     gainSlider->setRange(0, 100);
     gainSlider->setValue(50);
 
@@ -68,15 +69,15 @@ void ParamHarmonicsWidget::updateFreqMinSpinBox(int value)
 ParamResponseWidget::ParamResponseWidget(QWidget *parent) : QWidget(parent)
 {
     // Création des sliders pour modifier chaque paramètre
-    freqMinSlider = new QSlider(Qt::Horizontal);
+    freqMinSlider = new QDoubleSpinBox(this);
     freqMinSlider->setRange(20, 20000);
     freqMinSlider->setValue(20);
 
-    freqMaxSlider = new QSlider(Qt::Horizontal);
+    freqMaxSlider = new QDoubleSpinBox(this);
     freqMaxSlider->setRange(20, 20000);
     freqMaxSlider->setValue(20000);
 
-    durationSlider = new QSlider(Qt::Horizontal);
+    durationSlider = new QDoubleSpinBox(this);
     durationSlider->setRange(1, 100);
     durationSlider->setValue(10);
 

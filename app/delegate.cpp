@@ -1,5 +1,7 @@
 #include "delegate.h"
+#include "QJackView.h"
 #include "Response.h"
+#include "backend.h"
 #include "delegate.moc"
 #include "Jack.h"
 #include "mainwindow.h"
@@ -9,6 +11,7 @@
 
 #include <BodePlot.h>
 #include <qnamespace.h>
+
 
 delegate::delegate(MainWindow * m):mw{m}
 {
@@ -58,7 +61,34 @@ bool QBackendFaust::isReady() const{
     return backend->isReady();
 }
 
-QBackendJack::QBackendJack(QJackView * gui, QString name):backend(new BackendJack()),jack_gui{gui}{}
+QBackendJack::QBackendJack(QJackView * gui, QString name):backend(new QJack()),jack_gui{gui}{
+    connect(jack_gui,&QJackView::requestNewInputPort, this,[this](QString s){backend->addInputPort(s.toStdString());});
+    connect(jack_gui,&QJackView::requestNewOutputPort,this,[this](QString s){backend->addOutputPort(s.toStdString());});
+
+    connect(backend,&QJack::jack_samplerate_s,jack_gui,&QJackView::set_sample_rate);
+    connect(backend,&QJack::jack_buffer_size_s,jack_gui,&QJackView::set_buffer_size);
+
+    connect(backend,&QJack::jack_port_registration_s,this,[this](jack_port_id_t port, int i, QString name){
+        if(i)
+            jack_gui->addPort(port,name);
+        else
+            jack_gui->removePort(port);
+    });
+
+    connect(backend,&QJack::jack_port_connect_s, this,[this](jack_port_id_t a, jack_port_id_t b, int connect, QString namea, QString nameb){
+        if(connect)
+            jack_gui->connectPort(a,b,namea, nameb);
+        else
+            jack_gui->disconnectPort(a,b);
+    });
+//    void jack_port_connect_s(jack_port_id_t a, jack_port_id_t b, int connect, QString nameb);
+
+
+    backend->start();
+    connect(jack_gui,&QJackView::requestResponse,this,[this](auto p, auto c, auto i){
+        this->backend->startResponse(p,c,i);
+        });
+}
 QBackendJack::~QBackendJack(){
     delete backend;
 }
@@ -68,9 +98,11 @@ struct overloaded : Ts... { using Ts::operator()...; };
 
 void QBackendJack::timerEvent(QTimerEvent * e){
     auto r = backend->getResultResponse();
-    emit resultResponse(r);
+    if(!std::holds_alternative<std::monostate>(r))
+        emit resultResponse(r);
     auto h = backend->getResultHarmonics();
-    emit resultHarmonics(h);
+    if(!std::holds_alternative<std::monostate>(h))
+        emit resultHarmonics(h);
 }
 
 /*
@@ -107,30 +139,7 @@ void delegate::addFaustBackend() {
 
 void delegate::addJackBackend(){
     auto j = mw->backends->addJack();
-    jack = new QJack;
-    connect(j,&QJackView::requestNewInputPort, this,[this](QString s){jack->addInputPort(s.toStdString());});
-    connect(j,&QJackView::requestNewOutputPort,this,[this](QString s){jack->addOutputPort(s.toStdString());});
-
-    connect(jack,&QJack::jack_samplerate_s,j,&QJackView::set_sample_rate);
-    connect(jack,&QJack::jack_buffer_size_s,j,&QJackView::set_buffer_size);
-
-    connect(jack,&QJack::jack_port_registration_s,this,[j](jack_port_id_t port, int i, QString name){
-        if(i)
-            j->addPort(port,name);
-        else
-            j->removePort(port);
-    });
-
-    connect(jack,&QJack::jack_port_connect_s, this,[j](jack_port_id_t a, jack_port_id_t b, int connect, QString namea, QString nameb){
-        if(connect)
-            j->connectPort(a,b,namea, nameb);
-        else
-            j->disconnectPort(a,b);
-    });
-//    void jack_port_connect_s(jack_port_id_t a, jack_port_id_t b, int connect, QString nameb);
-
-
-    jack->start();
+    jack = new QBackendJack(j,"jack");
     //j->set_sample_rate(jack->getSampleRate()); // bit ugly, I dont know why the callback isn't called
 }
 

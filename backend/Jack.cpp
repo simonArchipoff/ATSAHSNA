@@ -20,6 +20,10 @@
 
 BackendJack::BackendJack()
 {
+}
+
+
+void BackendJack::start(){
     jack_options_t options = JackNullOption;
     jack_status_t status;
     client = jack_client_open(APPNAME, options, &status, nullptr);
@@ -41,11 +45,8 @@ BackendJack::BackendJack()
         jack_set_xrun_callback(client, jackXRunCallback,this);
         outputGain = -3;
     }
-}
-
-
-void BackendJack::start(){
     ready = !jack_activate(client);
+    RTModuleHandler::setSampleRate(getSampleRate());
 }
 
 BackendJack::~BackendJack(){

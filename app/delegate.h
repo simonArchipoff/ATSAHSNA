@@ -50,7 +50,7 @@ signals:
 
 protected:
     void timerEvent(QTimerEvent * e) override;
-    BackendJack * backend;
+    QJack * backend;
     QJackView * jack_gui;
 };
 
@@ -76,7 +76,7 @@ public:
     void addHarmonicsDisplay();
 
     QVector<QBackendFaust *> faust;
-    QJack * jack;
+    QBackendJack * jack;
     MainWindow * mw;
 };
 

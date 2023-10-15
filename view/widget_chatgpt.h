@@ -1,16 +1,18 @@
 #pragma once
 
 #include <QWidget>
+#include <QDoubleSpinBox>
 #include <QSlider>
-#include <QSpinBox>
 #include <QPushButton>
 #include <QFormLayout>
 
 #include <Harmonics.h>
 #include <Response.h>
 #include <Spectrogram.h>
+#include <qspinbox.h>
 
 
+//this is chat gpt code
 class ParamResponseWidget : public QWidget
 {
     Q_OBJECT
@@ -29,13 +31,11 @@ private slots:
     void onValidateClicked();
 
 private:
-    QSlider* freqMinSlider;
-    QSlider* freqMaxSlider;
-    QSlider* durationSlider;
+    QDoubleSpinBox* freqMinSlider;
+    QDoubleSpinBox* freqMaxSlider;
+    QDoubleSpinBox* durationSlider;
     QPushButton* validateButton;
 };
-
-
 
 
 class ParamHarmonicsWidget : public QWidget
@@ -55,10 +55,10 @@ private slots:
     void updateFreqMinSpinBox(int value);
 
 private:
-    QSlider *freqMinSlider;
-    QSlider *freqMaxSlider;
-    QSlider *durationSlider;
-    QSlider *gainSlider;
+    QDoubleSpinBox *freqMinSlider;
+    QDoubleSpinBox *freqMaxSlider;
+    QDoubleSpinBox *durationSlider;
+    QDoubleSpinBox *gainSlider;
     QDoubleSpinBox *durationSpinBox;
     QDoubleSpinBox *gainSpinBox;
     QPushButton *applyButton;
