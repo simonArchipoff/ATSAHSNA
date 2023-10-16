@@ -167,8 +167,10 @@ std::variant<const std::vector<ResultHarmonics>>  BackendFaust::getResultHarmoni
     vector<ResultHarmonics> res;
     auto in = sinusoid(paramHarmonics.frequency, 1, getSampleRate());
     auto out = acquisition(vector<VD>(numberInput(),in));
+    int i = 0;
     for(auto & o : out){
         auto r = computeTHD(paramHarmonics,o , getSampleRate());
+        r.name = nameInstance + "_" + std::to_string(i++);
         res.push_back(r);
     }
     return std::variant<const std::vector<ResultHarmonics>>(res);
