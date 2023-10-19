@@ -6,6 +6,7 @@
 #include <mutex>
 #include <Generation.h>
 #include <variant>
+#include "../helpers.h"
 
 using namespace std;
 BackendFaust::~BackendFaust(){
@@ -165,11 +166,13 @@ std::variant<const std::vector<ResultHarmonics>>  BackendFaust::getResultHarmoni
     const std::lock_guard<std::mutex> g(this->lock);
     dspInstance->instanceClear();
     vector<ResultHarmonics> res;
-    auto in = sinusoid(paramHarmonics.frequency, 1, getSampleRate());
+    auto in = sinusoid(paramHarmonics.frequency, 10.0/paramHarmonics.freqMin, getSampleRate());
     auto out = acquisition(vector<VD>(numberInput(),in));
+    auto keep = getSampleRate() / paramHarmonics.freqMin;
     int i = 0;
     for(auto & o : out){
-        auto r = computeTHD(paramHarmonics,o , getSampleRate());
+        remove_left(o.size() *0.8, o);
+        auto r = computeTHD(paramHarmonics,  o, getSampleRate());
         r.name = nameInstance + "_" + std::to_string(i++);
         res.push_back(r);
     }

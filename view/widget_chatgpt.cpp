@@ -36,7 +36,6 @@ ParamHarmonicsWidget::ParamHarmonicsWidget(QWidget *parent) : QWidget(parent)
         ParamHarmonics params;
         params.freqMin = freqMinSlider->value();
         params.freqMax = freqMaxSlider->value();
-        params.duration = durationSpinBox->value();
         params.gain = gainSpinBox->value();
 
         emit parameterSet(params);

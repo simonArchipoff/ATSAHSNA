@@ -131,7 +131,7 @@ void delegate::addFaustBackend() {
     auto h = mw->displays->getTHDPlot();
     auto fb = new QBackendFaust(f, name);
     faust.push_back(fb);
-    connect(fb, &QBackendFaust::resultResponse, d, &BodePlot::setResponses,
+    connect(fb, &QBackendFaust::resultResponse, d, &BodePlot::setResult,
             Qt::UniqueConnection);
     connect(fb, &QBackendFaust::resultHarmonics, h, &THDPlot::setResult,
             Qt::UniqueConnection);

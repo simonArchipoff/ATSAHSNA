@@ -115,13 +115,23 @@ void FrequencyPlot::updatePlot(QString name, const FDF&v){
     }
 
     amplitude_axis->setRange(minAmp - 5,maxAmp + 5);
+    if(maxAmp - minAmp < 10){
+        amplitude_axis->setTickInterval(1);
+    } else if(maxAmp - minAmp < 100){
+        amplitude_axis->setTickInterval(10);
+    } else if(maxAmp - minAmp < 200) {
+        amplitude_axis->setTickInterval(20);
+    } else {
+        amplitude_axis->setTickInterval(50);
+    }
+
     chart.update();
 }
 
 
 
 BodePlot::BodePlot(QWidget*parent):FrequencyPlot(parent){}
-void BodePlot::setResponses(std::variant<const std::vector<ResultResponse>> & r){
+void BodePlot::setResult(std::variant<const std::vector<ResultResponse>> & r){
     std::vector<ResultResponse> v = get<const std::vector<ResultResponse>>(r);
     for(uint i = 0; i < v.size(); i++){
         addPlot(v[i].response,QString{v[i].name.data()});

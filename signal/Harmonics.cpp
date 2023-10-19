@@ -160,9 +160,9 @@ public:
 
 ResultHarmonics computeTHD(const ParamHarmonics p, const VD& signal, int sampleRate){
 
-    assert(p.duration > 0 && p.freqMin <= p.frequency && p.frequency <= p.freqMax);
+    assert( p.freqMin <= p.frequency && p.frequency <= p.freqMax);
     assert(signal.size() > 1);
-    double duration = signal.size() / sampleRate;
+    double duration = static_cast<double>(signal.size()) / sampleRate;
 
     VCD signalfft = computeDFT(signal);
     signalfft[0] = 0;//remove offset

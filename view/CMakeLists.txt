@@ -14,7 +14,9 @@ add_library(view
     widget_chatgpt.h
     widget_chatgpt.cpp
     QJackView.h QJackView.cpp
+    TemporalPlot.h
+    TemporalPlot.cpp
 )
 
-target_link_libraries(view PUBLIC Qt${QT_VERSION_MAJOR}::Widgets backend Qt6::Charts)
+target_link_libraries(view PUBLIC Qt${QT_VERSION_MAJOR}::Widgets backend Qt6::Charts Qt6::Graphs)
 target_include_directories(view PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )

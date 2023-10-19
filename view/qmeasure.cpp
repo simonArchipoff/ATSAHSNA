@@ -62,7 +62,6 @@ QParamDistortion::QParamDistortion(QWidget * parent):QWidget{parent}{
 
 struct ParamHarmonics QParamDistortion::getParam(){
   ParamHarmonics f = {.frequency = frequency->value()
-                     ,.duration = duration->value()
                      ,.freqMin  = freq_min->value()
                      ,.freqMax  = freq_max->value()};
   return f;

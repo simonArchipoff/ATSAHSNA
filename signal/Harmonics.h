@@ -3,7 +3,7 @@
 #include "FrequencyDomain.h"
 
 struct ParamHarmonics {
-    double frequency = 1000, duration=1;
+    double frequency = 1000;
     double freqMin=20, freqMax=20000;
     double gain = 1;
 };

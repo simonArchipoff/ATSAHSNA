@@ -13,6 +13,8 @@
 #include <Response.h>
 #include <Harmonics.h>
 
+
+
 class RoundRobinColor{
 public:
     RoundRobinColor(std::initializer_list<QColor> &l);
@@ -64,7 +66,7 @@ class BodePlot : public FrequencyPlot
     Q_OBJECT
 public:
     BodePlot(QWidget*parent);
-    void setResponses(std::variant<const std::vector<ResultResponse>> & r);
+    void setResult(std::variant<const std::vector<ResultResponse>> & r);
 
 };
 
@@ -89,5 +91,9 @@ protected:
     BodePlot * bodePlot;
     THDPlot * thdPlot;
 };
+
+
+
+
 
 
