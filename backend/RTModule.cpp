@@ -4,6 +4,7 @@
 #include "../helpers.h"
 #include <iostream>
 #include <variant>
+#include <algorithm>
 
 
 
@@ -73,7 +74,95 @@ bool RTModuleHandler::getResultResponse(vector<ResultResponse>& result){
 
 }
 
+void Sender::rt_output(int time, float **output, int nb_output, int nb_frames){
+    assert(nb_output>0);
+    assert(nb_frames>0);
+    float * out = output[current_output];
+    int idx = 0;
+    while(idx < nb_frames){
+        switch(state){
+        case Sending:
+            idx = rt_send(idx,out, nb_frames);
+            assert(idx <= nb_frames);
+            break;
+        case SendingFinished:
+            if(mode == RoundRobin){
+                current_output = current_output + 1 % nb_output;
+                out = output[current_output];
 
+            }
+            if((current_output == 0 || mode == All) && ++current_number_rec == number_rec){
+                state = Finished;
+            } else {
+                state = Timeoffing;
+                current_timeoff=0;
+            }
+            break;
+
+        case Timeoffing:
+            idx = rt_timeoff(idx,out,nb_frames);
+            break;
+        case TimeoffFinished:
+            state = Sending;
+            current_send = 0;
+            break;
+        case Finished:
+            return;
+            break;
+        }
+    }
+
+    if(mode == All){
+        for(int i = 0; i < nb_output; i++){
+            if(output[i] != out)
+                std::copy(out,out + nb_frames, output[i]);
+        }
+    }
+}
+
+int Sender::rt_timeoff(int start_idx, float * output, int nb_frames){
+    assert(state == Timeoffing);
+    assert(start_idx < nb_frames);
+    assert(current_timeoff < timeoff);
+    (void)output;
+    const auto current_timeoff_left = timeoff - current_timeoff;
+    if( current_timeoff_left > nb_frames - start_idx){
+        current_timeoff = nb_frames - start_idx;
+        return nb_frames;
+    } else {
+        state = TimeoffFinished;
+        return start_idx + current_timeoff_left;
+    }
+}
+int Sender::rt_send(int start_idx, float * output, int nb_frames){
+    assert(state == Sending);
+    assert(current_number_rec < number_rec);
+    const int signalsize = static_cast<int>(signal.size());
+    assert(start_idx < nb_frames);
+    assert(current_send < signalsize);
+    const auto current_sending_left = signalsize - current_send;
+    const auto left = nb_frames - start_idx;
+    if(current_sending_left <= left){
+        std::transform(signal.begin() + current_send
+                       ,signal.end()
+                       ,output + start_idx
+                       ,[](double s){return static_cast<float>(s);});
+
+        state = SendingFinished;
+        return start_idx + left;
+    } else {// currend_sending_left > left
+        std::transform(signal.begin() + current_send
+                       ,signal.begin() + current_send + left
+                       ,output + start_idx
+                       ,[](double s){return static_cast<float>(s);});
+        current_send += left;
+
+        assert(start_idx + left == nb_frames);
+        return start_idx + left;
+    }
+
+
+}
 
 
 void Acquisition::init(const VCD & s, double threshold){

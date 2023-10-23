@@ -18,5 +18,5 @@ add_library(view
     TemporalPlot.cpp
 )
 
-target_link_libraries(view PUBLIC Qt${QT_VERSION_MAJOR}::Widgets backend Qt6::Charts Qt6::Graphs)
+target_link_libraries(view PUBLIC Qt${QT_VERSION_MAJOR}::Widgets backend Qt6::Charts)
 target_include_directories(view PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )

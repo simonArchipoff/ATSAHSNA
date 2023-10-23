@@ -49,9 +49,100 @@ private:
 };
 
 
-struct SystemDescriptor{
-    std::set<int> inputs;
-    std::set<int> outputs;
+
+class Sender {
+public:
+    enum Mode {All,RoundRobin};
+    Sender(const VD& signal, Sender::Mode m, int number, int timeoff)
+        : state(Timeoffing), mode(m), signal(signal), number_rec(number), timeoff(timeoff),
+        current_output(0), current_send(0), current_timeoff(0), current_number_rec(0) {}
+
+    void rt_output(int time, float ** output, int nb_output, int nb_frames);
+
+private:
+    int rt_timeoff(int start_idx, float * output, int nb_frames);
+    int rt_send(int start_idx, float * output, int nb_frames);
+
+private:
+    enum State { Sending, SendingFinished, Timeoffing, TimeoffFinished, Finished};
+//those two states are transitory ^^^                       ^^^
+//they are used for the round robin logic
+    State state;
+    Mode mode;
+    const VD signal;
+    const int number_rec;
+    const int timeoff;
+    int current_output;
+    int current_send;
+    int current_timeoff;
+    int current_number_rec;
+};
+
+
+template<typename T>
+class VectorPool{
+    VectorPool():pool(){}
+    void init(int number, int size){
+        for(auto i : pool){
+            delete[] i;
+        }
+        pool.resize(number);
+        for(auto & i : pool){
+            i=new double[size];
+        }
+    }
+    ~VectorPool(){
+        for(auto i : pool){
+            delete[] i;
+        }
+    }
+    T * getVector(){
+        for(auto & i : pool){
+            if(i){
+                auto tmp = i;
+                i = nullptr;
+                return tmp;
+            }
+        }
+        return nullptr;
+    }
+    void putVectorBack(T *v){
+        for(auto & i : pool){
+            if(!i){
+                i = v;
+                return;
+            }
+        }
+    }
+private:
+    std::vector<T *> pool;
+};
+
+class Receiver {
+public:
+
+    Receiver(const VD& signal, int timeout);
+
+
+    void rt_input(){
+    }
+
+    struct ReceiverResult {
+        double * data;
+        int size;
+        int time;
+    };
+    void putVectorBack(double * v){
+        vectorQueue.enqueue(v);
+    }
+    void putVectorBack(ReceiverResult&r){
+        putVectorBack(r.data);
+    }
+
+private:
+    moodycamel::ConcurrentQueue<double*> vectorQueue;
+    moodycamel::ConcurrentQueue<ReceiverResult> resultQueue;
+    VectorPool<double> pool;
 };
 
 

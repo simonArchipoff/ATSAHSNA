@@ -1,14 +1,13 @@
 #pragma once
 #include <QWidget>
 
-#include <Q3DSurface>
-
 #include <QChartView>
 #include <QLineSeries>
 #include <QValueAxis>
 
 #include "Response.h"
 #include "qtmetamacros.h"
+
 #include <qcustomplot.h>
 
 

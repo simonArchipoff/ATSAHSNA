@@ -32,7 +32,9 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
                               , unsigned int sampleRate);
 
 
-ResultSpectrogram spectrogram(const FDF & response
+inline ResultSpectrogram spectrogram(const FDF & response
                               , int nb_octave
-                              , int resolution
-                              , unsigned int sampleRate);
+                              , int resolution){
+    auto data = response.frequencyDomainTotemporal();
+    return spectrogram(data,nb_octave,resolution,response.getSampleRate());
+}

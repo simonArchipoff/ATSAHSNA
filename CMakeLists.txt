@@ -31,8 +31,8 @@ FetchContent_MakeAvailable(Catch2)
 
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-find_package(QT NAMES Qt6 COMPONENTS Core Widgets  LinguistTools Charts Graphs REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools Charts Graphs REQUIRED)
+find_package(QT NAMES Qt6 COMPONENTS Core Widgets  LinguistTools Charts REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools Charts REQUIRED)
 
 include(CMakePrintHelpers)
 

@@ -177,3 +177,37 @@ TEST_CASE("Acquisition") {
     }
     REQUIRE(res_delay == delay);
 }
+
+
+
+TEST_CASE("Test de Sender") {
+    VD signal = {1.0, 2.0, 3.0, 4.0};
+    Sender::Mode mode = Sender::All;
+    int number = 3;
+    int timeoff = 2;
+    Sender sender(signal, mode, number, timeoff);
+
+    SECTION("Test de rt_send") {
+        int start_idx = 0;
+        int nb_frames = 3;
+        int nb_call = 10;
+        float output[nb_call * nb_frames];
+        memset(output,0,sizeof(output));
+
+        for(int i = 0; i < nb_call; i++){
+            float * s = output + i*nb_frames;
+            sender.rt_output(0, &s, 1, nb_frames);
+        }
+
+        REQUIRE(output[0] == 0.0);
+        REQUIRE(output[1] == 0.0);
+        REQUIRE(output[2] == 1.0);
+        REQUIRE(output[3] == 2.0);
+        REQUIRE(output[4] == 3.0);
+        REQUIRE(output[5] == 4.0);
+        REQUIRE(output[6] == 0.0);
+        REQUIRE(output[7] == 0.0);
+    }
+}
+
+
