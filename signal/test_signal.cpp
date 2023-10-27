@@ -131,7 +131,7 @@ TEST_CASE("find delay DelayComputer","[benchmark]"){
     DelayComputer dc;
     dc.setReference(array_VD_to_VCD(o));
 
-    std::pair<int,double> p = dc.getDelays(array_VD_to_VCD(s));
+    auto p = dc.getDelays(array_VD_to_VCD(s));
     int diff = p.first;
     //int diff = compute_delay_fft(s,o);
 

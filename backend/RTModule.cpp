@@ -175,7 +175,7 @@ void Acquisition::init(const VCD & s, double threshold){
                    ,p.signal.begin(),[](std::complex<double> c){return c.real();});
     p.dc.setReference(s);
     time_waited = 0;
-    rb.reset(2*size);
+    rb.reset(3*size);
 }
 
 
