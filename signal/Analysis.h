@@ -65,9 +65,6 @@ public:
         for(uint i = 0; i < dft.getSize() ; i++){
             in[i] = outdft[i] * fft_const[i];
         }
-        to_file("/tmp/multop1",outdft,dft.getSize());
-        to_file("/tmp/multop2",fft_const,getOutputSize());
-        to_file("/tmp/mult",in,dft.getSize());
         dft.rfft();
     }
     int getOutputSize(){
@@ -107,8 +104,6 @@ public:
                       ,[](std::complex<double> c){return std::abs(c);});
         auto m = std::max_element(buff,buff+conv.getOutputSize());
         auto d = m-buff;
-        to_file("/tmp/result_conv",out, conv.getOutputSize());
-        to_file("/tmp/level",buff, conv.getOutputSize());
         auto lag = d - (conv.getSize()+1)/3 + 1;
         if(lag < 0)
             return std::pair{-1,0};

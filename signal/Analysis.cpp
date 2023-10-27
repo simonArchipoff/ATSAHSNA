@@ -141,11 +141,8 @@ void ConvolutionByConstant::setOperand(const VCD & v, uint other_operand_size){
     memcpy(in,v.data(), v.size() * sizeof(*in));
     VCD tmp(v);
     tmp.resize(size);
-    to_file("/tmp/src",tmp);
-    to_file("/tmp/pre_internal",in,in+size);
     dft.fft();
     memcpy((void*)fft_const, (void*) dft.getOutput(), dft.getSize() * sizeof(*fft_const));
-    to_file("/tmp/internal",(std::complex<double>*)dft.getOutput(),dft.getSize());
 }
 
 VCD ConvolutionByConstant::convolution_fft(const VCD & v){
@@ -188,14 +185,10 @@ void DelayComputer::setReference(const VCD & c){
     VCD tmp = reverse_and_conj(c);
     //tmp.resize(c.size()*2);
     conv.setOperand(tmp,c.size()*2);
-    to_file("/tmp/rcc",tmp);
     if(buff)
         fftw_free(buff);
     buff = fftw_alloc_real(conv.getOutputSize());
     this->refLevel = 1; // bit ugly hack, this allows to compute un-normalized delay
-    auto op2(c);
-    op2.resize(c.size() * 2);
-    to_file("/tmp/op2",op2);
     auto r = getDelays(c);
     assert(r.first == 0);
     this->refLevel = r.second;
