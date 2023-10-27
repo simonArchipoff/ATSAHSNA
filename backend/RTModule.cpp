@@ -2,6 +2,7 @@
 #include <cstring>
 #include <memory>
 #include "../helpers.h"
+#include "Analysis.h"
 #include <iostream>
 #include <variant>
 #include <algorithm>
@@ -219,9 +220,10 @@ Acquisition::ret_type Acquisition::rt_process_wait_response(const VD & output){
     rb.write(output);
     time_waited += frames;
 
-    if(rb.available() >= p.dc.getSize()){
-        auto tab = rb.read(p.dc.getSize());
+    if(rb.available() >= p.signal.size()*2){
+        auto tab = rb.read(p.signal.size()*2);
         auto r = p.dc.getDelays(array_VD_to_VCD(tab));
+        auto f = compute_delay_fft(p.signal,(tab));
         //send result
         res.level = r.second;
 

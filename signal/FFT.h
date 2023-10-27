@@ -2,6 +2,7 @@
 
 #include <fftw3.h>
 #include "../constants.h"
+#include <assert.h>
 
 VCD fft(const VD& input);
 VCD fft(const VCD& input);
@@ -28,10 +29,36 @@ public:
     size_t getSize() const {
         return size;
     }
-    fftw_complex*  getInput() const {
+    template<typename iterator>
+    void setInput(iterator begin, iterator end){
+        const std::complex<double> z(0,0);
+        assert(begin < end);
+        assert((unsigned long) std::distance(begin,end) <= size);
+        auto input = getInput();
+        for(int i = 0; i < getSize(); i++){
+            if(begin < end){
+                input[i][0] = begin->real();
+                input[i][1] = begin->imag();
+                begin++;
+            } else {
+                input[i][0] = 0.0;
+                input[i][1] = 0.0;
+            }
+        }
+        //std::fill(i,i+getSize(),z);
+        //std::copy(begin,end,(std::complex<double>*)(i));
+    }
+    /*void setInput(const double * begin, const double * end){
+        assert(begin < end);
+        assert((unsigned long)std::distance(end,begin) == size);
+        auto i = getInput();
+        std::transform(begin,end,(std::complex<double> *)i,[](double i){return  std::complex<double>(i,0);});
+    }*/
+
+    fftw_complex * getInput() const {
         return input;
     }
-    fftw_complex* getOutput() const{
+    fftw_complex * getOutput() const{
         return output;
     }
 

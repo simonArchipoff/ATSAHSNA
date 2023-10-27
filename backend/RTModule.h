@@ -121,7 +121,7 @@ private:
 class Receiver {
 public:
 
-    Receiver(const VD& signal, int timeout);
+    Receiver(int time, const VD& signal, int timeout);
 
 
     void rt_input(){
@@ -143,6 +143,9 @@ private:
     moodycamel::ConcurrentQueue<double*> vectorQueue;
     moodycamel::ConcurrentQueue<ReceiverResult> resultQueue;
     VectorPool<double> pool;
+
+    DelayComputer delayComputer;
+    std::vector<RingBuffer<double>> ringbuffers;
 };
 
 

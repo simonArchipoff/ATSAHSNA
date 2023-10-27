@@ -130,13 +130,14 @@ TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
 #include <Generation.h>
 #include "RTModule.h"
 #include <iostream>
+
 TEST_CASE("Acquisition") {
     Acquisition b;
     int delay=45;
     RingBuffer<double> rb(10000);
     rb.write(VD(delay));
     const uint sr = 3000;
-    const uint frames = 8;
+    const uint frames = 512;
     auto foo = chirp_complex(10,1000,0.5,sr);
     //VCD foo = {1,2,3,4,0,0,0,0,0,0,0};
     b.init(foo);

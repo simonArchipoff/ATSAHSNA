@@ -50,6 +50,17 @@ void to_file(const std::string & s, const std::vector<T> & v){
     out.write((char*)v.data(), sizeof(T)*v.size());
     out.close();
 }
+template<typename T>
+void to_file(const std::string & s, const T*p, int size){
+    std::vector<T> v(p,p+size);
+    return to_file(s,v);
+}
+
+template<typename T>
+void to_file(const std::string &s, const T*begin, const T*end){
+    std::vector<T> v(begin,end);
+    return to_file(s,v);
+}
 
 
 template<typename C, typename T>

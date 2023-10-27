@@ -3,6 +3,7 @@
 #include <FFT.h>
 #include <assert.h>
 #include <algorithm>
+#include <fftw3.h>
 #include <numeric>
 #include <cmath>
 #include <cstring>
@@ -114,18 +115,7 @@ void find_maximums(const VD & in, vector<int> & idx, vector<double> & maxs, doub
 
 
 
-//https://stackoverflow.com/questions/7616511/calculate-mean-and-standard-deviation-from-a-vector-of-samples-in-c-using-boos
-//thank you codeling
-double mean(const VD &v){
-    return std::accumulate(v.begin(), v.end(), 0.0) / v.size();
-}
-double stddev(const VD & v){
-    double m = mean(v);
-    double sq_sum = std::inner_product(v.begin(), v.end(), v.begin(), 0.0,
-        [](double const & x, double const & y) { return x + y; },
-        [m](double const & x, double const & y) { return (x - m)*(y - m); });
-    return std::sqrt(sq_sum / v.size());
-}
+
 
 VD try_make_phase_continuous(const VD &v){
     vector<double> res = VD{v};
@@ -142,13 +132,20 @@ VD try_make_phase_continuous(const VD &v){
 
 ConvolutionByConstant::ConvolutionByConstant():fft_const(nullptr){}
 
-void ConvolutionByConstant::setOperand(const VCD & v){
-    fft_const = (std::complex<double>*) fftw_alloc_complex(v.size());
-    dft.init(v.size());
+void ConvolutionByConstant::setOperand(const VCD & v, uint other_operand_size){
+    int size = v.size() + other_operand_size - 1;
+    fft_const = (std::complex<double>*) fftw_alloc_complex(size);
+    dft.init(size);
     auto * in = (std::complex<double> *) dft.getInput();
-    memcpy(in,v.data(),v.size() * sizeof(*in));
+    std::fill(in, in+size,std::complex<double>(0,0));
+    memcpy(in,v.data(), v.size() * sizeof(*in));
+    VCD tmp(v);
+    tmp.resize(size);
+    to_file("/tmp/src",tmp);
+    to_file("/tmp/pre_internal",in,in+size);
     dft.fft();
     memcpy((void*)fft_const, (void*) dft.getOutput(), dft.getSize() * sizeof(*fft_const));
+    to_file("/tmp/internal",(std::complex<double>*)dft.getOutput(),dft.getSize());
 }
 
 VCD ConvolutionByConstant::convolution_fft(const VCD & v){
@@ -174,26 +171,41 @@ VCD ConvolutionByConstant::convolution_fft(const VCD & v){
     return o;
 }
 
+
+
 uint ConvolutionByConstant::getSize() const{
     return dft.getSize();
 }
 
 
 
-DelayComputer::DelayComputer(){}
+DelayComputer::DelayComputer():buff(nullptr){}
+DelayComputer::~DelayComputer(){
+    if(buff)
+        fftw_free(buff);
+}
 void DelayComputer::setReference(const VCD & c){
     VCD tmp = reverse_and_conj(c);
-    tmp.resize(c.size()*2);
-    conv.setOperand(tmp);
+    //tmp.resize(c.size()*2);
+    conv.setOperand(tmp,c.size()*2);
+    to_file("/tmp/rcc",tmp);
+    if(buff)
+        fftw_free(buff);
+    buff = fftw_alloc_real(conv.getOutputSize());
     this->refLevel = 1; // bit ugly hack, this allows to compute un-normalized delay
-    auto r= getDelays(c);
+    auto op2(c);
+    op2.resize(c.size() * 2);
+    to_file("/tmp/op2",op2);
+    auto r = getDelays(c);
     assert(r.first == 0);
     this->refLevel = r.second;
 }
 
+/*
 std::pair<uint,double> DelayComputer::getDelays(const VCD &s){
+    //return getDelays(s.begin(),s.end());
     auto tmp = conv.convolution_fft(s);
-    auto r = rms(s);
+    auto r = rms(s.begin(),s.end());
     VD vd(tmp.size());
     std::transform(tmp.begin()
                    ,tmp.end()
@@ -201,8 +213,8 @@ std::pair<uint,double> DelayComputer::getDelays(const VCD &s){
                    ,[](std::complex<double> c){return std::abs(c);});
     auto m = std::max_element(vd.begin(),vd.end());
     auto d = m-vd.begin();
-    if(d - conv.getSize()/2 + 1 < 0)
+    if(d - (int) s.size() + 1 < 0)
         return std::pair{0,0};
-    return std::pair{d - conv.getSize()/2  + 1,(*m/this->refLevel) / r};
+    return std::pair{d - s.size()  + 1,(*m/this->refLevel) / r};
 }
-
+*/
