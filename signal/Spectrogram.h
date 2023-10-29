@@ -41,7 +41,7 @@ struct ResultSpectrogram{
 
 
 
-ResultSpectrogram stft(const double * begin, const double * end, int size_fft, int overlap_fft, unsigned int sampleRate, window_type window=HANN);
+ResultSpectrogram stft(const double * begin, const double * end, int size_fft, int increment_fft, unsigned int sampleRate, window_type window=HANN);
 
 
 ResultSpectrogram spectrogram(const std::vector<double> &data
