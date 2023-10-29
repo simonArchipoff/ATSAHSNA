@@ -1,6 +1,7 @@
 #include "Spectrogram.h"
 
 #include <fcwt.h>
+#include <iterator>
 
 
 ResultSpectrogram spectrogram(const std::vector<double> &data
@@ -46,13 +47,8 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
               , false);
 
 
-    ResultSpectrogram res {
-        .duration = static_cast<double>(n) / fs
-        ,.max_idx_time_rank = n
-        ,.max_freq_rank = f
-        ,.data = std::vector<double>(n * f)
-        ,.frequencies = std::vector<double>(f)
-    };
+    ResultSpectrogram res(static_cast<double>(n) / fs, n, f);
+
 
     //compute frequencies for each row of the matrix
     //not sure about the off-by-one things, if there is a problem with frequencies it might be here
@@ -75,3 +71,33 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
     return res;
 }
 
+
+
+
+
+ResultSpectrogram stft(const double * begin, const double * end, int size_fft, int overlap_fft, unsigned int sampleRate, window_type window_type){
+    auto w = window(size_fft,window_type);
+    DFTrc fft(size_fft);
+    int input_size = std::distance(begin,end);
+    ResultSpectrogram res(static_cast<double>(input_size) / sampleRate, (std::distance(begin, end) - size_fft) / (size_fft - overlap_fft),fft.getOutputSize()-1 /* I remove the null freq.*/) ;
+    for(int i = 0; i < res.frequencies.size(); i++){
+        res.frequencies[i] = (i+1) *  static_cast<double>(sampleRate) / static_cast<double>(size_fft);
+    }
+
+    for(int i = 0; i < res.max_idx_time_rank ; i++){
+        auto input = fft.getInput();
+        for(int j = 0; j < fft.getInputSize(); j++){
+
+            const int current_input_idx = i*(size_fft - overlap_fft)+j;
+            assert(current_input_idx < input_size);
+            input[j] = w[j] * begin[current_input_idx];
+
+        }
+        fft.fft();
+        auto output = (std::complex<double> *) fft.getOutput();
+        for(int j = 1; j < fft.getOutputSize(); j++){
+            res.at(j-1,i) = std::abs(output[j]);
+        }
+    }
+    return res;
+}

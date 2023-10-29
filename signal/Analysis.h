@@ -11,6 +11,7 @@ enum window_type {
     RECTANGLE = 0, BOXCAR = 0 // TODO: , DIRICHLET = 0, UNIFORM = 0
     ,HANN = 1, HANNING = 1
     ,HAMMING
+
 };
 
 
@@ -51,7 +52,12 @@ class ConvolutionByConstant {
 public:
     ConvolutionByConstant();
     void setOperand(const VCD &v, uint other_operand_size);
-    VCD convolution_fft(const VCD &v);
+
+    VCD convolution_fft(const VCD&v){
+        convolution_fft(v.begin(),v.end());
+        VCD r(getOutput(),getOutput() + getOutputSize() );
+        return r;
+    }
 
     template<typename iterator>
     void convolution_fft(iterator begin, iterator end){
@@ -66,6 +72,7 @@ public:
             in[i] = outdft[i] * fft_const[i];
         }
         dft.rfft();
+        std::transform(getOutput(),getOutput() + getOutputSize(), getOutput(),[](std::complex<double> s){return s * std::complex<double>(1./5.,0);});
     }
     int getOutputSize(){
         return dft.getSize();

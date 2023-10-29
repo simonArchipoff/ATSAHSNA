@@ -55,7 +55,11 @@ void to_file(const std::string & s, const T*p, int size){
     std::vector<T> v(p,p+size);
     return to_file(s,v);
 }
-
+template<typename T, typename iterator>
+void to_file(const std::string &s, iterator begin, iterator end){
+    std::vector<T> v(begin,end);
+    return to_file(s,v);
+}
 template<typename T>
 void to_file(const std::string &s, const T*begin, const T*end){
     std::vector<T> v(begin,end);

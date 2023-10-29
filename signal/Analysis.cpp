@@ -144,7 +144,7 @@ void ConvolutionByConstant::setOperand(const VCD & v, uint other_operand_size){
     dft.fft();
     memcpy((void*)fft_const, (void*) dft.getOutput(), dft.getSize() * sizeof(*fft_const));
 }
-
+/*
 VCD ConvolutionByConstant::convolution_fft(const VCD & v){
     auto * in = (std::complex<double>*) dft.getInput();
     for(uint i = 0; i < v.size(); i++){
@@ -167,7 +167,7 @@ VCD ConvolutionByConstant::convolution_fft(const VCD & v){
     }
     return o;
 }
-
+*/
 
 
 uint ConvolutionByConstant::getSize() const{

@@ -233,12 +233,11 @@ Acquisition::ret_type Acquisition::rt_process_wait_response(const VD & output){
             res.delay = r.first + time_waited - rb.available(); //r.first + time_waited - p.dc.getSize();
             //rb.pop(p.signal.size()+r.first);
             state &= ~RECIEVE;
-            std::cerr << "recieved\n";
             return ret_type(res);
         } else {
             if(time_waited > p.timeout){
                 state = DISABLED;
-                            std::cerr << "timeout\n";
+                std::cerr << "timeout\n";
                 return ret_type(timeout());
             }
             rb.pop(output.size());

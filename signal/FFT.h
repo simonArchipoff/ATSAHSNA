@@ -23,7 +23,7 @@ void rfft(const VCD & input, VCD& output);
 class DFT {
 public:
     DFT():size(0),pf(nullptr),pb(nullptr),input(nullptr),output(nullptr){}
-
+    ~DFT();
     DFT(size_t size);
     void init(size_t size);
     size_t getSize() const {
@@ -71,3 +71,27 @@ private:
     fftw_plan pb;
     fftw_complex * input, * output;
 };
+
+class DFTrc{
+public:
+    ~DFTrc();
+
+    DFTrc(size_t size);
+    size_t getInputSize() const {
+        return size;
+    }
+
+    void fft();
+
+    double * getInput() const;
+    fftw_complex * getOutput() const;
+
+    int getOutputSize() const{
+        return getInputSize()/ 2 + 1;
+    }
+    size_t size;
+    fftw_plan pf;
+    double * input;
+    fftw_complex * output;
+};
+

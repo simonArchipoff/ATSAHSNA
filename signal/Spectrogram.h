@@ -2,6 +2,7 @@
 
 #include "FrequencyDomain.h"
 #include "Response.h"
+#include "Analysis.h"
 
 
 
@@ -12,11 +13,25 @@ struct ParamSpectrogram : ParamResponse {
 };
 
 struct ResultSpectrogram{
+
+    ResultSpectrogram(double duration, int max_idx_time_rank, int max_freq_rank)
+        : duration(duration), max_idx_time_rank(max_idx_time_rank), max_freq_rank(max_freq_rank) {
+        // Initialisation des vecteurs data et frequencies avec des valeurs par défaut
+        data.resize(max_freq_rank * max_idx_time_rank);
+        frequencies.resize(max_freq_rank);
+    }
+
     double duration;
     int max_idx_time_rank;
     int max_freq_rank;
 
     double at(int freq_rank, int time_rank) const {
+        assert(freq_rank * max_idx_time_rank + time_rank < data.size());
+        return data[freq_rank * max_idx_time_rank + time_rank];
+    }
+
+    double & at(int freq_rank, int time_rank) {
+        assert(freq_rank * max_idx_time_rank + time_rank < data.size());
         return data[freq_rank * max_idx_time_rank + time_rank];
     }
 
@@ -24,6 +39,9 @@ struct ResultSpectrogram{
     std::vector<double> frequencies;
 };
 
+
+
+ResultSpectrogram stft(const double * begin, const double * end, int size_fft, int overlap_fft, unsigned int sampleRate, window_type window=HANN);
 
 
 ResultSpectrogram spectrogram(const std::vector<double> &data

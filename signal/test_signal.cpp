@@ -4,6 +4,7 @@
 #include "helpers.h"
 #include "Harmonics.h"
 #include "Analysis.h"
+#include "Spectrogram.h"
 #include "Generation.h"
 /*
 #include <fftw3.h>
@@ -42,6 +43,11 @@ TEST_CASE("Convolution FFT Test", "[convolution_fft]") {
         };
         REQUIRE(result.size() == resnumpy.size());
         REQUIRE( sum < 0.000001 );
+
+        BENCHMARK("bench convolution_fft") {
+            return convolution_fft(a,b);
+        };
+
     }
 }
 
@@ -61,10 +67,15 @@ TEST_CASE("Convolution FFT Test 2 ") {
 
 
         for(uint i = 0; i < result.size(); i++){
-            sum += fabs(result[i]-resnumpy[i]);;
+            sum += fabs(result[i] - resnumpy[i]);;
         };
         REQUIRE(result.size() == resnumpy.size());
         REQUIRE( sum < 0.000001 );
+
+        auto uieuie = array_VD_to_VCD(b);
+        BENCHMARK("bench ConvolutionByConstant::convolution_fft") {
+            return c.convolution_fft(uieuie);
+        };
     }
 }
 
@@ -131,7 +142,9 @@ TEST_CASE("find delay DelayComputer","[benchmark]"){
     DelayComputer dc;
     dc.setReference(array_VD_to_VCD(o));
 
+
     auto p = dc.getDelays(array_VD_to_VCD(s));
+
     int diff = p.first;
     //int diff = compute_delay_fft(s,o);
 
@@ -141,9 +154,10 @@ TEST_CASE("find delay DelayComputer","[benchmark]"){
     to_file("/tmp/res",res);
 */
     REQUIRE(diff == delay);
+
 }
 
-TEST_CASE("optimal window", "[benchmark]"){
+TEST_CASE("optimal window"){
     int SR = 44000;
     double f = 100;
     auto s = sinusoid(f,0.1,SR);
@@ -154,3 +168,18 @@ TEST_CASE("optimal window", "[benchmark]"){
     REQUIRE(s == r);
 }
 
+
+TEST_CASE("stft"){
+    int SR = 44000;
+    double d = 0.1;
+    auto o = chirp(10,20000,d,SR);
+
+    auto res = stft(o.data(), o.data() + o.size(), 1024, 1024-1, SR, HANN);
+    /*BENCHMARK("stft") {
+        return stft(o.data(), o.data() + o.size(), 1024, 1024-1, SR, HANN);
+    };*/
+
+    //to_file("/tmp/foo",res.data);
+
+
+}
