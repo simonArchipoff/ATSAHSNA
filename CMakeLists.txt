@@ -27,6 +27,14 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
+FetchContent_Declare(
+  QCustomPlot
+  GIT_REPOSITORY https://github.com/legerch/QCustomPlot-library
+  GIT_TAG 2.1.1.1
+)
+
+FetchContent_MakeAvailable(QCustomPlot)
+
 #find_package(Catch2 2 REQUIRED)
 
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)

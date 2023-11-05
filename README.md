@@ -11,7 +11,9 @@ What's already implemented:
 - two backend (faust and jackd)
 - impulse response
 - harmonic spectrum, THD computation (THD, THD+N, SNR)
-- wavelet waterfall measures
+- waterfall measures
+    - using continuous wavelet
+    - using short term fourier transform
 - temporal response
 
 
@@ -19,7 +21,6 @@ Soon :
 - export measurements in a bunch of standards files
 - handling of several measures at once
 - less franglish and proper translations
-- having several measure displayed at once
 
 Regarding IO and data acquisition :
 - dealing with several input/output (to measure two channels at once for instance)
@@ -52,5 +53,7 @@ Dependancy:
 * Faust
 * Jack
 * moodycamel lockfree queue (already in the repository)
+* QCustomPlot (via cmake fetch)
+* Catch2 (via cmake fetch
 
 When I started this project, I didn't knew that one : https://github.com/mincequi/qLouder, you should check it out as well

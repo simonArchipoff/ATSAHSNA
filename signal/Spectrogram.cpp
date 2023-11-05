@@ -48,6 +48,7 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
 
 
     ResultSpectrogram res(static_cast<double>(n) / fs, n, f);
+    res.sampleRate = sampleRate;
 
 
     //compute frequencies for each row of the matrix
@@ -79,14 +80,16 @@ ResultSpectrogram stft(const double * begin, const double * end, int size_fft, i
     auto w = window(size_fft,window_type);
     DFTrc fft(size_fft);
     int input_size = std::distance(begin,end);
-    ResultSpectrogram res(static_cast<double>(input_size) / sampleRate, (std::distance(begin, end) - size_fft) / (increment_fft),fft.getOutputSize()-1 /* I remove the null freq.*/) ;
-    for(int i = 0; i < res.frequencies.size(); i++){
+    ResultSpectrogram res(static_cast<double>(input_size) / sampleRate, (std::distance(begin, end) - size_fft) / (increment_fft),fft.getOutputSize()-1); // I remove the null freq.
+    res.sampleRate = sampleRate;
+    //output frequency size is input_size / 2 + 1 (hermitian thing) - 1 (remove the constant) = input_size / 2
+    for(uint i = 0; i < res.frequencies.size(); i++){
         res.frequencies[i] = (i+1) *  static_cast<double>(sampleRate) / static_cast<double>(size_fft);
     }
 
     for(int i = 0; i < res.max_idx_time_rank ; i++){
         auto input = fft.getInput();
-        for(int j = 0; j < fft.getInputSize(); j++){
+        for(uint j = 0; j < fft.getInputSize(); j++){
 
             const int current_input_idx = i*(increment_fft)+j;
             assert(current_input_idx < input_size);

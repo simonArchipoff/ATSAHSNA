@@ -21,6 +21,7 @@ struct ResultSpectrogram{
         frequencies.resize(max_freq_rank);
     }
 
+    int sampleRate;
     double duration;
     int max_idx_time_rank;
     int max_freq_rank;
