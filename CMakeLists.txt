@@ -4,72 +4,96 @@ project(ATSAHSNA VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
+
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 20)
+
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra -Wno-unused-parameter")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra")
 
 
-find_package(QT NAMES Qt5 COMPONENTS Core Widgets  LinguistTools REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
-include(CMakePrintHelpers)
-#find_package(QCoro5 REQUIRED COMPONENTS Core)
+
+
+
+Include(FetchContent)
+
+FetchContent_Declare(
+  Catch2
+  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+  GIT_TAG        v3.3.2 # or a later release
+)
+FetchContent_MakeAvailable(Catch2)
+
+FetchContent_Declare(
+  QCustomPlot
+  GIT_REPOSITORY https://github.com/legerch/QCustomPlot-library
+  GIT_TAG 2.1.1.1
+)
+
+FetchContent_MakeAvailable(QCustomPlot)
+
+#find_package(Catch2 2 REQUIRED)
 
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-#set(CMAKE_FIND_DEBUG_MODE TRUE)
-find_package(Qwt REQUIRED)
+
+find_package(QT NAMES Qt6 COMPONENTS Core Widgets  LinguistTools Charts REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools Charts REQUIRED)
+
+include(CMakePrintHelpers)
+
+set(TS_FILES ATSAHSNA_fr_FR.ts)
 
 
+
+#qt_standard_project_setup()
 
 add_subdirectory(third_party/fCWT_wrapper)
 add_subdirectory(backend)
+add_subdirectory(signal)
 add_subdirectory(view)
+add_subdirectory(app)
 
+add_executable(tests test_helpers.cpp signal/test_signal.cpp backend/test_backend.cpp )
+target_link_libraries(tests PRIVATE signal Catch2::Catch2WithMain fftw3 backend)
+
+
+
+#if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+#    qt_add_executable(ATSAHSNA
+#        MANUAL_FINALIZATION
+#        ${PROJECT_SOURCES}
+#      )
+#  qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+#endif()
+      
 set(PROJECT_SOURCES
-        constants.h
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
+        constantes.h
+        helpers.h
+        commandlineparser.h
+        commandlineparser.cpp
+#        main.cpp
+        acquisition.h
+        acquisition.cpp
         ${TF_SOURCES}
         ${TS_FILES}
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(ATSAHSNA
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-    )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET ATSAHSNA APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-
-    qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
-else()
-    if(ANDROID)
-        add_library(ATSAHSNA SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(ATSAHSNA
-            ${PROJECT_SOURCES}
-        )
-    endif()
-
-    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
-endif()
-
-
-target_link_libraries(ATSAHSNA PRIVATE Qt${QT_VERSION_MAJOR}::Widgets tbb view backend) #I dont know what uses tbb, fcwt probably
-#target_include_directories(ATSAHSNA PRIVATE third_party/wavelib/header) #eventually I'll learn how to do this properly
 
 
 
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(ATSAHSNA)
-endif()
+#target_link_libraries(ATSAHSNA PRIVATE Qt::Core fCWT backend signal view)
+
+#install(TARGETS ATSAHSNA
+#    BUNDLE DESTINATION .
+#    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+#)
+
+#if(QT_VERSION_MAJOR EQUAL 6)
+#    qt_finalize_executable(ATSAHSNA)
+#endif()
+
+

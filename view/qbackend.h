@@ -11,80 +11,45 @@
 #include <QPushButton>
 #include <QSpinBox>
 
-#include <backendJack.h>
-#include <backendFaust.h>
+#include <Jack.h>
+#include <Faust.h>
+#include <faust/gui/QTUI.h>
+
+#include <QJackView.h>
 
 
-class QBackend {
-public:
-  QBackend(Backend * b = nullptr):backend{b}{};
 
-  void setBackend(Backend * b){
-    this->backend.reset(b);
-  }
-  Backend * getBackend(){
-    return backend.data();
-  }
-protected:
-  QScopedPointer<Backend> backend;
-};
-
-
-class QFaustDsp : public QWidget, public QBackend {
+class QFaustView : public QWidget{
     Q_OBJECT
 public:
-    explicit QFaustDsp(BackendFaustQT * b, QWidget *parent = nullptr);
+    explicit QFaustView(QWidget *parent = nullptr);
 
-    void setUI(QWidget * ui);
+    void setDSPUI(QWidget * ui);
     void setErrorMessage(QString);
     void compile();
-    void setFaustCode(QString code,uint sampleRate);
-private:
+signals:
+    void setFaustCode(QString code, uint sampleRate);
+
+public:
     QWidget * dspUi;
     QLineEdit * sr;
     QTextEdit * codeEdit;
     QLabel * errorLabel;
     QPushButton * compile_button;
-    QVBoxLayout *layout;
+    QVBoxLayout * layout;
 };
 
 
-/*
-class QJackPort : public QWidget {
-  Q_OBJECT
-public:
-  QJackPort(QWidget * parent=nullptr);
-protected:
-};
-*/
 
-class QBackendJack : public QWidget, public QBackend {
-  Q_OBJECT
+class QBackendsView : public QTabWidget{
 public:
-  QBackendJack(BackendJackQt * b, QWidget * parent=nullptr);
+    QBackendsView(QWidget * parents):QTabWidget(parents){
+        //setTabsClosable(true);
+    }
+    QFaustView *  addFaust(QString name);
+    QJackView  * addJack();
 
 protected:
-
-  void set_sample_rate(uint);
-  void set_buffer_size(uint);
-
-
-  QPushButton * inputButton, * outputButton;
-  QLabel * sampleRate, *bufferSize;
-  QLineEdit * inputName, *outputName;
-  QSpinBox * latency;
-  QDoubleSpinBox * gain;
-};
-
-
-class QBackends : public QTabWidget {
-public:
-  QBackends(QWidget * parent=nullptr);
-
-  BackendFaustQT * addFaustBackend();
-  BackendJackQt * addJackBackend();
-
-  Backend * getSelectedBackend();
-protected:
-  vector<QBackend *> backends;
+    QVector<QFaustView *> fausts;
+    std::vector<QJackView *>  jacks;
 };
