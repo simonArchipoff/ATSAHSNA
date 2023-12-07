@@ -6,7 +6,7 @@
 #include <QValueAxis>
 
 
-#include <qcustomplot.h>>
+#include <qcustomplot.h>
 #include "Spectrogram.h"
 
 class SpectrogramPlot : public QCustomPlot {

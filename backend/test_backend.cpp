@@ -2,7 +2,9 @@
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <cstdlib>
 #include "RingBuffer.h"
+#include <stdexcept>
 #include <vector>
+#include <Faust.h>
 
 TEST_CASE("Ring buffer") {
     RingBuffer<int> rb(8);
@@ -171,7 +173,6 @@ TEST_CASE("Acquisition") {
 
         try {
             auto res = std::get<Acquisition::timeout>(r);
-
         } catch (const std::bad_variant_access& ex){
 
         }
@@ -212,3 +213,47 @@ TEST_CASE("Test de Sender") {
 }
 
 
+
+class FaustWithRTModule : public BackendFaust, public RTModuleHandler{
+public:
+    FaustWithRTModule(int s):BackendFaust("test"),size(s){}
+
+    void setCode(string code, int sr){
+        BackendFaust::setCode(code,sr);
+        RTModuleHandler::setSampleRate(sr);
+    }
+
+    void run1cycle(){
+        if(input.empty()){
+            input.resize(size);
+        }
+        auto r = BackendFaust::acquisition(std::vector<VD>({input}));
+        vector<VD> foo({input});
+        RTModuleHandler::rt_process(vector<VD>(r),foo);
+        input = foo[0];
+        RTModuleHandler::rt_after_process();
+    }
+
+public:
+    int size;
+    VD input;
+
+};
+
+
+
+TEST_CASE("Test RTModuleHandler 1"){
+    const int sr = 100;
+    const int vector_size = 16;
+    FaustWithRTModule f(vector_size);
+    f.setCode("process = _ @ 23;\n",sr);
+    ParamResponse p{1, 20, 1};
+    f.startResponse(p,0,1);
+    for(int i = 0; i < 1000; i+=vector_size){
+           f.run1cycle();
+    }
+    vector<ResultResponse> r;
+    if(f.RTModuleHandler::getResultResponse(r)){
+           1;
+    }
+}

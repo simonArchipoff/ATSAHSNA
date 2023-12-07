@@ -82,6 +82,7 @@ public:
         } else {
             std::transform(acc.begin(),acc.end(),acc.begin(),v.end(),std::plus<T>());
         }
+        size++;
     }
     C get(){
         C res = acc;

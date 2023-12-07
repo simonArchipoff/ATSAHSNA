@@ -65,8 +65,8 @@ private:
 
 private:
     enum State { Sending, SendingFinished, Timeoffing, TimeoffFinished, Finished};
-//those two states are transitory ^^^                       ^^^
-//they are used for the round robin logic
+    //those two states are transitory ^^^                       ^^^
+    //they are used for the round robin logic
     State state;
     Mode mode;
     const VD signal;
@@ -177,7 +177,9 @@ public:
     }
 
     ret_type rt_process(const VD & input, VD & output);
-
+    VD getSignal(){
+        return p.signal;
+    }
 
 protected:
     struct params {
@@ -200,7 +202,7 @@ protected:
 
     void rt_process_sending(VD & input);
     uint time_waited;
-    Acquisition::ret_type rt_process_wait_response(const VD & output);
+    Acquisition::ret_type rt_process_wait_response(const VD & input);
 
     RingBuffer<double> rb;
     params p;
@@ -222,7 +224,7 @@ public:
     virtual void rt_after_process() override;
 
 private:
-    VCD chirp;
+//    VCD chirp;
     Acquisition acq;
     uint sampleRate;
     ParamResponse paramResponse;

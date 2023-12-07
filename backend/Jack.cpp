@@ -71,7 +71,7 @@ void * BackendJack::audio_thread(void * arg){
             i.resize(nframes);
         }
 
-        jb->rt_process(inputs,outputs);
+        jb->rt_process(inputs, outputs);
         for(uint i = 0; i < jb->outputPorts.size(); i++){
             auto out= (float*) jack_port_get_buffer(jb->outputPorts[i], nframes);
             std::transform(outputs[i].begin(),outputs[i].end(),out,[](double x){return float(x);});

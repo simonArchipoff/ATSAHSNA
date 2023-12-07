@@ -186,6 +186,8 @@ Acquisition::ret_type Acquisition::rt_process(const VD & input, VD & output){
     }
     if(state & SEND){
         rt_process_sending(output);
+    } else {
+        memset(output.data(),0,sizeof(output[0])*output.size());
     }
     if(state & RECIEVE){
         return rt_process_wait_response(input);
@@ -195,14 +197,14 @@ Acquisition::ret_type Acquisition::rt_process(const VD & input, VD & output){
 }
 
 
-void Acquisition::rt_process_sending(VD &input){
+void Acquisition::rt_process_sending(VD &output){
     assert(state & SEND);
     uint remSize = p.signal.size() - sending_index;
-    uint frames = input.size();
+    uint frames = output.size();
 
-    memcpy(input.data(), p.signal.data()+sending_index, sizeof(input[0]) * std::min<uint>(remSize,frames));
+    memcpy(output.data(), p.signal.data()+sending_index, sizeof(output[0]) * std::min<uint>(remSize,frames));
     if(remSize <= frames){
-        memset(input.data()+remSize, 0, frames-remSize);
+        memset(output.data()+remSize, 0, frames-remSize);
         state &= ~SEND;
         sending_index = 0;
     }else{
@@ -210,14 +212,14 @@ void Acquisition::rt_process_sending(VD &input){
     }
 }
 
-Acquisition::ret_type Acquisition::rt_process_wait_response(const VD & output){
+Acquisition::ret_type Acquisition::rt_process_wait_response(const VD & input){
 
-    uint frames=output.size();
+    uint frames=input.size();
     if(rb.freespace() < frames){
         rb.pop(frames-rb.freespace());
     }
     result res;
-    rb.write(output);
+    rb.write(input);
     time_waited += frames;
 
     if(rb.available() >= p.signal.size()*2){
@@ -240,11 +242,14 @@ Acquisition::ret_type Acquisition::rt_process_wait_response(const VD & output){
                 std::cerr << "timeout\n";
                 return ret_type(timeout());
             }
-            rb.pop(output.size());
+            rb.pop(input.size());
         }
     }
     return ret_type(std::monostate());
 }
+
+
+
 
 
 
@@ -279,7 +284,7 @@ bool RTModuleResponse::tryGetResponse(ResultResponse & response){
     }
     if(acc.size > 0){
         auto o = acc.get();
-        auto in = array_VCD_to_VD(chirp);
+        auto in = acq.getSignal();
         response = computeResponse(paramResponse,in,o,sampleRate);
         return true;
     }

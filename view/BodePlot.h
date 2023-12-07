@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include "SpectrogramPlot.h"
 #include <QChartView>
 #include <QLineSeries>
 #include <QLogValueAxis>
@@ -90,6 +91,7 @@ public:
 protected:
     BodePlot * bodePlot;
     THDPlot * thdPlot;
+    SpectrogramPlot * specPlot;
 };
 
 

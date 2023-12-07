@@ -35,7 +35,7 @@ public:
         assert(begin < end);
         assert((unsigned long) std::distance(begin,end) <= size);
         auto input = getInput();
-        for(int i = 0; i < getSize(); i++){
+        for(uint i = 0; i < getSize(); i++){
             if(begin < end){
                 input[i][0] = begin->real();
                 input[i][1] = begin->imag();
