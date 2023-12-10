@@ -34,7 +34,6 @@ public:
 
     void setCurve(const VD&f, const VD&a, const VD&p, QString name);
 
-
     QScopedPointer<QLineSeries> amplitude,phase;
     double maxAmplitude,minAmplitude;
     double maxFrequency,minFrequency;
@@ -43,6 +42,7 @@ public:
     QColor color;
     QString name;
 };
+
 class FrequencyPlot : public QChartView
 {
     Q_OBJECT
@@ -68,7 +68,6 @@ class BodePlot : public FrequencyPlot
 public:
     BodePlot(QWidget*parent);
     void setResult(std::variant<const std::vector<ResultResponse>> & r);
-
 };
 
 class THDPlot : public FrequencyPlot

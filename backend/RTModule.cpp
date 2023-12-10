@@ -280,10 +280,11 @@ void RTModuleResponse::rt_after_process(){
 bool RTModuleResponse::tryGetResponse(ResultResponse & response){
     Acquisition::result r;
     while(responseQueue.try_dequeue(r)){
-        acc.add(r.result);
+        acc_raw_signal.add(r.result);
+        acc_delay.add(static_cast<double>(r.delay));
     }
-    if(acc.size > 0){
-        auto o = acc.get();
+    if(acc_raw_signal.size > 0){
+        auto o = acc_raw_signal.get();
         auto in = acq.getSignal();
         response = computeResponse(paramResponse,in,o,sampleRate);
         return true;

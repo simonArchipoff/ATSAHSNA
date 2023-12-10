@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include "RingBuffer.h"
 #include <stdexcept>
+#include <string>
 #include <vector>
 #include <Faust.h>
 
@@ -207,8 +208,29 @@ TEST_CASE("Test de Sender") {
         REQUIRE(output[3] == 2.0);
         REQUIRE(output[4] == 3.0);
         REQUIRE(output[5] == 4.0);
+
         REQUIRE(output[6] == 0.0);
         REQUIRE(output[7] == 0.0);
+
+        REQUIRE(output[8] == 1.0);
+        REQUIRE(output[9] == 2.0);
+        REQUIRE(output[10] == 3.0);
+        REQUIRE(output[11] == 4.0);
+
+        REQUIRE(output[12] == 0.0);
+        REQUIRE(output[13] == 0.0);
+
+        REQUIRE(output[14] == 1.0);
+        REQUIRE(output[15] == 2.0);
+        REQUIRE(output[16] == 3.0);
+        REQUIRE(output[17] == 4.0);
+
+        REQUIRE(output[18] == 0.0);
+        REQUIRE(output[19] == 0.0);
+
+        REQUIRE(output[20] == 0.0);
+        REQUIRE(output[21] == 0.0);
+
     }
 }
 
@@ -243,11 +265,12 @@ public:
 
 
 TEST_CASE("Test RTModuleHandler 1"){
-    const int sr = 100;
+    const int sr = 20;
     const int vector_size = 16;
+    const int delay = 23;
     FaustWithRTModule f(vector_size);
-    f.setCode("process = _ @ 23;\n",sr);
-    ParamResponse p{1, 20, 1};
+    f.setCode("process = _ @" + std::to_string(delay) +";\n",sr);
+    ParamResponse p{1, 5, 1};
     f.startResponse(p,0,1);
     for(int i = 0; i < 1000; i+=vector_size){
            f.run1cycle();

@@ -80,7 +80,7 @@ TEST_CASE("Convolution FFT Test 2 ") {
 }
 
 
-TEST_CASE("computeTHD") {
+TEST_CASE("computeTHD square") {
     uint t = 2*2048;
     VD v(t);
     for(uint i = 0; i < v.size(); i++){
@@ -119,11 +119,6 @@ TEST_CASE("find delay fft","[benchmark]"){
 
     int diff = compute_delay_fft(s,o);
 
-/*
-    to_file("/tmp/s",s);
-    to_file("/tmp/o",o);
-    to_file("/tmp/res",res);
-*/
     REQUIRE(diff == delay);
 }
 

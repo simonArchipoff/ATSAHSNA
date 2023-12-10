@@ -232,6 +232,7 @@ private:
     int integration_number;
     moodycamel::ConcurrentQueue<Acquisition::result> responseQueue;
     //accumulate results
-    Accumulate<VD,double> acc;
+    Accumulate<VD,double> acc_raw_signal;
+    Accumulate<double,double> acc_delay;
 };
 

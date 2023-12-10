@@ -93,3 +93,22 @@ public:
     }
 
 };
+
+
+template<>
+struct Accumulate<double,double>{
+    double acc = 0;
+    int size = 0;
+    void reset(){
+        acc = 0.0;
+        size = 0;
+    }
+    void add(double d){
+        acc += d;
+        size++;
+    }
+    double get(){
+        return acc/size;
+    }
+
+};
