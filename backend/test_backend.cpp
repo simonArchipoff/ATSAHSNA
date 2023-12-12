@@ -271,8 +271,8 @@ TEST_CASE("Test RTModuleHandler 1"){
     FaustWithRTModule f(vector_size);
     f.setCode("process = _ @" + std::to_string(delay) +";\n",sr);
     ParamResponse p{1, 5, 1};
-    f.startResponse(p,0,1);
-    for(int i = 0; i < 1000; i+=vector_size){
+    f.startResponse(p,0,4);
+    for(int i = 0; i < 10000; i+=vector_size){
            f.run1cycle();
     }
     vector<ResultResponse> r;

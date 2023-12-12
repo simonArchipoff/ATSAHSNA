@@ -225,7 +225,7 @@ Acquisition::ret_type Acquisition::rt_process_wait_response(const VD & input){
     if(rb.available() >= p.signal.size()*2){
         auto tab = rb.read(p.signal.size()*2);
         auto r = p.dc.getDelays(array_VD_to_VCD(tab));
-        auto f = compute_delay_fft(p.signal,(tab));
+        //auto f = compute_delay_fft(tab,p.signal);
         //send result
         res.level = r.second;
 
@@ -233,8 +233,8 @@ Acquisition::ret_type Acquisition::rt_process_wait_response(const VD & input){
             res.result.resize(p.signal.size());
             std::copy(tab.begin() + r.first, tab.begin() + r.first + p.signal.size(),res.result.begin());
             res.delay = r.first + time_waited - rb.available(); //r.first + time_waited - p.dc.getSize();
-            //rb.pop(p.signal.size()+r.first);
-            state &= ~RECIEVE;
+            rb.pop(p.signal.size()+r.first);
+            //state &= ~RECIEVE;
             return ret_type(res);
         } else {
             if(time_waited > p.timeout){

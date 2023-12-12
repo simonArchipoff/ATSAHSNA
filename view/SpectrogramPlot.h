@@ -1,10 +1,6 @@
 #pragma once
 #include <QWidget>
 
-#include <QChartView>
-#include <QLineSeries>
-#include <QValueAxis>
-
 
 #include <qcustomplot.h>
 #include "Spectrogram.h"
@@ -18,6 +14,6 @@ public:
     void plotSpectrogram(const ResultSpectrogram& spectrogram);
 
 private:
-         // Ajoutez des membres de données privées ou des méthodes privées au besoin
+
 };
 
