@@ -55,32 +55,30 @@ BackendJack::~BackendJack(){
 
 void * BackendJack::audio_thread(void * arg){
     BackendJack * jb = static_cast<BackendJack *>(arg);
-#warning TODO : fix this non RT safe things with vector
+
     while(1) {
         jack_nframes_t nframes = jack_cycle_wait(jb->client);
 
-        vector<VD> inputs; // I think it's not RT-safe to use this allocator
+        AudioIO<float> inputs;
         for(uint i = 0; i < jb->inputPorts.size(); i++) {
             auto in = (float*)jack_port_get_buffer(jb->inputPorts[i], nframes);
-            inputs.push_back(VD(in,in+nframes));
+            inputs.addChannel(nframes,in);
         }
 
+        AudioIO<float> outputs;
         int nbOutput = jb->outputPorts.size();
-        vector<VD> outputs(nbOutput);
-        for(auto &i : outputs){
-            i.resize(nframes);
+        for(uint i = 0; i < nbOutput; i++){
+            auto out = (float*)jack_port_get_buffer(jb->outputPorts[i], nframes);
+            outputs.addChannel(nframes,out);
         }
 
         jb->rt_process(inputs, outputs);
-        for(uint i = 0; i < jb->outputPorts.size(); i++){
-            auto out= (float*) jack_port_get_buffer(jb->outputPorts[i], nframes);
-            std::transform(outputs[i].begin(),outputs[i].end(),out,[](double x){return float(x);});
-        }
 
         jack_cycle_signal(jb->client,0);
         jb->rt_after_process();
     }
 }
+
 
 
 const char ** get_list_ports(jack_client_t * client){

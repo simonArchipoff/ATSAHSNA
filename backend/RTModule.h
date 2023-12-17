@@ -12,227 +12,139 @@
 #include <memory>
 #include "Response.h"
 #include "concurrentqueue.h"
+#include <AudioIO.h>
+#include "Acquisition.h"
 
-
+template<typename T>
 class RTModule {
 public:
-    virtual void rt_process(const vector<VD> & inputs, vector<VD> & outputs) = 0;
-    virtual void rt_after_process(){};
-};
-
-class RTModuleResponse;
-class RTModuleHarmonics;
-
-class RTModuleHandler{
-public:
-    void setModule(std::shared_ptr<RTModule>);
-    void startResponse(ParamResponse p,bool continuous,int integration);
-    void startHarmonics();
-
-    bool getResultHarmonics(vector<ResultHarmonics>& result);
-    bool getResultResponse(vector<ResultResponse>& result);
-
-protected:
-    void setSampleRate(uint);
-
-    void rt_process(const vector<VD> & inputs, vector<VD> & outputs);
-    void rt_after_process();
-
-    moodycamel::ConcurrentQueue<std::shared_ptr<RTModule>> toRTQueue;
-
-    std::shared_ptr<RTModule> module;
-
-private:
-    void rt_updateModule();
-    uint sampleRate = 0;
-    std::shared_ptr<RTModuleResponse> responseRTModule;
-};
-
-
-
-class Sender {
-public:
-    enum Mode {All,RoundRobin};
-    Sender(const VD& signal, Sender::Mode m, int number, int timeoff)
-        : state(Timeoffing), mode(m), signal(signal), number_rec(number), timeoff(timeoff),
-        current_output(0), current_send(0), current_timeoff(0), current_number_rec(0) {}
-
-    void rt_output(int time, float ** output, int nb_output, int nb_frames);
-
-private:
-    int rt_timeoff(int start_idx, float * output, int nb_frames);
-    int rt_send(int start_idx, float * output, int nb_frames);
-
-private:
-    enum State { Sending, SendingFinished, Timeoffing, TimeoffFinished, Finished};
-    //those two states are transitory ^^^                       ^^^
-    //they are used for the round robin logic
-    State state;
-    Mode mode;
-    const VD signal;
-    const int number_rec;
-    const int timeoff;
-    int current_output;
-    int current_send;
-    int current_timeoff;
-    int current_number_rec;
+  virtual void rt_process(const AudioIO<T>& inputs, AudioIO<T> & outputs) = 0;
+  virtual void rt_after_process(){};
 };
 
 
 template<typename T>
-class VectorPool{
-    VectorPool():pool(){}
-    void init(int number, int size){
-        for(auto i : pool){
-            delete[] i;
-        }
-        pool.resize(number);
-        for(auto & i : pool){
-            i=new double[size];
-        }
-    }
-    ~VectorPool(){
-        for(auto i : pool){
-            delete[] i;
-        }
-    }
-    T * getVector(){
-        for(auto & i : pool){
-            if(i){
-                auto tmp = i;
-                i = nullptr;
-                return tmp;
-            }
-        }
-        return nullptr;
-    }
-    void putVectorBack(T *v){
-        for(auto & i : pool){
-            if(!i){
-                i = v;
-                return;
-            }
-        }
-    }
-private:
-    std::vector<T *> pool;
-};
-
-class Receiver {
+class RTModuleResponse : public RTModule<T> {
 public:
+  RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number){
+  assert(sampleRate > 0);
+  this->integration_number = integration_number;
+  this->sampleRate = sampleRate;
+  auto s = computeChirp(p,  sampleRate);
+  acq.init(s);
+  acq.start();
+}
 
-    Receiver(int time, const VD& signal, int timeout);
+  void startResponse();
+  bool tryGetResponse(ResultResponse & response){
+    typename Acquisition<T>::result r;
+    /*while(responseQueue.try_dequeue(r)){
+      acc_raw_signal.add(r.result);
+      acc_delay.add(static_cast<double>(r.delay));
+    }*/
+    if(acc_raw_signal.size > 0){
+      auto o = acc_raw_signal.get();
+      //auto in = acq.getSignal();
+      //response = computeResponse(paramResponse,in,o,sampleRate);
+      return true;
+    }
+    return false;
+  }
 
+  void setContinuous(bool);
+  void setIntegrationSize(int s=1);
 
-    void rt_input(){
+  virtual void rt_process(const AudioIO<T> & inputs, vector<VD> & outputs) {
+    auto r = acq.rt_process(inputs[0],outputs[0]);
+    try{
+      //responseQueue.enqueue(std::get<Acquisition<T>::result>(r));
+    } catch(const std::bad_variant_access& ex){
     }
 
-    struct ReceiverResult {
-        double * data;
-        int size;
-        int time;
-    };
-    void putVectorBack(double * v){
-        vectorQueue.enqueue(v);
-    }
-    void putVectorBack(ReceiverResult&r){
-        putVectorBack(r.data);
-    }
+  }
+  virtual void rt_after_process() override;
 
 private:
-    moodycamel::ConcurrentQueue<double*> vectorQueue;
-    moodycamel::ConcurrentQueue<ReceiverResult> resultQueue;
-    VectorPool<double> pool;
+  //    VCD chirp;
+  Acquisition<T> acq;
+  uint sampleRate;
+  ParamResponse paramResponse;
+  bool continuous;
+  int integration_number;
 
-    DelayComputer delayComputer;
-    std::vector<RingBuffer<double>> ringbuffers;
+  //accumulate results
+  Accumulate<vector<T>,T> acc_raw_signal;
+  Accumulate<T,T> acc_delay;
 };
 
 
-
-class Acquisition{
+template<typename T>
+class RTModuleHandler{
 public:
-    Acquisition():state(DISABLED){
+  void setModule(std::shared_ptr<RTModule<T>> m){
+    toRTQueue.enqueue(m);
+  }
+  void startResponse(ParamResponse p,bool continuous,int integration){
+    if(this->responseRTModule){
+      m.reset();
     }
+    m = std::make_shared<RTModuleResponse<T>>(sampleRate, p, integration);
+    setModule(responseRTModule);
+  }
+  void startHarmonics();
 
-    struct timeout{
-        int dummy;
-    };
-
-    struct result {
-        double level = 0.0;
-        VD result;
-        int delay;
-    };
-
-    typedef std::variant<result,std::monostate,timeout> ret_type;
-
-    void init(const VCD & signal,double threshold=0.9);
-
-    void start(){
-        state = SEND | RECIEVE;
-        time_waited = 0;
-        sending_index = 0;
-        rb.reset();
+  bool getResultHarmonics(vector<ResultHarmonics>& result){
+    result.clear();
+    abort();
+    return false;
+  }
+  bool getResultResponse(vector<ResultResponse>& result){
+    result.clear();
+    result.resize(1);
+    ResultResponse r;
+    if(responseRTModule && responseRTModule->tryGetResponse(r)){
+      result[0] = r;
+      return true;
+    } else {
+      result.clear();
+      return false;  
     }
-
-    ret_type rt_process(const VD & input, VD & output);
-    VD getSignal(){
-        return p.signal;
-    }
+  }
 
 protected:
-    struct params {
-        VD signal;
-        DelayComputer dc;
-        double threshold_level;
-        uint timeout;
-        int sample_between_iteration;
-    };
+  void setSampleRate(uint sr){
+    sampleRate = sr;
+  }
 
+  void rt_process(const AudioIO<float> & inputs, AudioIO<float> & outputs){
+    (void)outputs;
+    rt_updateModule();
+    if(!module){
+      for(auto & v:outputs){
+	std::fill(v.begin(),v.end(),0.0);
+      }
+    } else {
+      module->rt_process(inputs, outputs);
+    }
+  }
 
-    enum state_t {
-         DISABLED = 0
-        ,SEND     = 2
-        ,RECIEVE  = 4
-    };
+  void rt_after_process(){
+    if(module){
+      module->rt_after_process();
+    }
+  }
 
-    uint state = SEND|RECIEVE;
-    uint sending_index;
+  moodycamel::ConcurrentQueue<std::shared_ptr<RTModule<T>>> toRTQueue;
 
-    void rt_process_sending(VD & input);
-    uint time_waited;
-    Acquisition::ret_type rt_process_wait_response(const VD & input);
-
-    RingBuffer<double> rb;
-    params p;
-};
-
-
-
-class RTModuleResponse : public RTModule {
-public:
-    RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number = 1);
-
-    void startResponse();
-    bool tryGetResponse(ResultResponse & v);
-
-    void setContinuous(bool);
-    void setIntegrationSize(int s=1);
-
-    virtual void rt_process(const vector<VD> & inputs, vector<VD> & outputs) override;
-    virtual void rt_after_process() override;
+  std::shared_ptr<RTModule<T>> module;
 
 private:
-//    VCD chirp;
-    Acquisition acq;
-    uint sampleRate;
-    ParamResponse paramResponse;
-    bool continuous;
-    int integration_number;
-    moodycamel::ConcurrentQueue<Acquisition::result> responseQueue;
-    //accumulate results
-    Accumulate<VD,double> acc_raw_signal;
-    Accumulate<double,double> acc_delay;
+  void rt_updateModule(){
+    if(toRTQueue.try_dequeue(m)){
+      module = m;
+    }
+  }
+  std::shared_ptr<RTModule<T>> m;
+  uint sampleRate = 0;
+  std::shared_ptr<RTModuleResponse<T>> responseRTModule;
 };
-

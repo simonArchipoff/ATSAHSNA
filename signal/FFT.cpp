@@ -3,7 +3,18 @@
 #include <mutex>
 
 using std::mutex;
+
 static mutex plan_mutex;
+
+
+FFTWScopedLocker::FFTWScopedLocker(){
+    plan_mutex.lock();
+}
+
+FFTWScopedLocker::~FFTWScopedLocker(){
+    plan_mutex.unlock();
+}
+
 VCD fft(const VD & input){
     VCD out(input.size());
     plan_mutex.lock();
@@ -52,6 +63,11 @@ void rfft(const VCD & input, VCD & out){
     fftw_execute(p);
     fftw_destroy_plan(p);
 }
+
+
+
+
+
 
 DFT::DFT(size_t size){
     init(size);
@@ -137,5 +153,3 @@ double* DFTrc::getInput() const {
 fftw_complex* DFTrc::getOutput() const {
     return output;
 }
-
-
