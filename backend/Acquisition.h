@@ -17,8 +17,6 @@ public:
     sender.rt_process(outputs);
     receiver.rt_process(inputs);
   }
-
-
   
 
   struct result{

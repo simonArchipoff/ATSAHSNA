@@ -85,11 +85,11 @@ public:
     toRTQueue.enqueue(m);
   }
   void startResponse(ParamResponse p,bool continuous,int integration){
-    if(this->responseRTModule){
+    if(this->m){
       m.reset();
     }
-    m = std::make_shared<RTModuleResponse<T>>(sampleRate, p, integration);
-    setModule(responseRTModule);
+    //m = std::make_shared<RTModuleResponse<T>>(sampleRate, p, integration);
+    //setModule(responseRTModule);
   }
   void startHarmonics();
 
@@ -99,7 +99,7 @@ public:
     return false;
   }
   bool getResultResponse(vector<ResultResponse>& result){
-    result.clear();
+    /*result.clear();
     result.resize(1);
     ResultResponse r;
     if(responseRTModule && responseRTModule->tryGetResponse(r)){
@@ -108,7 +108,7 @@ public:
     } else {
       result.clear();
       return false;  
-    }
+    }*/
   }
 
 protected:
@@ -146,5 +146,4 @@ private:
   }
   std::shared_ptr<RTModule<T>> m;
   uint sampleRate = 0;
-  std::shared_ptr<RTModuleResponse<T>> responseRTModule;
 };

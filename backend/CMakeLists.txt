@@ -24,7 +24,10 @@ set(BACKEND_SOURCES
     RingBuffer.cpp
 
     RTModule.h
-    RTModule.cpp
+
+    Acquisition.h
+    Sender.h
+    Receiver.h
 
     concurrentqueue.h
 )
