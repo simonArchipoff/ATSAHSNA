@@ -21,8 +21,6 @@ VD window(uint size, window_type t);
 VD convolution_fft(const VD&a,const VD&b);
 VCD convolution_fft(const VCD&a, const VCD&b);
 VD correlation_fft(const VD&a, const VD&b);
-
-
 VCD reverse_and_conj(const VCD & v);
 
 
@@ -48,43 +46,46 @@ double rms(iterator begin, iterator end){
 
 
 
+template<typename T>
 class ConvolutionByConstant {
-public:
+  public:
   ConvolutionByConstant();
-  void setOperand(const VCD &v, uint other_operand_size);
+  void setOperand(vector<complex<T>> &o , uint other_operand_size);
 
-  VCD convolution_fft(const VCD&v){
-    convolution_fft(v.begin(),v.end());
-    VCD r(getOutput(),getOutput() + getOutputSize() );
-    return r;
-  }
+  /*
+  VCD convolution_fft(const vector&v){
+      convolution_fft(v.begin(),v.end());
+      VCD r(getOutput(),getOutput() + getOutputSize() );
+      return r;
+  }*/
 
   template<typename iterator>
   void convolution_fft(iterator begin, iterator end){
-    int input_size = std::distance(begin,end);
-    assert( input_size <= dft.getSize());
-    dft.setInput(begin,end);
-    dft.fft();
-    auto * outdft = (std::complex<double>*) dft.getOutput();
-    auto * in = (std::complex<double>*) dft.getInput();
-    // multiply
-    for(uint i = 0; i < dft.getSize() ; i++){
-      in[i] = outdft[i] * fft_const[i];
-    }
-    dft.rfft();
-    std::transform(getOutput(),getOutput() + getOutputSize(), getOutput(),[](std::complex<double> s){return s * std::complex<double>(1./5.,0);});
+      int input_size = std::distance(begin,end);
+      assert( input_size <= dft.getSize());
+      dft.setInput(begin,end);
+      dft.fft();
+      auto * outdft = (std::complex<double>*) dft.getOutput();
+      auto * in = (std::complex<double>*) dft.getInput();
+      // multiply
+      for(uint i = 0; i < dft.getSize() ; i++){
+          in[i] = outdft[i] * fft_const[i];
+      }
+      dft.rfft();
+      std::transform(getOutput(),getOutput() + getOutputSize(), getOutput(),[](std::complex<T> s){return s * std::complex<T>(1./5.,0);});
   }
   int getOutputSize(){
-    return dft.getSize();
+      return dft.getSize();
   }
   std::complex<double> * getOutput(){
-    return (std::complex<double>*)dft.getOutput();
+      return (std::complex<double>*)dft.getOutput();
   }
   uint getSize() const;
 
-private:
-  std::complex<double> *fft_const;
-  DFT dft;
+  private:
+  std::complex<T> *fft_const;
+  DFFT<complex<T>,complex<T>> dft;
+  DFFTr<complex<T>,complex<T>> dftr;
 };
 
 

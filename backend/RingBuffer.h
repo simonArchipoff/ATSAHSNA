@@ -15,19 +15,16 @@ public:
         buff.resize(size);
     }
 
-    std::vector<T> read(uint size) const{
+    void read(uint size,T * res) const{
         assert(size <= available());
-        std::vector<T> res;
-        res.resize(size,42);
         if(buff.size() - begin >= size){
-            std::copy(buff.cbegin() + begin, buff.cbegin() + begin + size,res.begin());
+            std::copy(buff.cbegin() + begin, buff.cbegin() + begin + size,res);
         } else {
             int tmp = buff.size() - begin;
             assert(tmp < int(size));
-            std::copy(buff.cbegin() + begin, buff.end(), res.begin());
-            std::copy(buff.cbegin(), buff.cbegin() + (size - tmp)  , res.begin() + tmp);
+            std::copy(buff.cbegin() + begin, buff.end(), res);
+            std::copy(buff.cbegin(), buff.cbegin() + (size - tmp)  , res + tmp);
         }
-        return res;
     }
 
     void pop(uint size){

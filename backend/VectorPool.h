@@ -1,44 +1,43 @@
 #pragma once
 #include <vector>
-
+#include <AudioIO.h>
 
 
 template<typename T>
 class VectorPool{
 public:
-  VectorPool():pool(){}
-  void init(int number, int size){
-    for(auto i : pool){
-      delete[] i;
+    VectorPool(int number,int size):pool(number),size(size){
+        for(auto & i : pool){
+            i = new T[size];
+        }
     }
-    pool.resize(number);
-    for(auto & i : pool){
-      i=new T[size];
+    ~VectorPool(){
+        for(auto i : pool){
+            delete[] i;
+        }
     }
-  }
-  ~VectorPool(){
-    for(auto i : pool){
-      delete[] i;
+    VectorCStyle<T> * getVector(){
+        for(auto & i : pool){
+            if(i){
+                auto tmp = i;
+                i = nullptr;
+                VectorCStyle<T> res;
+                res.v = tmp;
+                res.v_size = size;
+                return res;
+            }
+        }
+        return nullptr;
     }
-  }
-  T * getVector(){
-    for(auto & i : pool){
-      if(i){
-	auto tmp = i;
-	i = nullptr;
-	return tmp;
-      }
+    void putVectorBack(VectorCStyle<T> &v){
+        for(auto & i : pool){
+            if(!i){
+                i = v.data();
+                return;
+            }
+        }
     }
-    return nullptr;
-  }
-  void putVectorBack(T *v){
-    for(auto & i : pool){
-      if(!i){
-	i = v;
-	return;
-      }
-    }
-  }
 private:
-  std::vector<T *> pool;
+    std::vector<T *> pool;
+    int size;
 };

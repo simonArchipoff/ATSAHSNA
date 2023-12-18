@@ -17,15 +17,21 @@ public:
     sender.rt_process(outputs);
     receiver.rt_process(inputs);
   }
-  
+  struct result;
+  bool tryGetResult(result & r){
+
+    abort();
+  }
 
   struct result{
     vector<T> result;
-    int time;
+    int time_sent;
+    int time_result;
     int input_index;
     int output_index;
   };
-  
+
+
 protected:
   Sender<T> sender;
   Receiver<T> receiver;  
