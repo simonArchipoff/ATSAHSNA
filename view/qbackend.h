@@ -11,11 +11,15 @@
 #include <QPushButton>
 #include <QSpinBox>
 
+#if ENABLE_JACK
 #include <Jack.h>
+#include <QJackView.h>
+#endif
+
 #include <Faust.h>
 #include <faust/gui/QTUI.h>
 
-#include <QJackView.h>
+
 
 
 
@@ -47,9 +51,12 @@ public:
         //setTabsClosable(true);
     }
     QFaustView *  addFaust(QString name);
+#if ENABLE_JACK
     QJackView  * addJack();
+    std::vector<QJackView *>  jacks;
+#endif
 
 protected:
     QVector<QFaustView *> fausts;
-    std::vector<QJackView *>  jacks;
+
 };

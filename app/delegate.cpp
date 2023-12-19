@@ -1,9 +1,9 @@
 #include "delegate.h"
-#include "QJackView.h"
+
 #include "Response.h"
 #include "backend.h"
 #include "delegate.moc"
-#include "Jack.h"
+
 #include "mainwindow.h"
 #include "Harmonics.h"
 
@@ -11,11 +11,15 @@
 
 #include <BodePlot.h>
 #include <qnamespace.h>
-
-
+#ifdef ENABLE_JACK
+#include "Jack.h"
+#include "QJackView.h"
+#endif
 delegate::delegate(MainWindow * m):mw{m}
 {
+#ifdef ENABLE_JACK
     connect(m,&MainWindow::addJackBackendRequested,this, &delegate::addJackBackend);
+#endif
     connect(m,&MainWindow::addFaustBackendRequested,this, &delegate::addFaustBackend);
 }
 
@@ -61,6 +65,7 @@ bool QBackendFaust::isReady() const{
     return backend->isReady();
 }
 
+#ifdef ENABLE_JACK
 QBackendJack::QBackendJack(QJackView * gui, QString name):backend(new QJack()),jack_gui{gui}{
     connect(jack_gui,&QJackView::requestNewInputPort, this,[this](QString s){backend->addInputPort(s.toStdString());});
     connect(jack_gui,&QJackView::requestNewOutputPort,this,[this](QString s){backend->addOutputPort(s.toStdString());});
@@ -105,6 +110,12 @@ void QBackendJack::timerEvent(QTimerEvent * e){
         emit resultHarmonics(h);
 }
 
+void delegate::addJackBackend(){
+    auto j = mw->backends->addJack();
+    jack = new QBackendJack(j,"jack");
+    //j->set_sample_rate(jack->getSampleRate()); // bit ugly, I dont know why the callback isn't called
+}
+#endif
 /*
 class QBackendJack : public QObject {
     Q_OBJECT
@@ -137,11 +148,7 @@ void delegate::addFaustBackend() {
             Qt::UniqueConnection);
 }
 
-void delegate::addJackBackend(){
-    auto j = mw->backends->addJack();
-    jack = new QBackendJack(j,"jack");
-    //j->set_sample_rate(jack->getSampleRate()); // bit ugly, I dont know why the callback isn't called
-}
+
 
 void delegate::addResponseDisplay(){
     if(!mw->displays->isBodeInit()){
@@ -168,4 +175,5 @@ create_faust_qt(QString dspCode, int sampleRate, QWidget * parent){
     QString s = QString::fromStdString(tmp->getErrorMessage());
     delete tmp;
     return dsp_or_error{s};
-}*/
+}
+*/

@@ -46,34 +46,41 @@ double rms(iterator begin, iterator end){
 
 
 
+
+
 template<typename T>
 class ConvolutionByConstant {
   public:
-  ConvolutionByConstant();
-  void setOperand(vector<complex<T>> &o , uint other_operand_size);
+  ConvolutionByConstant(const vector<T> & v, uint other_operand_size):ConvolutionByConstant(array_VD_to_VCD(v),other_operand_size){};
+  ConvolutionByConstant(const vector<complex<T>> & v, uint other_operand_size)
+      :dft(v.size() + other_operand_size - 1)
+      ,dftr(dft.getSize())
+      //,fft_const(getBuffer<T>(dft.getSize()))
+  {
+      vector<complex<T>> tmp(v);
+      tmp.resize(dft.getSize(),0);
+      dft.execute(tmp.data(),fft_const);
+  }
 
-  /*
-  VCD convolution_fft(const vector&v){
-      convolution_fft(v.begin(),v.end());
-      VCD r(getOutput(),getOutput() + getOutputSize() );
-      return r;
-  }*/
+  void convolution_fft(const T * v, int size){
 
+  }
+
+
+#if 0
   template<typename iterator>
   void convolution_fft(iterator begin, iterator end){
       int input_size = std::distance(begin,end);
       assert( input_size <= dft.getSize());
       dft.setInput(begin,end);
       dft.fft();
-      auto * outdft = (std::complex<double>*) dft.getOutput();
-      auto * in = (std::complex<double>*) dft.getInput();
-      // multiply
       for(uint i = 0; i < dft.getSize() ; i++){
           in[i] = outdft[i] * fft_const[i];
       }
       dft.rfft();
       std::transform(getOutput(),getOutput() + getOutputSize(), getOutput(),[](std::complex<T> s){return s * std::complex<T>(1./5.,0);});
   }
+#endif
   int getOutputSize(){
       return dft.getSize();
   }
@@ -83,13 +90,13 @@ class ConvolutionByConstant {
   uint getSize() const;
 
   private:
+  DFFT<T,complex<T>> dft;
+  DFFTr<complex<T>,T> dftr;
   std::complex<T> *fft_const;
-  DFFT<complex<T>,complex<T>> dft;
-  DFFTr<complex<T>,complex<T>> dftr;
 };
 
 
-
+#if 0
 
 class DelayComputer
 {
@@ -130,7 +137,7 @@ private:
   double refLevel;
 };
 
-
+#endif
 
 
 

@@ -9,7 +9,6 @@ VCD fft(const VCD& input);
 VCD fft(const VD&  input, int size);
 VCD fft(const VCD& input, int size);
 
-
 void rfft(const VCD & input, VD& output,int size);
 void rfft(const VCD & input, VCD& output);
 
@@ -32,8 +31,6 @@ public:
     int getOutputSize() const {
         return size;
     }
-
-
 
 protected:
     int size;

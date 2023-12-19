@@ -50,7 +50,7 @@ TEST_CASE("Convolution FFT Test", "[convolution_fft]") {
 
     }
 }
-
+#if 0
 TEST_CASE("Convolution FFT Test 2 ") {
     SECTION("Test avec des vecteurs simples") {
 
@@ -78,7 +78,7 @@ TEST_CASE("Convolution FFT Test 2 ") {
         };
     }
 }
-
+#endif
 
 TEST_CASE("computeTHD square") {
     uint t = 2*2048;
@@ -123,7 +123,7 @@ TEST_CASE("find delay fft","[benchmark]"){
 }
 
 
-
+#if 0
 TEST_CASE("find delay DelayComputer","[benchmark]"){
     int SR = 44000;
     double d = 0.1;
@@ -152,6 +152,9 @@ TEST_CASE("find delay DelayComputer","[benchmark]"){
 
 }
 
+#endif
+
+
 TEST_CASE("optimal window"){
     int SR = 44000;
     double f = 100;
@@ -163,7 +166,7 @@ TEST_CASE("optimal window"){
     REQUIRE(s == r);
 }
 
-
+#if 0
 TEST_CASE("stft"){
     int SR = 44000;
     double d = 0.1;
@@ -177,3 +180,4 @@ TEST_CASE("stft"){
     //to_file("/tmp/stft",res.data);
 
 }
+#endif

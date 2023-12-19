@@ -79,7 +79,7 @@ QFaustView * QBackendsView::addFaust(QString name){
     return f;
 }
 
-
+#if ENABLE_JACK
 QJackView * QBackendsView::addJack(){
     auto f = new QJackView;
     QScrollArea * s = new QScrollArea;
@@ -89,3 +89,4 @@ QJackView * QBackendsView::addJack(){
     jacks.push_back(f);
     return f;
 }
+#endif

@@ -75,7 +75,7 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
 
 
 
-
+#if 0
 ResultSpectrogram stft(const double * begin, const double * end, int size_fft, int increment_fft, unsigned int sampleRate, window_type window_type){
     auto w = window(size_fft,window_type);
     DFTrc fft(size_fft);
@@ -104,3 +104,4 @@ ResultSpectrogram stft(const double * begin, const double * end, int size_fft, i
     }
     return res;
 }
+#endif

@@ -128,7 +128,7 @@ VD try_make_phase_continuous(const VD &v){
 }
 
 
-
+#if 0
 
 ConvolutionByConstant::ConvolutionByConstant():fft_const(nullptr){}
 
@@ -211,3 +211,4 @@ std::pair<uint,double> DelayComputer::getDelays(const VCD &s){
     return std::pair{d - s.size()  + 1,(*m/this->refLevel) / r};
 }
 */
+#endif
