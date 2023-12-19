@@ -107,7 +107,10 @@ void MainWindow::createMenus()
 {
   QMenu* backendMenu = new QMenu("Backend", this);
   QAction* addFaustAction = backendMenu->addAction("Add Faust");
+#ifdef ENABLE_JACK
   QAction* addJackAction = backendMenu->addAction("Add Jack");
+  connect(addJackAction, &QAction::triggered, this, &MainWindow::onAddJackBackendRequested);
+#endif
   menuBar()->addMenu(backendMenu);
 
   QMenu* analyseMenu = new QMenu("Analyse", this);
@@ -126,7 +129,7 @@ void MainWindow::createMenus()
   connect(this, &MainWindow::addHarmonicsWidgetRequested, this, &MainWindow::onAddHarmonicsWidgetRequested);
   connect(this, &MainWindow::addSpectrogramWidgetRequested, this, &MainWindow::onAddSpectrogramWidgetRequested);
   connect(addFaustAction, &QAction::triggered, this, &MainWindow::onAddFaustBackendRequested);
-  connect(addJackAction, &QAction::triggered, this, &MainWindow::onAddJackBackendRequested);
+
 }
 
 void MainWindow::onAddResponseWidgetRequested()
