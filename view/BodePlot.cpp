@@ -1,4 +1,5 @@
 #include "BodePlot.h"
+#include "SpectrogramPlot.h"
 #include "qnamespace.h"
 
 
@@ -60,7 +61,7 @@ FrequencyPlot::FrequencyPlot(QWidget * parent):QChartView(parent)
     chart.addAxis(phase_axis,Qt::AlignRight);
 
 
-    phase_axis->setRange(-180,0);
+    phase_axis->setRange(-180,180);
     auto p = phase_axis->gridLinePen();
     p.setStyle(Qt::DashLine);
     p.setWidth(2);
@@ -153,7 +154,11 @@ void THDPlot::setResult(std::variant<const std::vector<ResultHarmonics>> & r){
 }
 
 
-QDisplays::QDisplays(QWidget * parents):QTabWidget(parents),bodePlot{nullptr},thdPlot{nullptr}{
+QDisplays::QDisplays(QWidget * parents)
+    :QTabWidget(parents)
+    ,bodePlot{nullptr}
+    ,thdPlot{nullptr}
+    ,spectrogramPlot{nullptr}{
 }
 
 bool QDisplays::isBodeInit(){
@@ -161,6 +166,9 @@ bool QDisplays::isBodeInit(){
 }
 bool QDisplays::isTHDinit(){
     return thdPlot;
+}
+bool QDisplays::isSpectrogramInit(){
+    return spectrogramPlot;
 }
 
 
@@ -234,6 +242,14 @@ THDPlot * QDisplays::getTHDPlot(){
         addTab(thdPlot,"harmonics");
     }
     return thdPlot;
+}
+
+SpectrogramPlot * QDisplays::getSpectrogramPlot(){
+    if(!spectrogramPlot){
+        spectrogramPlot = new SpectrogramPlot(this);
+        addTab(spectrogramPlot,"spectrogram");
+    }
+    return spectrogramPlot;
 }
 
 /*

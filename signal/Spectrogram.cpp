@@ -63,9 +63,10 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
     //flip matrix and compute abs value
     for(int p = 0; p < n * f; p += 1){
         auto row =  (f-1) - (p / n);
-        auto col = p % n;
+        auto col = p % n ;
         float r = tfm[2* p]
-            , i = tfm[(2* p) +1];
+            , i = tfm[(2* p) + 1];
+        assert(n*row + col < n * f);
         res.data[n*row + col] = static_cast<double>(sqrt(r*r + i*i));
     }
 

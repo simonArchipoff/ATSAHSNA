@@ -41,7 +41,7 @@ signals:
 private:
     ParamResponseWidget* paramResponseWidget;
     ParamHarmonicsWidget* paramHarmonicsWidget;
-    ParamSpectrogramWidget* spectrogramWidget;
+    ParamSpectrogramWidget* paramSpectrogramWidget;
 };
 
 

@@ -18,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent)
     :QMainWindow{parent}
     ,backends{new QBackendsView(this)}
     ,displays{new QDisplays{this}}
+    ,paramResponseWidget{nullptr}
+    ,paramHarmonicsWidget{nullptr}
+    ,paramSpectrogramWidget{nullptr}
   //,measures{new QMeasure{this}}
 {
   //QToolBar * toolbar = addToolBar("main toolbar");
@@ -144,7 +147,7 @@ void MainWindow::onAddHarmonicsWidgetRequested()
 
 void MainWindow::onAddSpectrogramWidgetRequested()
 {
-  spectrogramWidget->show();
+  paramSpectrogramWidget->show();
 }
 
 void MainWindow::onAddFaustBackendRequested()

@@ -84,13 +84,15 @@ public:
 
     bool isBodeInit();
     bool isTHDinit();
+    bool isSpectrogramInit();
 
     BodePlot * getBodePlot();
     THDPlot * getTHDPlot();
+    SpectrogramPlot * getSpectrogramPlot();
 protected:
     BodePlot * bodePlot;
     THDPlot * thdPlot;
-    SpectrogramPlot * specPlot;
+    SpectrogramPlot * spectrogramPlot;
 };
 
 

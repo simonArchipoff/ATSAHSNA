@@ -78,6 +78,7 @@ public:
 #endif
     void addResponseDisplay();
     void addHarmonicsDisplay();
+    void addSpectrogramDisplay();
 
     QVector<QBackendFaust *> faust;
 #ifdef ENABLE_JACK

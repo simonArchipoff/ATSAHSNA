@@ -19,13 +19,15 @@ void SpectrogramPlot::plotSpectrogram(const ResultSpectrogram& spectrogram) {
 
 
     // Configuration de l'échelle des axes
-    xAxis->setRange(0, spectrogram.max_idx_time_rank * timeStep); // L'axe du temps est maintenant en secondes
+    //xAxis->setRange(0, spectrogram.max_idx_time_rank * timeStep); // L'axe du temps est maintenant en secondes
+    yAxis->setScaleType(QCPAxis::stLogarithmic);
 
     // Afficher le spectrogramme en 2D
     //addGraph(xAxis,yAxis);
     QCPColorMap* colorMap = new QCPColorMap(xAxis, yAxis);
     colorMap->data()->setSize(spectrogram.max_idx_time_rank, spectrogram.max_freq_rank);
-    colorMap->data()->setRange(QCPRange(0, spectrogram.max_idx_time_rank * timeStep), QCPRange(0, *spectrogram.frequencies.rbegin()));
+    colorMap->data()->setRange(QCPRange(0, spectrogram.max_idx_time_rank * timeStep), QCPRange(*spectrogram.frequencies.begin()
+                                                                                               ,*spectrogram.frequencies.rbegin()));
     for (uint i = 0; i < spectrogram.data.size(); ++i) {
         colorMap->data()->setCell(i % spectrogram.max_idx_time_rank, i / spectrogram.max_idx_time_rank, spectrogram.data[i]);
     }
