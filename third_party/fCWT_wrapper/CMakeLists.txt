@@ -14,11 +14,11 @@ if (OPENMP_FOUND)
 endif()
 
 set(libraryheaders
-    "./fCWT/src/fcwt.h"
+    "./fCWT/src/fcwt/fcwt.h"
 )
 
 set(librarysources 
-    "./fCWT/src/fcwt.cpp"
+    "./fCWT/src/fcwt/fcwt.cpp"
 )
 
 
