@@ -28,6 +28,7 @@ QBackendFaust::QBackendFaust(QFaustView * gui, QString name):QObject{},faust_gui
     connectGUI();
 }
 QBackendFaust::~QBackendFaust(){
+    delete backend;
   //  ui->stop();
 }
 void QBackendFaust::timerEvent(QTimerEvent * e){
