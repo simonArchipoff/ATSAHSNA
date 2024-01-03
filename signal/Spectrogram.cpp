@@ -1,14 +1,15 @@
 #include "Spectrogram.h"
 
 #include <fcwt.h>
+#include <fftw3.h>
 #include <iterator>
-
+#include <omp.h>
 
 ResultSpectrogram spectrogram(const std::vector<double> &data
                               ,int nb_octaves
                               ,int resolution
                               , uint sampleRate){
-    int n = data.size();//std::exp2(find2power(data.size())); //signal length
+    int n = std::exp2(find2power(data.size()))+1; //signal length
     float fs = sampleRate; //sampling frequency
 
 
@@ -24,14 +25,14 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
         else
             sig[i] = 0;
     }
-    Morlet morlet(13);
+    Morlet morlet(40);
     FCWT fcwt(&morlet,4,true,false);
 
 
-    Scales scs(&morlet, FCWT_LOGSCALES, fs, 20*fs/data.size() , fs/2, f);
+    Scales scs(&morlet, FCWT_LOGSCALES, fs, 30*fs/data.size() , fs/2, f);
 
     fcwt.cwt(sig.data(),n,tfm.data(),&scs);
-    fcwt.create_FFT_optimization_plan(n*2,FFTW_ESTIMATE);
+    //fcwt.create_FFT_optimization_plan(n*2,FFTW_ESTIMATE);
 
     ResultSpectrogram res(static_cast<double>(n) / fs, n, f);
     res.sampleRate = sampleRate;
@@ -59,33 +60,40 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
 
 
 
-#if 0
-ResultSpectrogram stft(const double * begin, const double * end, int size_fft, int increment_fft, unsigned int sampleRate, window_type window_type){
+
+ResultSpectrogram stft(const float * begin, const float * end, int size_fft, int increment_fft, unsigned int sampleRate, window_type window_type){
     auto w = window(size_fft,window_type);
-    DFTrc fft(size_fft);
+    DFFT<float,std::complex<float>> fft(size_fft);
+
     int input_size = std::distance(begin,end);
     ResultSpectrogram res(static_cast<double>(input_size) / sampleRate, (std::distance(begin, end) - size_fft) / (increment_fft),fft.getOutputSize()-1); // I remove the null freq.
     res.sampleRate = sampleRate;
     //output frequency size is input_size / 2 + 1 (hermitian thing) - 1 (remove the constant) = input_size / 2
     for(uint i = 0; i < res.frequencies.size(); i++){
-        res.frequencies[i] = (i+1) *  static_cast<double>(sampleRate) / static_cast<double>(size_fft);
+        res.frequencies[i] = (i+1) *  static_cast<double>(sampleRate)
+                             / static_cast<double>(size_fft);
     }
 
-    for(int i = 0; i < res.max_idx_time_rank ; i++){
-        auto input = fft.getInput();
-        for(uint j = 0; j < fft.getInputSize(); j++){
+#pragma omp parallel
+    {
+        float * input = fftwf_alloc_real(size_fft);
+        std::complex<float> * output = (std::complex<float>*) fftwf_alloc_complex(fft.getOutputSize());
+#pragma omp for
+        for(int i = 0; i < res.max_idx_time_rank ; i++){
+            for(int j = 0; j < size_fft; j++){
+                const int current_input_idx = i*(increment_fft)+j;
+                assert(current_input_idx < input_size);
+                input[j] = w[j] * begin[current_input_idx];
 
-            const int current_input_idx = i*(increment_fft)+j;
-            assert(current_input_idx < input_size);
-            input[j] = w[j] * begin[current_input_idx];
-
+            }
+            fft.execute(input,output);
+            for(int j = 1; j < fft.getOutputSize(); j++){
+                res.at(j-1,i) = std::abs(output[j]);
+            }
         }
-        fft.fft();
-        auto output = (std::complex<double> *) fft.getOutput();
-        for(int j = 1; j < fft.getOutputSize(); j++){
-            res.at(j-1,i) = std::abs(output[j]);
-        }
+        fftwf_free(input);
+        fftwf_free(output);
     }
     return res;
 }
-#endif
+

@@ -23,7 +23,6 @@ class DFFTfloat{
 public:
     DFFTfloat(int size):size(size){}
     ~DFFTfloat(){
-        fftwf_destroy_plan(plan);
     }
     int getSize() const {
         return size;
@@ -41,7 +40,6 @@ class DFFTdouble{
 public:
     DFFTdouble(int size):size(size){}
     ~DFFTdouble(){
-        fftw_destroy_plan(plan);
     }
     int getSize(){
         return size;

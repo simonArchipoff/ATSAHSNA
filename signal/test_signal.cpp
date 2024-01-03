@@ -166,18 +166,19 @@ TEST_CASE("optimal window"){
     REQUIRE(s == r);
 }
 
-#if 0
+
 TEST_CASE("stft"){
     int SR = 44000;
-    double d = 0.1;
+    double d = 30;
     auto o = chirp(10,20000,d,SR);
-
-    auto res = stft(o.data(), o.data() + o.size(), 1024, 1, SR, HANN);
-    /*BENCHMARK("stft") {
-        return stft(o.data(), o.data() + o.size(), 1024, 1024-1, SR, HANN);
-    };*/
+    {
+        auto res = stft(o.data(), o.data() + o.size(), 1024, 1, SR, HANN);
+    }
+    BENCHMARK("stft") {
+        return stft(o.data(), o.data() + o.size(), 1024, 1, SR, HANN);
+    };
 
     //to_file("/tmp/stft",res.data);
 
 }
-#endif
+

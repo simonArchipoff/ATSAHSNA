@@ -42,8 +42,12 @@ struct ResultSpectrogram{
 
 
 
-ResultSpectrogram stft(const double * begin, const double * end, int size_fft, int increment_fft, unsigned int sampleRate, window_type window=HANN);
-
+ResultSpectrogram stft(const float * begin, const float * end, int size_fft, int increment_fft, unsigned int sampleRate, window_type window=HANN);
+inline
+ResultSpectrogram stft(const double * begin, const double * end, int size_fft, int increment_fft, unsigned int sampleRate, window_type window=HANN){
+    vector<float> input(begin,end);
+    return stft(input.data(),input.data() + input.size(), size_fft, increment_fft, sampleRate, window);
+}
 
 ResultSpectrogram spectrogram(const std::vector<double> &data
                               , int nb_octave
