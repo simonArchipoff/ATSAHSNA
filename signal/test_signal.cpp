@@ -169,11 +169,11 @@ TEST_CASE("optimal window"){
 
 TEST_CASE("stft"){
     int SR = 44000;
-    double d = 30;
-    auto o = chirp(10,20000,d,SR);
-    {
-        auto res = stft(o.data(), o.data() + o.size(), 1024, 1, SR, HANN);
-    }
+    double d = 1;
+    auto o = chirp(10,22000,d,SR);
+
+    auto res = stft(o.data(), o.data() + o.size(), 1024, 32, SR, HANN);
+
     BENCHMARK("stft") {
         return stft(o.data(), o.data() + o.size(), 1024, 1, SR, HANN);
     };

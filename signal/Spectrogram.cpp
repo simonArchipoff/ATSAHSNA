@@ -32,7 +32,7 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
     Scales scs(&morlet, FCWT_LOGSCALES, fs, 30*fs/data.size() , fs/2, f);
 
     fcwt.cwt(sig.data(),n,tfm.data(),&scs);
-    //fcwt.create_FFT_optimization_plan(n*2,FFTW_ESTIMATE);
+    fcwt.create_FFT_optimization_plan(n*2,FFTW_ESTIMATE);
 
     ResultSpectrogram res(static_cast<double>(n) / fs, n, f);
     res.sampleRate = sampleRate;
@@ -48,6 +48,7 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
     res.data.resize(n*f);
 
     //flip matrix and compute abs value
+#pragma omp parallel for
     for(int p = 0; p < n * f; p += 1){
         auto row =  (f-1) - (p / n);
         auto col = p % n ;
@@ -76,6 +77,7 @@ ResultSpectrogram stft(const float * begin, const float * end, int size_fft, int
 
 #pragma omp parallel
     {
+
         float * input = fftwf_alloc_real(size_fft);
         std::complex<float> * output = (std::complex<float>*) fftwf_alloc_complex(fft.getOutputSize());
 #pragma omp for
@@ -87,7 +89,7 @@ ResultSpectrogram stft(const float * begin, const float * end, int size_fft, int
 
             }
             fft.execute(input,output);
-            for(int j = 1; j < fft.getOutputSize(); j++){
+            for(int j = 1; j < fft.getOutputSize(); j++){ //remove null frequency
                 res.at(j-1,i) = std::abs(output[j]);
             }
         }

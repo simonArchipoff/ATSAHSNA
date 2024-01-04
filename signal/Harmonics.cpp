@@ -172,6 +172,7 @@ ResultHarmonics computeTHD(const ParamHarmonics p, const VD& signal, int sampleR
 
     VD amplitude;
     amplitude.resize(signalfft.size()/2);
+#pragma omp parallel for if(amplitude.size() > 1024)
     for(uint i = 0; i < amplitude.size(); i++){
         amplitude[i] = abs(signalfft[i]);
     }

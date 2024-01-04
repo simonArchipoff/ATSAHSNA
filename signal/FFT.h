@@ -72,6 +72,9 @@ public:
     void execute(float * in, std::complex<float> * out){
         fftwf_execute_dft_r2c(plan, reinterpret_cast<float *>(in), reinterpret_cast<fftwf_complex *>(out));
     }
+    int getOutputSize() const{
+        return size / 2 + 1;
+    }
 
 };
 template<>
@@ -147,9 +150,10 @@ public:
         FFTWScopedLocker l;
         fftw_destroy_plan(plan);
     }
+    /*
     int getOutputSize() const {
         return size/2 + 1;
-    }
+    }*/
     void execute(std::complex<double> * in, double *out){
         fftw_execute_dft_c2r(plan, reinterpret_cast<fftw_complex *>(out), reinterpret_cast<double *>(in));
     }
