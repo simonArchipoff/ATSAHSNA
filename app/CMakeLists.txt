@@ -4,7 +4,7 @@ add_library(app
     delegate.h
     MeasureStore.h MeasureStore.cpp)
 
-target_link_libraries(app PUBLIC Qt${QT_VERSION_MAJOR}::Widgets backend view)
+target_link_libraries(app PUBLIC  Qt6::Core Qt6::Widgets  backend view)
 target_include_directories(app PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
 
 add_executable(atsahsna-gui main.cpp)

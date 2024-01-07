@@ -9,8 +9,7 @@
 
 StartMesure::StartMesure(QWidget * parent)
   :QWidget{parent}
-  ,start_button{new QPushButton{tr("start"),this}}
-{
+  ,start_button{new QPushButton{tr("start"),this}}{
   auto * l = new QHBoxLayout();
   l->addWidget(start_button);
 

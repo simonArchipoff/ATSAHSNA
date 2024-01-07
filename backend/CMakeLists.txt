@@ -23,8 +23,6 @@ set(BACKEND_SOURCES
 
     Faust.h
     Faust.cpp
-
-
 )
 
 
@@ -51,7 +49,7 @@ endif()
 
 add_library(backend ${BACKEND_SOURCES} )
 target_include_directories(backend PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(backend PUBLIC faust signal Qt6::Core Qt6::Widgets )
+target_link_libraries(backend PUBLIC faust signal Qt6::Core Qt6::Widgets)
 
 
 
