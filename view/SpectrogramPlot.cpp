@@ -32,7 +32,7 @@ void SpectrogramPlot::plotSpectrogram(const ResultSpectrogram& spectrogram) {
         colorMap->data()->setCell(i % spectrogram.max_idx_time_rank, i / spectrogram.max_idx_time_rank, spectrogram.data[i]);
     }
     colorMap->rescaleDataRange();
-    colorMap->setGradient(QCPColorGradient::gpHot);
+    colorMap->setGradient(QCPColorGradient::gpJet);
     colorMap->setInterpolate(false);
 
     rescaleAxes();

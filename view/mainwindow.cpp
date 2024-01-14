@@ -9,7 +9,7 @@
 #include "qnamespace.h"
 //#include "task.h"
 #include "qbackend.h"
-#include <QChartView>
+
 #include <QtConcurrent/QtConcurrent>
 
 

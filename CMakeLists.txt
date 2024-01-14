@@ -39,8 +39,8 @@ FetchContent_MakeAvailable(QCustomPlot)
 
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-find_package(QT NAMES Qt6 COMPONENTS Core Widgets  LinguistTools Charts REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools Charts REQUIRED)
+find_package(QT NAMES Qt6 COMPONENTS Core Widgets  LinguistTools REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 
 include(CMakePrintHelpers)
 

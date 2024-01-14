@@ -1,20 +1,19 @@
 #pragma once
 
 
-#include "SpectrogramPlot.h"
-#include <QChartView>
-#include <QLineSeries>
-#include <QLogValueAxis>
-#include <QValueAxis>
 
-#include<QTabWidget>
+
+#include <QTabWidget>
 
 #include <QColor>
+#include <QVector>
+
+#include <qcustomplot.h>
 
 #include <Response.h>
 #include <Harmonics.h>
 
-
+#include <SpectrogramPlot.h>
 
 class RoundRobinColor{
 public:
@@ -27,14 +26,19 @@ protected:
     uint i;
 };
 
-class PlotAmplitudePhase:public QObject{
-    Q_OBJECT
-public:
-    PlotAmplitudePhase(QString name, QColor c);
+struct PlotAmplitudePhase{
 
-    void setCurve(const VD&f, const VD&a, const VD&p, QString name);
+    PlotAmplitudePhase(QString name, QColor c,QCPGraph * amplitude, QCPGraph * phase);
 
-    QScopedPointer<QLineSeries> amplitude,phase;
+    void setCurve(const FDF&);
+    void setCurve(const VD&f, const VD&a, const VD&p);
+    void setDisplayPhase(bool phase){
+        phaseDisplayed = phase;
+        this->phase->setVisible(phase);
+    }
+
+    QCPGraph *amplitude,*phase;
+
     double maxAmplitude,minAmplitude;
     double maxFrequency,minFrequency;
     bool displayed = true;
@@ -43,22 +47,21 @@ public:
     QString name;
 };
 
-class FrequencyPlot : public QChartView
+class FrequencyPlot : public QCustomPlot
 {
     Q_OBJECT
 public:
     FrequencyPlot(QWidget * parent=nullptr);
 
-    void addPlot(const FDF & f, QString name, bool phaseDisp = true);
+    void setPlot(const FDF & f, QString name,bool phaseDisp=true);
 
     void updatePlot(QString name, const FDF&v);
-
 protected:
     QMap<QString,PlotAmplitudePhase *> plots;
-    QChart chart;
-    QValueAxis * amplitude_axis,*phase_axis;
-    QLogValueAxis * frequency_axis;
     RoundRobinColor color_round_robin;
+    QCPAxis *frequencyAxis;
+    QCPAxis *amplitudeAxis;
+    QCPAxis *phaseAxis;
 };
 
 

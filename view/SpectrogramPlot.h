@@ -19,8 +19,8 @@ public:
 
         auto spect = spectrogram(t
                                  ,5
-                                 ,64
-                                 , v[0].response.getSampleRate());
+                                 ,128
+                                 ,v[0].response.getSampleRate());
         plotSpectrogram(spect);
     }
 
