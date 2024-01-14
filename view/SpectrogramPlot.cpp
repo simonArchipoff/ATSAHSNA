@@ -5,8 +5,13 @@ SpectrogramPlot::SpectrogramPlot(QWidget* parent)
     // Initialiser QCustomPlot
     addGraph();
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    yAxis->setScaleType(QCPAxis::stLogarithmic);
+    colorMap = new QCPColorMap(xAxis, yAxis);
     xAxis->setLabel("Temps (s)"); // L'unité de temps est maintenant en secondes
     yAxis->setLabel("Fréquence");
+}
+SpectrogramPlot::~SpectrogramPlot(){
+    delete colorMap;
 }
 
 void SpectrogramPlot::plotSpectrogram(const ResultSpectrogram& spectrogram) {
@@ -16,15 +21,7 @@ void SpectrogramPlot::plotSpectrogram(const ResultSpectrogram& spectrogram) {
     }
 
     double timeStep = 1.0 / spectrogram.sampleRate; // Calculez le pas de temps en secondes
-
-
-    // Configuration de l'échelle des axes
-    //xAxis->setRange(0, spectrogram.max_idx_time_rank * timeStep); // L'axe du temps est maintenant en secondes
-    yAxis->setScaleType(QCPAxis::stLogarithmic);
-
-    // Afficher le spectrogramme en 2D
-    //addGraph(xAxis,yAxis);
-    QCPColorMap* colorMap = new QCPColorMap(xAxis, yAxis);
+    colorMap->data()->clear();
     colorMap->data()->setSize(spectrogram.max_idx_time_rank, spectrogram.max_freq_rank);
     colorMap->data()->setRange(QCPRange(0, spectrogram.max_idx_time_rank * timeStep), QCPRange(*spectrogram.frequencies.begin()
                                                                                                ,*spectrogram.frequencies.rbegin()));

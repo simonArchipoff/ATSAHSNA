@@ -15,6 +15,12 @@ add_library(view
 
     SpectrogramPlot.h
     SpectrogramPlot.cpp
+
+    frequencyplot.h
+    frequencyplot.cpp
+
+    harmonicsplot.h
+    harmonicsplot.cpp
 )
 
 if(ENABLE_JACK)
