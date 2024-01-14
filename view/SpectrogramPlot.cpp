@@ -11,7 +11,7 @@ SpectrogramPlot::SpectrogramPlot(QWidget* parent)
     yAxis->setLabel("Fréquence");
 }
 SpectrogramPlot::~SpectrogramPlot(){
-    delete colorMap;
+    //delete colorMap;
 }
 
 void SpectrogramPlot::plotSpectrogram(const ResultSpectrogram& spectrogram) {

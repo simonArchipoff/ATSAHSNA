@@ -21,6 +21,11 @@ add_library(view
 
     harmonicsplot.h
     harmonicsplot.cpp
+    responseview.h
+    responseview.cpp
+    temporalplot.h
+    temporalplot.cpp
+    roundrobincolor.h roundrobincolor.cpp
 )
 
 if(ENABLE_JACK)

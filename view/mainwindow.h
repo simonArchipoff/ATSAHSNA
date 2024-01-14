@@ -11,6 +11,7 @@
 #include <Response.h>
 #include <Spectrogram.h>
 #include <BodePlot.h>
+#include <responseview.h>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT

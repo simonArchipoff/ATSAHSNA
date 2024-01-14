@@ -54,12 +54,8 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
         auto col = p % n ;
         res.data[n*row + col] = static_cast<double>(std::abs(tfm[p]));
     }
-
     return res;
 }
-
-
-
 
 
 ResultSpectrogram stft(const float * begin, const float * end, int size_fft, int increment_fft, unsigned int sampleRate, window_type window_type){

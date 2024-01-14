@@ -16,26 +16,6 @@ void BodePlot::setResult(std::variant<const std::vector<ResultResponse>> & r){
     replot();
 }
 
-
-QDisplays::QDisplays(QWidget * parents)
-    :QTabWidget(parents)
-    ,bodePlot{nullptr}
-    ,thdPlot{nullptr}
-    ,spectrogramPlot{nullptr}{
-}
-
-bool QDisplays::isBodeInit(){
-    return bodePlot;
-}
-bool QDisplays::isTHDinit(){
-    return thdPlot;
-}
-bool QDisplays::isSpectrogramInit(){
-    return spectrogramPlot;
-}
-
-
-
 void clean_spectrum(VD &s){
   for(uint i = 0; i < s.size(); i++){
       if(std::isnan(s[i]) || std::isinf(s[i]) || s[i] < -400){
@@ -76,31 +56,6 @@ void setMinMaxAmplitude(double & minA, double & maxA, const VD&a, const VD & f, 
 
 
 
-
-
-BodePlot * QDisplays::getBodePlot(){
-    if(!bodePlot){
-        bodePlot = new BodePlot(this);
-        addTab(bodePlot,"response");
-    }
-    return bodePlot;
-}
-
-THDPlot * QDisplays::getTHDPlot(){
-    if(!thdPlot){
-        thdPlot = new THDPlot(this);
-        addTab(thdPlot,"harmonics");
-    }
-    return thdPlot;
-}
-
-SpectrogramPlot * QDisplays::getSpectrogramPlot(){
-    if(!spectrogramPlot){
-        spectrogramPlot = new SpectrogramPlot(this);
-        addTab(spectrogramPlot,"spectrogram");
-    }
-    return spectrogramPlot;
-}
 
 /*
 BodeCurve::BodeCurve(const QColor c) : color(c) {

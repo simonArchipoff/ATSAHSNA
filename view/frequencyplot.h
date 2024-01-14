@@ -3,18 +3,9 @@
 #include <QColor>
 #include <qcustomplot.h>
 #include <FrequencyDomain.h>
+#include "roundrobincolor.h"
 
 
-class RoundRobinColor{
-public:
-    RoundRobinColor(std::initializer_list<QColor> &l);
-    RoundRobinColor();
-    QColor getNext();
-
-protected:
-    QVector<QColor> color;
-    uint i;
-};
 
 struct PlotAmplitudePhase{
 
