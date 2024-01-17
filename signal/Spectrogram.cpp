@@ -63,7 +63,7 @@ ResultSpectrogram stft(const float * begin, const float * end, int size_fft, int
     DFFT<float,std::complex<float>> fft(size_fft);
 
     int input_size = std::distance(begin,end);
-    ResultSpectrogram res(static_cast<double>(input_size) / sampleRate, (std::distance(begin, end) - size_fft) / (increment_fft),fft.getOutputSize()-1); // I remove the null freq.
+    ResultSpectrogram res(static_cast<double>(input_size) / sampleRate, (input_size - size_fft) / (increment_fft),fft.getOutputSize()-1); // I remove the null freq.
     res.sampleRate = sampleRate;
     //output frequency size is input_size / 2 + 1 (hermitian thing) - 1 (remove the constant) = input_size / 2
     for(uint i = 0; i < res.frequencies.size(); i++){

@@ -4,7 +4,7 @@
 QDisplays::QDisplays(QWidget * parents):
     bodePlot(new BodePlot(this))
     ,temporalPlot(new TemporalPlot(this))
-    ,spectrogramPlot(new SpectrogramPlot(this)){
+    ,spectrogramPlot(new SpectrogramPlots(this)){
 
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(bodePlot);
@@ -38,9 +38,9 @@ BodePlot * QDisplays::getBodePlot(){
 }
 
 
-SpectrogramPlot * QDisplays::getSpectrogramPlot(){
+SpectrogramPlots * QDisplays::getSpectrogramPlot(){
     if(!spectrogramPlot){
-        spectrogramPlot = new SpectrogramPlot(this);
+        spectrogramPlot = new SpectrogramPlots(this);
     }
     return spectrogramPlot;
 }

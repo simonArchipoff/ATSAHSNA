@@ -26,7 +26,7 @@ FrequencyPlot::FrequencyPlot(QWidget * parent):QCustomPlot(parent){
     frequencyAxis = xAxis;
     amplitudeAxis = yAxis;
     phaseAxis = yAxis2;
-
+    setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     frequencyAxis->setScaleType(QCPAxis::stLogarithmic);
     frequencyAxis->setLabel("Frequency (Hz)");
 

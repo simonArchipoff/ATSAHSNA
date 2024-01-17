@@ -6,10 +6,13 @@ add_library(view
 
     qmeasure.h
     qmeasure.cpp
+
     BodePlot.cpp
     BodePlot.h
+
     mainwindow.cpp
     mainwindow.h
+
     widget_chatgpt.h
     widget_chatgpt.cpp
 
@@ -21,15 +24,20 @@ add_library(view
 
     harmonicsplot.h
     harmonicsplot.cpp
+
     responseview.h
     responseview.cpp
+
     temporalplot.h
     temporalplot.cpp
-    roundrobincolor.h roundrobincolor.cpp
+
+    roundrobincolor.h
+    roundrobincolor.cpp
 )
 
 if(ENABLE_JACK)
-    add_library(view QJackView.h QJackView.cpp)
+    add_library(view QJackView.h
+                     QJackView.cpp)
 endif()
 
 target_link_libraries(view PUBLIC Qt${QT_VERSION_MAJOR}::Widgets backend qcustomplot)

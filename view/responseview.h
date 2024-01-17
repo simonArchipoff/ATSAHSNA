@@ -15,11 +15,11 @@ public:
 
     BodePlot * getBodePlot();
     TemporalPlot * getTemporalPlot();
-    SpectrogramPlot * getSpectrogramPlot();
+    SpectrogramPlots * getSpectrogramPlot();
 protected:
     BodePlot * bodePlot;
     TemporalPlot * temporalPlot;
-    SpectrogramPlot * spectrogramPlot;
+    SpectrogramPlots * spectrogramPlot;
 };
 
 

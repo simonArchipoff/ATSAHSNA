@@ -1,9 +1,9 @@
 #pragma once
 
-#include <qcustomplot.h>
 
 #include <FrequencyDomain.h>
 #include <roundrobincolor.h>
+#include <qcustomplot.h>
 
 class PlotTemporal{
 public:

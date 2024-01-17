@@ -1,6 +1,5 @@
 #include "temporalplot.h"
 
-
 void PlotTemporal::setCurve(const FDF&f){
     auto a = f.frequencyDomainTotemporal();
     QVector<double> qa(a.begin(),a.end());
@@ -15,12 +14,11 @@ void PlotTemporal::setCurve(const FDF&f){
 
 
 TemporalPlot::TemporalPlot(QWidget * parent):QCustomPlot(parent){
+    setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     temporalAxis = xAxis;
     amplitudeAxis = yAxis;
-
-    temporalAxis->setLabel("Temps (s)");
-
-    amplitudeAxis->setLabel("Amplitude");
+    temporalAxis->setLabel(tr("time (s)"));
+    amplitudeAxis->setLabel(tr("Amplitude"));
 
 }
 TemporalPlot::~TemporalPlot(){
