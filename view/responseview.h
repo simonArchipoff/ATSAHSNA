@@ -4,9 +4,9 @@
 #include <temporalplot.h>
 #include <SpectrogramPlot.h>
 
-class QDisplays : public QWidget{
+class QResponseView : public QWidget{
 public:
-    QDisplays(QWidget * parents);
+    QResponseView(QWidget * parents);
 
     bool isBodeInit();
     bool isSpectrogramInit();

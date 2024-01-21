@@ -1,7 +1,7 @@
 #include "responseview.h"
 #include <QVBoxLayout>
 
-QDisplays::QDisplays(QWidget * parents):
+QResponseView::QResponseView(QWidget * parents):
     bodePlot(new BodePlot(this))
     ,temporalPlot(new TemporalPlot(this))
     ,spectrogramPlot(new SpectrogramPlots(this)){
@@ -13,7 +13,7 @@ QDisplays::QDisplays(QWidget * parents):
     setLayout(mainLayout);
 }
 
-void QDisplays::setResult(std::variant<const std::vector<ResultResponse>>&r){
+void QResponseView::setResult(std::variant<const std::vector<ResultResponse>>&r){
     std::vector<ResultResponse> v = get<const std::vector<ResultResponse>>(r);
     for(uint i = 0; i < v.size(); i++){
         temporalPlot->setPlot(v[i].response,QString{v[i].name.data()});
@@ -21,16 +21,16 @@ void QDisplays::setResult(std::variant<const std::vector<ResultResponse>>&r){
     temporalPlot->replot();
 }
 
-bool QDisplays::isBodeInit(){
+bool QResponseView::isBodeInit(){
     return bodePlot;
 }
 
-bool QDisplays::isSpectrogramInit(){
+bool QResponseView::isSpectrogramInit(){
     return spectrogramPlot;
 }
 
 
-BodePlot * QDisplays::getBodePlot(){
+BodePlot * QResponseView::getBodePlot(){
     if(!bodePlot){
         bodePlot = new BodePlot(this);
     }
@@ -38,7 +38,7 @@ BodePlot * QDisplays::getBodePlot(){
 }
 
 
-SpectrogramPlots * QDisplays::getSpectrogramPlot(){
+SpectrogramPlots * QResponseView::getSpectrogramPlot(){
     if(!spectrogramPlot){
         spectrogramPlot = new SpectrogramPlots(this);
     }

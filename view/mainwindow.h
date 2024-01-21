@@ -19,7 +19,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     QBackendsView *backends;
-    QDisplays *displays;
+    QResponseView *displays;
 
 private:
     void createMenus();

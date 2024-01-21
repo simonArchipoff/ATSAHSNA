@@ -28,11 +28,17 @@ add_library(view
     responseview.h
     responseview.cpp
 
+    qharmonicview.h
+    qharmonicview.cpp
+
     temporalplot.h
     temporalplot.cpp
 
     roundrobincolor.h
     roundrobincolor.cpp
+
+    qmeasuresview.h
+    qmeasuresview.cpp
 )
 
 if(ENABLE_JACK)

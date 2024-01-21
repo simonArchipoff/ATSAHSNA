@@ -17,7 +17,7 @@
 MainWindow::MainWindow(QWidget *parent)
     :QMainWindow{parent}
     ,backends{new QBackendsView(this)}
-    ,displays{new QDisplays{this}}
+    ,displays{new QResponseView{this}}
     ,paramResponseWidget{nullptr}
     ,paramHarmonicsWidget{nullptr}
     ,paramSpectrogramWidget{nullptr}
