@@ -9,7 +9,7 @@
 
 BodePlot::BodePlot(QWidget*parent):FrequencyPlot(parent){}
 void BodePlot::setResult(std::variant<const std::vector<ResultResponse>> & r){
-    std::vector<ResultResponse> v = get<const std::vector<ResultResponse>>(r);
+    std::vector<ResultResponse> v = std::get<const std::vector<ResultResponse>>(r);
     for(uint i = 0; i < v.size(); i++){
        setPlot(v[i].response,QString{v[i].name.data()});
     }

@@ -14,7 +14,7 @@ QResponseView::QResponseView(QWidget * parents):
 }
 
 void QResponseView::setResult(std::variant<const std::vector<ResultResponse>>&r){
-    std::vector<ResultResponse> v = get<const std::vector<ResultResponse>>(r);
+    std::vector<ResultResponse> v = std::get<const std::vector<ResultResponse>>(r);
     for(uint i = 0; i < v.size(); i++){
         temporalPlot->setPlot(v[i].response,QString{v[i].name.data()});
     }

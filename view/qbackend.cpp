@@ -4,7 +4,7 @@
 #include "qpushbutton.h"
 
 #include <faust/gui/QTUI.h>
-#include <qt/QtWidgets/qscrollarea.h>
+#include <QScrollArea>
 
 
 std::list<GUI*> GUI::fGuiList;

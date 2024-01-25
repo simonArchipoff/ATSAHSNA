@@ -44,7 +44,7 @@ public:
     }
 
     void setResult(const std::variant<const std::vector<ResultResponse>> & var){
-        auto v = get<const std::vector<ResultResponse>>(var);
+        auto v = std::get<const std::vector<ResultResponse>>(var);
         for(auto const & i : v){
             QString n(i.name.c_str());
             if(!m.contains(n)){

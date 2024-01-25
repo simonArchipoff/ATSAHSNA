@@ -1,6 +1,7 @@
 #pragma once
 
 #define FAUSTFLOAT double
+#include <cstdint>
 #include <faust/dsp/llvm-dsp.h>
 #include <cstring>
 #include <faust/gui/APIUI.h>
