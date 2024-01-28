@@ -168,7 +168,7 @@ std::variant<const std::vector<ResultHarmonics>>  BackendFaust::getResultHarmoni
     vector<ResultHarmonics> res;
     auto in = sinusoid(paramHarmonics.frequency, 10.0/paramHarmonics.freqMin, getSampleRate());
     auto out = acquisition(vector<VD>(numberInput(),in));
-    auto keep = getSampleRate() / paramHarmonics.freqMin;
+    //auto keep = getSampleRate() / paramHarmonics.freqMin;
     int i = 0;
     for(auto & o : out){
         remove_left(o.size() *0.8, o);
