@@ -3,7 +3,7 @@
 #include <QColor>
 #include <qcustomplot.h>
 #include <FrequencyDomain.h>
-#include "roundrobincolor.h"
+#include <Response.h>
 
 
 
@@ -34,12 +34,14 @@ class FrequencyPlot : public QCustomPlot
 public:
     FrequencyPlot(QWidget * parent=nullptr);
     ~FrequencyPlot();
-    void setPlot(const FDF & f, QString name, bool phaseDisp=true);
+    void setPlot(const FDF & f, QString name, QColor c, bool phaseDisp=true);
 
-    void updatePlot(QString name, const FDF&v);
+    void updatePlot(const FDF&v,QString name);
+    void updatePlot(const ResultResponse & r, QString name){
+        updatePlot(r.response, name);
+    }
 protected:
     QMap<QString,PlotAmplitudePhase *> plots;
-    RoundRobinColor color_round_robin;
     QCPAxis *frequencyAxis;
     QCPAxis *amplitudeAxis;
     QCPAxis *phaseAxis;

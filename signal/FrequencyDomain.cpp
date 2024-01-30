@@ -11,7 +11,7 @@ FDF FDF::operator+(const FDF &a) const{
     assert(this->sampleRate == a.sampleRate);
     FDF res(*this);
     assert(response.size() == a.response.size());
-#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
+//#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
     for(uint i = 0; i < response.size(); i++){
         res.response[i] += a.response[i];
     }
@@ -22,7 +22,7 @@ FDF FDF::operator-(const FDF &a) const {
     assert(this->sampleRate == a.sampleRate);
     FDF res(*this);
     assert(response.size() == a.response.size());
-#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
+//#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
     for(uint i = 0; i < response.size(); i++){
         res.response[i] -= a.response[i];
     }
@@ -33,7 +33,7 @@ FDF FDF::operator/(const FDF &a) const {
     assert(this->sampleRate == a.sampleRate);
     FDF res(*this);
     assert(response.size() == a.response.size());
-#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
+//#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
     for(uint i = 0; i < response.size(); i++){
         res.response[i] /= a.response[i];
     }
@@ -78,7 +78,7 @@ vector <double> FDF::getAmplitude() const {
 
 vector <double> FDF::getAmplitude20log10() const {
     vector<double> res = getAmplitude();
-#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
+//#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
     for(uint i = 0; i < res.size(); i++){
         res[i] = 20 * log10(res[i]);
     }
@@ -87,7 +87,7 @@ vector <double> FDF::getAmplitude20log10() const {
 
 vector <double> FDF::getPhase() const {
     vector<double> res(response.size()/2);
-#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
+//#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
     for(uint i = 0; i < res.size(); i++){
         res[i] = atan2(response[i].imag(), response[i].real()) * 180/(M_PI);
     }
@@ -98,7 +98,7 @@ vector <double> FDF::getPhase() const {
 
 vector <double> FDF::getFrequency() const {
     vector<double> res(response.size()/2);
-#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
+//#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
     for(uint i = 0; i < res.size(); i++){
         res[i] = i * f1;
         if(i > 1)
@@ -168,7 +168,7 @@ FDF compute_TF_FFT(const vector<double> &input, const vector<double> &output, ui
     assert(input.size() == output.size());
     VCD in(input.size());
     VCD out(output.size());
-#pragma omp parallel for if(input.size() > 1024)
+//#pragma omp parallel for if(input.size() > 1024)
     for(uint i = 0; i < input.size(); i++){
         in[i] = complex<double>(input[i],0);
         out[i] = complex<double>(output[i],0);

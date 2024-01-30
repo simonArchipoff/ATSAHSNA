@@ -4,6 +4,7 @@
 #include <FrequencyDomain.h>
 #include <roundrobincolor.h>
 #include <qcustomplot.h>
+#include <Response.h>
 
 class PlotTemporal{
 public:
@@ -22,8 +23,12 @@ class TemporalPlot : public QCustomPlot
 public:
     TemporalPlot(QWidget * parent=nullptr);
     ~TemporalPlot();
-    void setPlot(const FDF & f, QString name);
-    void updatePlot(QString name, const FDF&v);
+    void setPlot(const FDF & f, QString name, QColor color);
+    void updatePlot( const FDF&v, QString name);
+    void updatePlot(const ResultResponse&v, QString name){
+        updatePlot(v.response, name);
+    }
+    void remove(QString);
 protected:
     QMap<QString,PlotTemporal *> plots;
     RoundRobinColor color_round_robin;

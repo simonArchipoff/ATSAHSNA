@@ -12,7 +12,7 @@
 class QResultView : public QWidget {
     Q_OBJECT
 public:
-    QResultView( QColor color, QString name, QWidget * parent=nullptr);
+    QResultView(QColor color, QString name, QWidget * parent=nullptr);
 
     bool getFrequencyDisplay() const{
         return frequency_display;
@@ -27,6 +27,9 @@ public:
 
 
     QString getName() const;
+    QColor getColor() const{
+        return color;
+    }
 
 signals:
     void copy(QString new_name);
@@ -34,6 +37,7 @@ signals:
 
     void temporalDisplay(const QString name, bool set);
     void frequencyDisplay(const QString name, bool set);
+
 
 protected:
     bool frequency_display = true,
@@ -49,11 +53,16 @@ class QResultHarmonicsView : public QResultView {
 public:
     QResultHarmonicsView(QColor color, const ResultHarmonics &r, QWidget * parent);
     void setSpectrogramDisplay(bool newSpectrogram_display);
+    void updateResult(const ResultHarmonics &r);
+    const ResultHarmonics & getResult() const {
+        return result;
+    }
 signals:
     void spectrogramDisplay(const QString name, bool set);
+    void updatedResult(const ResultHarmonics&r, QString name);
 protected:
     bool spectrogram_display = false;
-    const ResultHarmonics result;
+    ResultHarmonics result;
 };
 
 class QResultResponseView : public QResultView {
@@ -61,11 +70,16 @@ class QResultResponseView : public QResultView {
 public:
     QResultResponseView(QColor color, const ResultResponse &r, QWidget * parent);
     void setTextDisplay(bool newText_display);
+    void updateResult(const ResultResponse &r);
+    const ResultResponse & getResult() const{
+        return result;
+    }
 signals:
     void textDisplay(const QString name, bool set);
+    void updatedResult( const ResultResponse&r, QString name);
 protected:
     bool text_display = true;
-    const ResultResponse result;
+    ResultResponse result;
 };
 
 inline QResultHarmonicsView * measureToQWidget(QColor color
@@ -83,19 +97,39 @@ inline QResultResponseView * measureToQWidget(QColor color
 class QMeasuresView : public QWidget{
     Q_OBJECT
 public:
-    QMeasuresView();
-    template<typename T, typename R>
-    R * addResult(const T &r){
-        R * q = mesureToQWidget(rr_color.getNext(),r,this);
-        layout->addWidget(q);
-        return q;
+    QMeasuresView(QWidget * parent);
+    QResultHarmonicsView * addResult(const ResultHarmonics &r){
+        QString n(r.name.c_str());
+        if(harmonicsMap.contains(n)){
+            harmonicsMap[n]->updateResult(r);
+            return nullptr;
+        }else{
+            auto q = measureToQWidget(rr_color.getNext(),r,this);
+            layout->addWidget(q);
+            harmonicsMap.insert(q->getName(),q);
+            return q;
+        }
+    }
+    QResultResponseView * addResult(const ResultResponse &r){
+        QString n(r.name.c_str());
+        if(responseMap.contains(n)){
+            responseMap[n]->updateResult(r);
+            return responseMap[n];
+        }else{
+            auto q = measureToQWidget(rr_color.getNext(),r,this);
+            layout->addWidget(q);
+            responseMap.insert(q->getName(),q);
+            return q;
+        }
     }
 
-    void remove(QResultView *);
+    void removeResult(QResultView *);
 
 signals:
     void remove(QString);
 protected:
     RoundRobinColor rr_color;
     QLayout * layout;
+    QMap<QString,QResultHarmonicsView*> harmonicsMap;
+    QMap<QString,QResultResponseView*> responseMap;
 };

@@ -2,39 +2,54 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QLabel>
+#include <QApplication>
+#include <QStyle>
 
 
 QResultView::QResultView(QColor color, QString name, QWidget *parent)
     :QWidget(parent)
-    ,layout(new QVBoxLayout(this))
+    ,layout(new QHBoxLayout(this))
     ,color(color)
     ,name(name)
     ,colorFrame(new QFrame(this)){
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     setLayout(layout);
-    auto closeButton = new QPushButton(tr("close"), this);
-    auto copyButton = new QPushButton(tr("copy"),this);
-    auto temporal = new QCheckBox(tr("temporal"), this);
-    auto spectrum = new QCheckBox(tr("spectrum"), this);
+    auto closeButton = new QPushButton(this);
+    auto label = new QLabel(this);
+    label->setText(name);
+    //auto copyButton = new QPushButton(tr("copy"),this);
+    //auto temporal = new QCheckBox(tr("temporal"), this);
+    //auto spectrum = new QCheckBox(tr("spectrum"), this);
+
+    QIcon closeIcon = QApplication::style()->standardIcon(QStyle::SP_TitleBarCloseButton);
+    closeButton->setIcon(closeIcon);
+    closeButton->setIconSize(QSize(16, 16));
 
     // Configuration du layout
     layout->addWidget(colorFrame);
+    layout->addWidget(label);
     layout->addWidget(closeButton);
-    layout->addWidget(copyButton);
-    layout->addWidget(temporal);
-    layout->addWidget(spectrum);
+    //layout->addWidget(copyButton);
+    //layout->addWidget(temporal);
+    //layout->addWidget(spectrum);
+
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
 
     colorFrame->setFrameShape(QFrame::Box);
     colorFrame->setAutoFillBackground(true);
+    colorFrame->setFixedSize(16, 16);
     QPalette palette = colorFrame->palette();
     palette.setColor(QPalette::Window, color);
     colorFrame->setPalette(palette);
 
     // Connexions des signaux et slots
     connect(closeButton, &QPushButton::clicked, this, &QResultView::remove);
-    connect(copyButton, &QPushButton::clicked, this, [this](){emit copy(this->name);});
-    connect(temporal, &QCheckBox::toggled, this, &QResultView::setTemporalDisplay);
-    connect(spectrum, &QCheckBox::toggled, this, &QResultView::setFrequencyDisplay);
+    //connect(copyButton,  &QPushButton::clicked, this, [this](){emit copy(this->name);});
+    //connect(temporal,    &QCheckBox::toggled,   this, &QResultView::setTemporalDisplay);
+    //connect(spectrum,    &QCheckBox::toggled,   this, &QResultView::setFrequencyDisplay);
 }
 
 void QResultView::setFrequencyDisplay(bool newFrequency_display){
@@ -66,11 +81,16 @@ void QResultHarmonicsView::setSpectrogramDisplay(bool newSpectrogram_display){
     emit spectrogramDisplay(name,newSpectrogram_display);
 }
 
+void QResultHarmonicsView::updateResult(const ResultHarmonics &r){
+    result = r;
+    emit updatedResult(r, getName());
+}
+
 QResultResponseView::QResultResponseView(QColor color, const ResultResponse &r, QWidget *parent)
     : QResultView(color,QString(r.name.c_str()),parent)
     ,result(r){
-    auto spectrum = new QCheckBox(tr("spectrogram"), this);
-    layout->addWidget(spectrum);
+    //auto spectrum = new QCheckBox(tr("spectrogram"), this);
+    //layout->addWidget(spectrum);
 }
 
 void QResultResponseView::setTextDisplay(bool newText_display){
@@ -78,8 +98,14 @@ void QResultResponseView::setTextDisplay(bool newText_display){
     emit textDisplay(name,newText_display);
 }
 
-QMeasuresView::QMeasuresView():layout(new QVBoxLayout(this)){
+void QResultResponseView::updateResult(const ResultResponse &r){
+    result = r;
+    emit updatedResult(r, getName());
+}
+
+QMeasuresView::QMeasuresView(QWidget * parent):QWidget(parent),layout(new QVBoxLayout(this)){
     setLayout(layout);
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 void QMeasuresView::removeResult(QResultView * w){

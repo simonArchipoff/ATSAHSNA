@@ -144,11 +144,7 @@ void delegate::addFaustBackend() {
     auto s = mw->displays->getSpectrogramPlot();
     auto fb = new QBackendFaust(f, name);
     faust.push_back(fb);
-    connect(fb, &QBackendFaust::resultResponse, d, &BodePlot::setResult,
-            Qt::UniqueConnection);
-    connect(fb, &QBackendFaust::resultResponse, s, &SpectrogramPlots::setResult,
-            Qt::UniqueConnection);
-    connect(fb,&QBackendFaust::resultResponse, mw->displays,&QResponseView::setResult);
+    connect(fb,&QBackendFaust::resultResponse, mw->displays,&QResponseView::setResults);
     /*connect(fb, &QBackendFaust::resultHarmonics, h, &THDPlot::setResult,
             Qt::UniqueConnection);*/
 }

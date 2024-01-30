@@ -23,7 +23,10 @@ class BodePlot : public FrequencyPlot
     Q_OBJECT
 public:
     BodePlot(QWidget*parent);
-    void setResult(std::variant<const std::vector<ResultResponse>> & r);
+    //void setResult(std::variant<const std::vector<ResultResponse>> & r);
+    void setResult(const ResultResponse &r, QString name, QColor c);
+    void removeResult(QString);
+    //void remove(QString);
 };
 
 

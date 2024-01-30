@@ -36,6 +36,20 @@ void SpectrogramPlot::plotSpectrogram(const ResultSpectrogram& spectrogram) {
     replot();
 }
 
+void SpectrogramPlot::setResult(const ResultResponse &r){
+    auto t = r.response.frequencyDomainTotemporal();
+#if 0
+        auto spect = stft(t.data(), t.data() + t.size(), 1024, 2, v[0].response.getSampleRate());
+#else
+
+    auto spect = spectrogram(t
+                             ,6
+                             ,128
+                             ,r.response.getSampleRate());
+#endif
+    plotSpectrogram(spect);
+}
+
 /*
 
 TemporalSignal::TemporalSignal()
@@ -81,3 +95,16 @@ void TemporalSignal::updateCurve(const VD&signal, QString name){
 }
 
 */
+
+SpectrogramPlots::SpectrogramPlots(QWidget *parent):QWidget(parent),m(),layout(new QHBoxLayout){
+    setLayout(layout);
+}
+
+void SpectrogramPlots::setResult(const ResultResponse& r, QString name){
+    if(!m.contains(name)){
+        auto s = new SpectrogramPlot(this);
+        m.insert(name,s);
+        layout->addWidget(s);
+    }
+    m[name]->setResult(r);
+}

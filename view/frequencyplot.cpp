@@ -18,7 +18,7 @@ void PlotAmplitudePhase::setCurve(const VD&f, const VD&a, const VD&p){
     auto qa = QVector<double>(a.begin(), a.end());
     auto qp = QVector<double>(p.begin(), p.end());
     amplitude->setData(qf,qa,true);
-    phase->setData(qf,qp,true);
+//phase->setData(qf,qp,true);
     amplitude->rescaleAxes(false);
 }
 
@@ -41,13 +41,12 @@ FrequencyPlot::~FrequencyPlot(){
     }
 }
 
-void FrequencyPlot::setPlot(const FDF & f, QString name, bool phaseDisp){
+void FrequencyPlot::setPlot(const FDF & f, QString name, QColor color, bool phaseDisp){
     if(!plots.contains(name)){
         auto pa = addGraph(frequencyAxis, amplitudeAxis);
         auto pp = addGraph(frequencyAxis, phaseAxis);
 
         QPen pen_phase,pen_amplitude;
-        auto color = color_round_robin.getNext();
         pen_phase.setColor(color);
         pen_phase.setWidth(2);
         pen_amplitude = pen_phase;
@@ -64,7 +63,7 @@ void FrequencyPlot::setPlot(const FDF & f, QString name, bool phaseDisp){
 }
 
 
-void FrequencyPlot::updatePlot(QString name, const FDF&v){
+void FrequencyPlot::updatePlot( const FDF&v, QString name){
     auto * p = plots[name];
     assert(p);
     p->setCurve(v);

@@ -36,5 +36,6 @@ public:
 protected:
     THDPlot * plot;
     THDText * text;
+
 };
 

@@ -30,12 +30,12 @@ TemporalPlot::~TemporalPlot(){
 
 
 
-void TemporalPlot::setPlot(const FDF & f, QString name){
+void TemporalPlot::setPlot(const FDF & f, QString name, QColor color){
     if(!plots.contains(name)){
         auto pa = addGraph(temporalAxis, amplitudeAxis);
 
         QPen pen_amplitude;
-        auto color = color_round_robin.getNext();
+
         pen_amplitude.setColor(color);
         pen_amplitude.setWidth(2);
 
@@ -48,7 +48,7 @@ void TemporalPlot::setPlot(const FDF & f, QString name){
 }
 
 
-void TemporalPlot::updatePlot(QString name, const FDF&v){
+void TemporalPlot::updatePlot(const FDF&v , QString name){
     auto * p = plots[name];
     assert(p);
     p->setCurve(v);
