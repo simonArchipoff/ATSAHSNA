@@ -33,7 +33,7 @@ public:
 
 signals:
     void copy(QString new_name);
-    void remove();
+    void remove(QString name);
 
     void temporalDisplay(const QString name, bool set);
     void frequencyDisplay(const QString name, bool set);
@@ -123,7 +123,7 @@ public:
         }
     }
 
-    void removeResult(QResultView *);
+    void removeResult(QString name);
 
 signals:
     void remove(QString);

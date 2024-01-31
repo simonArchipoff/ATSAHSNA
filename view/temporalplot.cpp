@@ -53,3 +53,15 @@ void TemporalPlot::updatePlot(const FDF&v , QString name){
     assert(p);
     p->setCurve(v);
 }
+
+void TemporalPlot::removeResult(QString name){
+    auto r = plots[name];
+    plots.remove(name);
+    if(r){
+        this->removePlottable(r->values);
+        replot();
+        delete r;
+    }
+
+
+}

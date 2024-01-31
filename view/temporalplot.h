@@ -28,7 +28,7 @@ public:
     void updatePlot(const ResultResponse&v, QString name){
         updatePlot(v.response, name);
     }
-    void remove(QString);
+    void removeResult(QString);
 protected:
     QMap<QString,PlotTemporal *> plots;
     RoundRobinColor color_round_robin;

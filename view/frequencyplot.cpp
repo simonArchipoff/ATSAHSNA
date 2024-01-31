@@ -62,6 +62,14 @@ void FrequencyPlot::setPlot(const FDF & f, QString name, QColor color, bool phas
     plots[name]->setCurve(f);
 }
 
+void FrequencyPlot::removeResult(QString name){
+    auto r = plots[name];
+    this->removePlottable(r->amplitude);
+    this->removePlottable(r->phase);
+    replot();
+    plots.remove(name);
+    delete r;
+}
 
 void FrequencyPlot::updatePlot( const FDF&v, QString name){
     auto * p = plots[name];

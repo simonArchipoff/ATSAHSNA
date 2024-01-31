@@ -46,7 +46,9 @@ QResultView::QResultView(QColor color, QString name, QWidget *parent)
     colorFrame->setPalette(palette);
 
     // Connexions des signaux et slots
-    connect(closeButton, &QPushButton::clicked, this, &QResultView::remove);
+    connect(closeButton, &QPushButton::released, this, [this]() {
+        emit QResultView::remove(getName());
+    });
     //connect(copyButton,  &QPushButton::clicked, this, [this](){emit copy(this->name);});
     //connect(temporal,    &QCheckBox::toggled,   this, &QResultView::setTemporalDisplay);
     //connect(spectrum,    &QCheckBox::toggled,   this, &QResultView::setFrequencyDisplay);
@@ -108,8 +110,22 @@ QMeasuresView::QMeasuresView(QWidget * parent):QWidget(parent),layout(new QVBoxL
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
-void QMeasuresView::removeResult(QResultView * w){
-    layout->removeWidget(w);
-    emit remove(w->getName());
-    delete w;
+void QMeasuresView::removeResult(QString name){
+    {
+        auto w = harmonicsMap[name];
+        if(w){
+            layout->removeWidget(w);
+            harmonicsMap.remove(name);
+            delete w;
+        }
+    }
+    {
+        auto w = responseMap[name];
+        if(w){
+            layout->removeWidget(w);
+            responseMap.remove(name);
+            delete w;
+        }
+    }
+
 }

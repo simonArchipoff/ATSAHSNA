@@ -13,6 +13,8 @@ void BodePlot::setResult(const ResultResponse & r, QString name, QColor c){
 
 }
 
+
+
 void clean_spectrum(VD &s){
   for(uint i = 0; i < s.size(); i++){
       if(std::isnan(s[i]) || std::isinf(s[i]) || s[i] < -400){

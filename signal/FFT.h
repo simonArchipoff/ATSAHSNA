@@ -63,7 +63,7 @@ class DFFT<float, std::complex<float>> : public DFFTfloat{
 public:
     DFFT(int size):DFFTfloat(size){
         FFTWScopedLocker l;
-        plan = fftwf_plan_dft_r2c_1d(size,nullptr,nullptr,FFTW_ESTIMATE);
+        plan = fftwf_plan_dft_r2c_1d(size,nullptr,nullptr,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
     }
     ~DFFT(){
         FFTWScopedLocker l;
@@ -82,7 +82,7 @@ class DFFTr<std::complex<float>, float> : public DFFTfloat{
 public:
     DFFTr(int size):DFFTfloat(size){
         FFTWScopedLocker l;
-        plan = fftwf_plan_dft_c2r_1d(size,nullptr,nullptr,FFTW_ESTIMATE);
+        plan = fftwf_plan_dft_c2r_1d(size,nullptr,nullptr,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
     }
     ~DFFTr(){
         FFTWScopedLocker l;
@@ -98,7 +98,7 @@ class DFFT<std::complex<float> *,std::complex<float> *> : public DFFTfloat{
 public:
     DFFT(int size):DFFTfloat(size){
         FFTWScopedLocker l;
-        plan = fftwf_plan_dft_1d(size,nullptr,nullptr,FFTW_FORWARD,FFTW_ESTIMATE);
+        plan = fftwf_plan_dft_1d(size,nullptr,nullptr,FFTW_FORWARD,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
     }
     ~DFFT(){
         FFTWScopedLocker l;
@@ -113,7 +113,7 @@ class DFFTr<std::complex<float> *,std::complex<float> *> : public DFFTfloat{
 public:
     DFFTr(int size):DFFTfloat(size){
         FFTWScopedLocker l;
-        plan = fftwf_plan_dft_1d(size,nullptr,nullptr,FFTW_BACKWARD,FFTW_ESTIMATE);
+        plan = fftwf_plan_dft_1d(size,nullptr,nullptr,FFTW_BACKWARD,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
     }
     ~DFFTr(){
         FFTWScopedLocker l;
@@ -129,7 +129,7 @@ class DFFT<double, std::complex<double>>:public DFFTdouble{
 public:
     DFFT(int size):DFFTdouble(size){
         FFTWScopedLocker l;
-        plan = fftw_plan_dft_r2c_1d(size,nullptr,nullptr,FFTW_ESTIMATE);
+        plan = fftw_plan_dft_r2c_1d(size,nullptr,nullptr,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
     }
     ~DFFT(){
         FFTWScopedLocker l;
@@ -144,7 +144,7 @@ class DFFT<std::complex<double>, double>:public DFFTdouble{
 public:
     DFFT(int size):DFFTdouble(size){
         FFTWScopedLocker l;
-        plan = fftw_plan_dft_c2r_1d(size,nullptr,nullptr,FFTW_ESTIMATE);
+        plan = fftw_plan_dft_c2r_1d(size,nullptr,nullptr,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
     }
     ~DFFT(){
         FFTWScopedLocker l;
@@ -163,7 +163,7 @@ class DFFT<std::complex<double>, std::complex<double>> : public DFFTdouble{
 public:
     DFFT(int size):DFFTdouble(size){
         FFTWScopedLocker l;
-        plan = fftw_plan_dft_1d(size,nullptr,nullptr,FFTW_FORWARD,FFTW_ESTIMATE);
+        plan = fftw_plan_dft_1d(size,nullptr,nullptr,FFTW_FORWARD,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
     }
     ~DFFT(){
         FFTWScopedLocker l;
@@ -178,7 +178,7 @@ class DFFTr<std::complex<double>, std::complex<double>> : public DFFTdouble{
 public:
     DFFTr(int size):DFFTdouble(size){
         FFTWScopedLocker l;
-        plan = fftw_plan_dft_1d(size,nullptr,nullptr,FFTW_BACKWARD,FFTW_ESTIMATE);
+        plan = fftw_plan_dft_1d(size,nullptr,nullptr,FFTW_BACKWARD,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
     }
     ~DFFTr(){
         FFTWScopedLocker l;

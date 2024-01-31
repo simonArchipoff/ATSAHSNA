@@ -108,3 +108,9 @@ void SpectrogramPlots::setResult(const ResultResponse& r, QString name){
     }
     m[name]->setResult(r);
 }
+
+void SpectrogramPlots::removeResult(QString name){
+    auto r = m[name];
+    m.remove(name);
+    delete r;
+}
