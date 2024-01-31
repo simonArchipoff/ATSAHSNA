@@ -54,7 +54,7 @@ void QResponseView::setResult(const ResultResponse &r){
         //spectrogramPlot->setResult(m->getResult(), m->getName());
     } else {
         temporalPlot->updatePlot(m->getResult().response,m->getName());
-        bodePlot->updatePlot(m->getResult().response,m->getName());
+        //bodePlot->updatePlot(m->getResult().response,m->getName());
         //spectrogramPlot->setResult(m->getResult(),m->getName());
     }
     temporalPlot->replot();

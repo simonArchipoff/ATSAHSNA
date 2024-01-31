@@ -31,7 +31,7 @@ VCD fft(const VD & input){
     fftw_plan p;
     {
             FFTWLockPthread l;
-            p = fftw_plan_dft_r2c_1d(input.size(), const_cast<double *>(input.data()), (fftw_complex*)out.data(), FFTW_ESTIMATE);
+            p = fftw_plan_dft_r2c_1d(input.size(), const_cast<double *>(input.data()), (fftw_complex*)out.data(), FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
     }
     fftw_execute(p);
     fftw_destroy_plan(p);
@@ -42,7 +42,7 @@ VCD fft(const VCD & input){
     fftw_plan p;
     {
         FFTWLockPthread l;
-        p = fftw_plan_dft_1d(input.size(), (fftw_complex*) const_cast<complex<double>*>(input.data()), (fftw_complex*)out.data(),FFTW_FORWARD, FFTW_ESTIMATE);
+        p = fftw_plan_dft_1d(input.size(), (fftw_complex*) const_cast<complex<double>*>(input.data()), (fftw_complex*)out.data(),FFTW_FORWARD, FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
     }
     fftw_execute(p);
     fftw_destroy_plan(p);
@@ -65,7 +65,7 @@ void rfft(const VCD & input, VD & out, int size){
     fftw_plan p;
     {
         FFTWLockPthread l;
-        p = fftw_plan_dft_c2r_1d(size,(fftw_complex*) const_cast<complex<double>*>(input.data()), out.data(), FFTW_ESTIMATE);
+        p = fftw_plan_dft_c2r_1d(size,(fftw_complex*) const_cast<complex<double>*>(input.data()), out.data(), FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
     }
 
     fftw_execute(p);
@@ -78,7 +78,7 @@ void rfft(const VCD & input, VCD & out){
     fftw_plan p;
     {
         FFTWLockPthread l;
-        p = fftw_plan_dft_1d(input.size(),(fftw_complex*) const_cast<complex<double>*>(input.data()), (fftw_complex*)out.data(), FFTW_BACKWARD, FFTW_ESTIMATE);
+        p = fftw_plan_dft_1d(input.size(),(fftw_complex*) const_cast<complex<double>*>(input.data()), (fftw_complex*)out.data(), FFTW_BACKWARD, FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
     }
     fftw_execute(p);
     fftw_destroy_plan(p);
