@@ -29,6 +29,7 @@ private:
 
     vector<double *> faustZones;
     vector<double> ref;
+    bool firstTime = true;
 };
 
 class BackendFaust : public Backend {

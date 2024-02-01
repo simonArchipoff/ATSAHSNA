@@ -194,6 +194,10 @@ void DetectChange::setAPIUI(APIUI * ui){
 }
 
 bool DetectChange::isSomethingChanged(){
+    if(firstTime == true){
+        firstTime = false;
+        return true;
+    }
     bool changed=false;
     for(uint i = 0; i<faustZones.size(); i++){
         changed |= *faustZones[i] != ref[i];
