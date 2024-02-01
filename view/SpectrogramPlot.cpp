@@ -7,8 +7,8 @@ SpectrogramPlot::SpectrogramPlot(QWidget* parent)
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     yAxis->setScaleType(QCPAxis::stLogarithmic);
     colorMap = new QCPColorMap(xAxis, yAxis);
-    xAxis->setLabel("Temps (s)"); // L'unité de temps est maintenant en secondes
-    yAxis->setLabel("Fréquence");
+    xAxis->setLabel(tr("Time (s)")); // L'unité de temps est maintenant en secondes
+    yAxis->setLabel(tr("Frequency"));
 }
 SpectrogramPlot::~SpectrogramPlot(){
     //delete colorMap;
@@ -49,6 +49,7 @@ void SpectrogramPlot::setResult(const ResultResponse &r){
 #endif
     plotSpectrogram(spect);
 }
+
 
 /*
 
@@ -106,7 +107,8 @@ void SpectrogramPlots::setResult(const ResultResponse& r, QString name){
         m.insert(name,s);
         layout->addWidget(s);
     }
-    m[name]->setResult(r);
+    if(isVisible())
+        m[name]->setResult(r);
 }
 
 void SpectrogramPlots::removeResult(QString name){

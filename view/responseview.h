@@ -18,6 +18,16 @@ public:
     void setResult(const ResultResponse &r);
     void removeResult(QString);
 
+    void setBodeView(bool b){
+        bodePlot->setVisible(b);
+    }
+    void setTemporalView(bool b){
+        temporalPlot->setVisible(b);
+    }
+    void setSpectrogramView(bool b){
+        spectrogramPlot->setVisible(b);
+    }
+
     BodePlot * getBodePlot();
     TemporalPlot * getTemporalPlot();
     SpectrogramPlots * getSpectrogramPlot();

@@ -18,7 +18,7 @@ void PlotAmplitudePhase::setCurve(const VD&f, const VD&a, const VD&p){
     auto qa = QVector<double>(a.begin(), a.end());
     auto qp = QVector<double>(p.begin(), p.end());
     amplitude->setData(qf,qa,true);
-//phase->setData(qf,qp,true);
+    phase->setData(qf,qp,true);
     amplitude->rescaleAxes(false);
 }
 

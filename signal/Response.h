@@ -6,7 +6,7 @@
 struct ParamResponse {
     int freqMin = 20;
     int freqMax = 20000;
-    double duration = 0.1;
+    double duration = 0.5;
 };
 
 struct ResultResponse {

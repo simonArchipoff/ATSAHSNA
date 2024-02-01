@@ -24,9 +24,11 @@ public:
 private:
     void createMenus();
 public:
-    void onAddResponseWidgetRequested();
-    void onAddHarmonicsWidgetRequested();
-    void onAddSpectrogramWidgetRequested();
+    void onAddSpectrumWidgetRequested(bool);
+    void onAddTemporalWidgetRequested(bool);
+    void onAddSpectrogramWidgetRequested(bool);
+
+
     void onAddFaustBackendRequested();
     void onAddJackBackendRequested();
 public:
@@ -34,15 +36,9 @@ signals:
     void addResponseWidgetRequested();
     void addHarmonicsWidgetRequested();
     void addSpectrogramWidgetRequested();
+
     void addFaustBackendRequested();
     void addJackBackendRequested();
-
-
-
-private:
-    ParamResponseWidget* paramResponseWidget;
-    ParamHarmonicsWidget* paramHarmonicsWidget;
-    ParamSpectrogramWidget* paramSpectrogramWidget;
 };
 
 

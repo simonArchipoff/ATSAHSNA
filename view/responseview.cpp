@@ -16,10 +16,9 @@ QResponseView::QResponseView(QWidget * parent):QWidget(parent),
     vLayout->setSizeConstraint(QLayout::SetMaximumSize);
     hLayout->addWidget(measures);
     hLayout->addLayout(vLayout);
-
-
-
     connect(measures,&QMeasuresView::remove,this,&QResponseView::removeResult);
+
+
 }
 
 /*

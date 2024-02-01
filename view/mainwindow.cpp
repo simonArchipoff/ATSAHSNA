@@ -18,9 +18,9 @@ MainWindow::MainWindow(QWidget *parent)
     :QMainWindow{parent}
     ,backends{new QBackendsView(this)}
     ,displays{new QResponseView{this}}
-    ,paramResponseWidget{nullptr}
-    ,paramHarmonicsWidget{nullptr}
-    ,paramSpectrogramWidget{nullptr}
+    //,paramResponseWidget{nullptr}
+    //,paramHarmonicsWidget{nullptr}
+    //,paramSpectrogramWidget{nullptr}
   //,measures{new QMeasure{this}}
 {
   //QToolBar * toolbar = addToolBar("main toolbar");
@@ -110,57 +110,63 @@ void MainWindow::createMenus()
 {
   QMenu* backendMenu = new QMenu("Backend", this);
   QAction* addFaustAction = backendMenu->addAction("Add Faust");
+  connect(addFaustAction, &QAction::triggered, this, &MainWindow::onAddFaustBackendRequested);
 #ifdef ENABLE_JACK
   QAction* addJackAction = backendMenu->addAction("Add Jack");
   connect(addJackAction, &QAction::triggered, this, &MainWindow::onAddJackBackendRequested);
 #endif
   menuBar()->addMenu(backendMenu);
 
-  QMenu* analyseMenu = new QMenu("Analyse", this);
-  QAction* addResponseAction = analyseMenu->addAction("Add Response");
-  QAction* addHarmonicsAction = analyseMenu->addAction("Add Harmonics");
-  QAction* addSpectrogramAction = analyseMenu->addAction("Add Spectrogram");
+  QMenu* analyseMenu = new QMenu(tr("Response"), this);
+
+  QAction* spectrum = analyseMenu->addAction("Spectrum");
+  spectrum->setCheckable(true);
+
+  connect(spectrum, &QAction::toggled, this, &MainWindow::onAddSpectrumWidgetRequested);
+
+  QAction* temporal = analyseMenu->addAction("Temporal");
+  temporal->setCheckable(true);
+  connect(temporal, &QAction::toggled, this, &MainWindow::onAddTemporalWidgetRequested);
+
+
+  QAction* spectrogram = analyseMenu->addAction("Spectrogram");
+  spectrogram->setCheckable(true);
+  connect(spectrogram, &QAction::toggled, this, &MainWindow::onAddSpectrogramWidgetRequested);
+
   menuBar()->addMenu(analyseMenu);
+  spectrum->setChecked(true);
+  temporal->setChecked(true);
+  spectrogram->setChecked(true);
 
-  // Connecter les signaux des actions aux slots appropriés
-  connect(addResponseAction, &QAction::triggered, this, &MainWindow::onAddResponseWidgetRequested);
-  connect(addHarmonicsAction, &QAction::triggered, this, &MainWindow::onAddHarmonicsWidgetRequested);
-  connect(addSpectrogramAction, &QAction::triggered, this, &MainWindow::onAddSpectrogramWidgetRequested);
+  //onAddSpectrumWidgetRequested(true);
+  //onAddTemporalWidgetRequested(false);
+  //onAddSpectrogramWidgetRequested(false);
 
-  // Connecter les signaux personnalisés aux slots appropriés
-  connect(this, &MainWindow::addResponseWidgetRequested, this, &MainWindow::onAddResponseWidgetRequested);
-  connect(this, &MainWindow::addHarmonicsWidgetRequested, this, &MainWindow::onAddHarmonicsWidgetRequested);
-  connect(this, &MainWindow::addSpectrogramWidgetRequested, this, &MainWindow::onAddSpectrogramWidgetRequested);
-  connect(addFaustAction, &QAction::triggered, this, &MainWindow::onAddFaustBackendRequested);
+  //connect(this, &MainWindow::addResponseWidgetRequested, this, &MainWindow::onAddSpectrumWidgetRequested);
+  //connect(this, &MainWindow::addHarmonicsWidgetRequested, this, &MainWindow::onAddTemporalWidgetRequested);
+  //connect(this, &MainWindow::addSpectrogramWidgetRequested, this, &MainWindow::onAddSpectrogramWidgetRequested);
 
 }
 
-void MainWindow::onAddResponseWidgetRequested()
-{
-  paramResponseWidget->show();
+void MainWindow::onAddSpectrumWidgetRequested(bool b){
+  displays->setBodeView(b);
 }
 
-void MainWindow::onAddHarmonicsWidgetRequested()
-{
-  paramHarmonicsWidget->show();
+void MainWindow::onAddTemporalWidgetRequested(bool b){
+  displays->setTemporalView(b);
 }
 
-void MainWindow::onAddSpectrogramWidgetRequested()
-{
-  paramSpectrogramWidget->show();
+void MainWindow::onAddSpectrogramWidgetRequested(bool b){
+  displays->setSpectrogramView(b);
 }
 
-void MainWindow::onAddFaustBackendRequested()
-{
-  // Logique pour ajouter le backend Faust
-  // Émettre le signal pour indiquer que le backend a été ajouté
+
+
+void MainWindow::onAddFaustBackendRequested(){
   emit addFaustBackendRequested();
 }
 
-void MainWindow::onAddJackBackendRequested()
-{
-  // Logique pour ajouter le backend Jack
-  // Émettre le signal pour indiquer que le backend a été ajouté
+void MainWindow::onAddJackBackendRequested(){
   emit addJackBackendRequested();
 }
 
