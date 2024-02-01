@@ -51,7 +51,7 @@ bool BackendFaust::setCode(std::string dspCode_or_file, int sampleRate=DEFAULTSR
 
     factory = file_exists(dspCode_or_file) ?
                   createDSPFactoryFromFile(dspCode_or_file, argc, argv ,"", errorString,0)
-                                           :  createDSPFactoryFromString("", dspCode_or_file, argc, argv ,"", errorString,0);
+               :  createDSPFactoryFromString("", dspCode_or_file, argc, argv ,"", errorString,0);
 
     dspInstance = factory ? factory->createDSPInstance() : nullptr;
     if(dspInstance){
@@ -189,7 +189,7 @@ void DetectChange::setAPIUI(APIUI * ui){
     ref.resize(0);
     for(int i = 0; i < ui->getParamsCount(); i++){
         faustZones.push_back(ui->getParamZone(i));
-        ref.push_back(0);//ui->getParamValue(i));
+        ref.push_back(0);
     }
 }
 

@@ -31,6 +31,9 @@ public:
 
     void onAddFaustBackendRequested();
     void onAddJackBackendRequested();
+
+    void openFile();
+
 public:
 signals:
     void addResponseWidgetRequested();
@@ -38,6 +41,7 @@ signals:
     void addSpectrogramWidgetRequested();
 
     void addFaustBackendRequested();
+    void AddFaustBackendRequested(QString file);
     void addJackBackendRequested();
 };
 

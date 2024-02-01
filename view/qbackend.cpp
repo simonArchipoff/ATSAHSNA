@@ -38,11 +38,23 @@ QFaustView::QFaustView(QWidget *parent)
     connect(compile_button,&QPushButton::clicked,this, &QFaustView::compile);
     connect(codeEdit,&QTextEdit::textChanged, this, [this](){compile_button->setDisabled(false);});
     connect(sr,&QLineEdit::textChanged, this, [this](){compile_button->setDisabled(false);});
-
 }
 
 void QFaustView::compile(){
     emit setFaustCode(codeEdit->toPlainText(),sr->text().toInt());
+}
+
+void QFaustView::setFile(QString path){
+    QFile file(path);
+    if(file.exists()){
+        emit setFaustCode(path,sr->text().toInt());
+        if(file.open(QIODevice::ReadOnly|QIODevice::Text)) {
+            QTextStream in(&file);
+            QString c = in.readAll();
+            codeEdit->setText(c);
+            codeEdit->setReadOnly(true);
+        }
+    }
 }
 
 void QFaustView::setDSPUI(QWidget * ui)

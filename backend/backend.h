@@ -5,9 +5,10 @@
 #include <Response.h>
 #include <vector>
 #include <variant>
-using std::variant;
 
 #include "concurrentqueue.h"
+
+using std::variant;
 
 class Backend {
 public:
@@ -36,7 +37,6 @@ class MeasureSync{
     vector<ResultHarmonics> getResultHarmonics();
     vector<ResultResponse>  getResultResponse();
 };
-
 
 class MeasureASync {
     const vector<ResultHarmonics> getResultHarmonics();

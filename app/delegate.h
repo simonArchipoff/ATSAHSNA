@@ -73,6 +73,8 @@ public:
     delegate(MainWindow * mw);
 
     void addFaustBackend();
+    void addFaustBackendWithFile(QString path);
+
 #ifdef ENABLE_JACK
     void addJackBackend();
 #endif

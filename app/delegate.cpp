@@ -21,6 +21,7 @@ delegate::delegate(MainWindow * m):mw{m}
     connect(m,&MainWindow::addJackBackendRequested,this, &delegate::addJackBackend);
 #endif
     connect(m,&MainWindow::addFaustBackendRequested,this, &delegate::addFaustBackend);
+    connect(m,&MainWindow::AddFaustBackendRequested,this, &delegate::addFaustBackendWithFile);
 }
 
 QBackendFaust::QBackendFaust(QFaustView * gui, QString name):QObject{},faust_gui{gui}{
@@ -139,9 +140,6 @@ protected:
 void delegate::addFaustBackend() {
     QString name = "faust" + QString::number(faust.size());
     auto f = mw->backends->addFaust(name);
-    auto d = mw->displays->getBodePlot();
-    //auto h = mw->displays->getTHDPlot();
-    auto s = mw->displays->getSpectrogramPlot();
     auto fb = new QBackendFaust(f, name);
     faust.push_back(fb);
     connect(fb,&QBackendFaust::resultResponse, mw->displays,&QResponseView::setResults);
@@ -149,7 +147,16 @@ void delegate::addFaustBackend() {
             Qt::UniqueConnection);*/
 }
 
-
+void delegate::addFaustBackendWithFile(QString path) {
+    QString name = "faust" + QString::number(faust.size());
+    auto f = mw->backends->addFaust(name);
+    auto fb = new QBackendFaust(f, name);
+    faust.push_back(fb);
+    connect(fb,&QBackendFaust::resultResponse, mw->displays,&QResponseView::setResults);
+    f->setFile(path);
+    /*connect(fb, &QBackendFaust::resultHarmonics, h, &THDPlot::setResult,
+            Qt::UniqueConnection);*/
+}
 
 void delegate::addResponseDisplay(){
     if(!mw->displays->isBodeInit()){

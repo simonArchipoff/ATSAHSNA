@@ -20,9 +20,6 @@
 #include <faust/gui/QTUI.h>
 
 
-
-
-
 class QFaustView : public QWidget{
     Q_OBJECT
 public:
@@ -31,6 +28,9 @@ public:
     void setDSPUI(QWidget * ui);
     void setErrorMessage(QString);
     void compile();
+
+    void setFile(QString path);
+
 signals:
     void setFaustCode(QString code, uint sampleRate);
 

@@ -5,6 +5,7 @@
 #include <QScopedPointer>
 #include <QToolBar>
 #include <QVBoxLayout>
+#include <QFileDialog>
 
 #include "qnamespace.h"
 //#include "task.h"
@@ -109,6 +110,9 @@ MainWindow::~MainWindow()
 void MainWindow::createMenus()
 {
   QMenu* backendMenu = new QMenu("Backend", this);
+  QAction * openFileAction = backendMenu->addAction("open file");
+  connect(openFileAction, &QAction::triggered, this, &MainWindow::openFile);
+
   QAction* addFaustAction = backendMenu->addAction("Add Faust");
   connect(addFaustAction, &QAction::triggered, this, &MainWindow::onAddFaustBackendRequested);
 #ifdef ENABLE_JACK
@@ -168,6 +172,16 @@ void MainWindow::onAddFaustBackendRequested(){
 
 void MainWindow::onAddJackBackendRequested(){
   emit addJackBackendRequested();
+}
+
+void MainWindow::openFile(){
+  auto path = QFileDialog::getOpenFileName(this
+                                        , tr("Open File")
+                                        ,""
+                                       ,tr("Faust program (*.dsp)"));
+  if(path.endsWith(".dsp")){
+      emit AddFaustBackendRequested(path);
+  }
 }
 
 
