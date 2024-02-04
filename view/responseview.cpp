@@ -17,8 +17,6 @@ QResponseView::QResponseView(QWidget * parent):QWidget(parent),
     hLayout->addWidget(measures);
     hLayout->addLayout(vLayout);
     connect(measures,&QMeasuresView::remove,this,&QResponseView::removeResult);
-
-
 }
 
 /*
