@@ -13,7 +13,7 @@ void PlotTemporal::setCurve(const FDF&f){
 }
 
 
-TemporalPlot::TemporalPlot(QWidget * parent):QCustomPlot(parent){
+TemporalPlot::TemporalPlot(QWidget * parent):MyQCustomPlot(parent){
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     temporalAxis = xAxis;
     amplitudeAxis = yAxis;

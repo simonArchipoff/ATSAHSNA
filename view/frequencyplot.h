@@ -4,7 +4,7 @@
 #include <qcustomplot.h>
 #include <FrequencyDomain.h>
 #include <Response.h>
-
+#include <myqcustomplot.h>
 
 
 struct PlotAmplitudePhase{
@@ -28,7 +28,7 @@ struct PlotAmplitudePhase{
     QString name;
 };
 
-class FrequencyPlot : public QCustomPlot
+class FrequencyPlot : public MyQCustomPlot
 {
     Q_OBJECT
 public:

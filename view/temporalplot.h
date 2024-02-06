@@ -3,7 +3,7 @@
 
 #include <FrequencyDomain.h>
 #include <roundrobincolor.h>
-#include <qcustomplot.h>
+#include <myqcustomplot.h>
 #include <Response.h>
 
 class PlotTemporal{
@@ -17,7 +17,7 @@ public:
     QCPGraph * values;
 };
 
-class TemporalPlot : public QCustomPlot
+class TemporalPlot : public MyQCustomPlot
 {
     Q_OBJECT
 public:

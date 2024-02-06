@@ -1,7 +1,7 @@
 #include "SpectrogramPlot.h"
 
 SpectrogramPlot::SpectrogramPlot(QWidget* parent)
-    : QCustomPlot(parent) {
+    : MyQCustomPlot(parent) {
     // Initialiser QCustomPlot
     addGraph();
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);

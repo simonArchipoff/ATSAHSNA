@@ -22,7 +22,7 @@ void PlotAmplitudePhase::setCurve(const VD&f, const VD&a, const VD&p){
     amplitude->rescaleAxes(false);
 }
 
-FrequencyPlot::FrequencyPlot(QWidget * parent):QCustomPlot(parent){
+FrequencyPlot::FrequencyPlot(QWidget * parent):MyQCustomPlot(parent){
     frequencyAxis = xAxis;
     amplitudeAxis = yAxis;
     phaseAxis = yAxis2;

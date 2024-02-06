@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include <qcustomplot.h>
+#include <myqcustomplot.h>
 #include "Spectrogram.h"
 #include <Response.h>
 #include <variant>
@@ -8,7 +8,7 @@
 
 #include <QHBoxLayout>
 
-class SpectrogramPlot : public QCustomPlot {
+class SpectrogramPlot : public MyQCustomPlot {
     Q_OBJECT
 public:
     SpectrogramPlot(QWidget* parent = nullptr);

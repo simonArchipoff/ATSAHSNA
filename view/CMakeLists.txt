@@ -7,6 +7,9 @@ add_library(view
     qmeasure.h
     qmeasure.cpp
 
+    myqcustomplot.h
+    myqcustomplot.cpp
+
     BodePlot.cpp
     BodePlot.h
 
