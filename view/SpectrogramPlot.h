@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include <myqcustomplot.h>
+#include <helper_results_view.h>
 #include "Spectrogram.h"
 #include <Response.h>
 #include <variant>
@@ -23,12 +23,14 @@ private:
 
 
 
-class SpectrogramPlots : public QWidget{
+class SpectrogramPlots : public ResultBase{
     Q_OBJECT
 
 public:
     SpectrogramPlots(QWidget* parent = nullptr);
-
+    virtual QWidget * getConfigureWidget() override{
+        return new QWidget(this);
+    }
     void setResult(const ResultResponse & r, QString name);
     void removeResult(QString);
 private:

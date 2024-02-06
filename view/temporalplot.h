@@ -3,7 +3,7 @@
 
 #include <FrequencyDomain.h>
 #include <roundrobincolor.h>
-#include <myqcustomplot.h>
+#include <helper_results_view.h>
 #include <Response.h>
 
 class PlotTemporal{

@@ -97,8 +97,10 @@ void TemporalSignal::updateCurve(const VD&signal, QString name){
 
 */
 
-SpectrogramPlots::SpectrogramPlots(QWidget *parent):QWidget(parent),m(),layout(new QHBoxLayout){
-    setLayout(layout);
+SpectrogramPlots::SpectrogramPlots(QWidget *parent):ResultBase("spectrogram",parent),m(),layout(new QHBoxLayout){
+    auto w = new QWidget(this);
+    w->setLayout(layout);
+    addWidget(w);
 }
 
 void SpectrogramPlots::setResult(const ResultResponse& r, QString name){

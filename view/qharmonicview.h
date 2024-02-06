@@ -14,7 +14,6 @@ public:
     void setResult(const std::vector<ResultHarmonics> &);
 };
 
-
 class THDText : public QWidget {
 public:
     THDText(QWidget * parent=nullptr);

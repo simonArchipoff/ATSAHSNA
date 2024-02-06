@@ -13,24 +13,12 @@ QResponseView::QResponseView(QWidget * parent):QWidget(parent),
     QHBoxLayout * hLayout = new QHBoxLayout(this);
     QVBoxLayout* vLayout = new QVBoxLayout();
 
-    bbodePlot = new QGroupBox("Spectrum"),
-        btemporalPlot = new QGroupBox("temporal"),
-                  bspectrogramPlot = new QGroupBox("spectrogram");
-    QLayout * bodeLayout = new QHBoxLayout,
-        * temporalLayout = new QHBoxLayout,
-                * spectrogramLayout = new QHBoxLayout;
-    bbodePlot->setLayout(bodeLayout);
-    btemporalPlot->setLayout(temporalLayout);
-    bspectrogramPlot->setLayout(spectrogramLayout);
-
-    bodeLayout->addWidget(bodePlot);
-    temporalLayout->addWidget(temporalPlot);
-    spectrogramLayout->addWidget(spectrogramPlot);
 
 
-    vLayout->addWidget(bbodePlot);
-    vLayout->addWidget(btemporalPlot);
-    vLayout->addWidget(bspectrogramPlot);
+
+    vLayout->addWidget(bodePlot);
+    vLayout->addWidget(temporalPlot);
+    vLayout->addWidget(spectrogramPlot);
     vLayout->setSizeConstraint(QLayout::SetMaximumSize);
     hLayout->addWidget(measures);
     hLayout->addLayout(vLayout);

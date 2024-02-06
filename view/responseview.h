@@ -19,13 +19,13 @@ public:
     void removeResult(QString);
 
     void setBodeView(bool b){
-        bbodePlot->setVisible(b);
+        bodePlot->setVisible(b);
     }
     void setTemporalView(bool b){
-        btemporalPlot->setVisible(b);
+        temporalPlot->setVisible(b);
     }
     void setSpectrogramView(bool b){
-        bspectrogramPlot->setVisible(b);
+        spectrogramPlot->setVisible(b);
     }
 
     BodePlot * getBodePlot();
@@ -35,10 +35,6 @@ protected:
     BodePlot * bodePlot;
     TemporalPlot * temporalPlot;
     SpectrogramPlots * spectrogramPlot;
-
-    QWidget * bbodePlot,
-     * btemporalPlot,
-     * bspectrogramPlot;
     QMeasuresView * measures;
 };
 

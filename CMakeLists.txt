@@ -25,6 +25,15 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
   GIT_TAG        v3.3.2 # or a later release
 )
+
+FetchContent_Declare(
+    KFR
+    GIT_REPOSITORY https://github.com/kfrlib/kfr.git
+    GIT_TAG 6.0.0
+)
+
+#FetchContent_MakeAvailable(KFR)
+
 FetchContent_MakeAvailable(Catch2)
 
 FetchContent_Declare(

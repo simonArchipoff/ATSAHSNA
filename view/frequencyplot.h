@@ -4,7 +4,7 @@
 #include <qcustomplot.h>
 #include <FrequencyDomain.h>
 #include <Response.h>
-#include <myqcustomplot.h>
+#include <helper_results_view.h>
 
 
 struct PlotAmplitudePhase{
