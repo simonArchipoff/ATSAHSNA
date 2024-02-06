@@ -2,6 +2,8 @@
 #include "qmeasuresview.h"
 #include <QVBoxLayout>
 
+#include <QGroupBox>
+
 QResponseView::QResponseView(QWidget * parent):QWidget(parent),
     bodePlot(new BodePlot(this))
     ,temporalPlot(new TemporalPlot(this))
@@ -10,9 +12,25 @@ QResponseView::QResponseView(QWidget * parent):QWidget(parent),
     //setLayout(hLayout);
     QHBoxLayout * hLayout = new QHBoxLayout(this);
     QVBoxLayout* vLayout = new QVBoxLayout();
-    vLayout->addWidget(bodePlot);
-    vLayout->addWidget(temporalPlot);
-    vLayout->addWidget(spectrogramPlot);
+
+    bbodePlot = new QGroupBox("Spectrum"),
+        btemporalPlot = new QGroupBox("temporal"),
+                  bspectrogramPlot = new QGroupBox("spectrogram");
+    QLayout * bodeLayout = new QHBoxLayout,
+        * temporalLayout = new QHBoxLayout,
+                * spectrogramLayout = new QHBoxLayout;
+    bbodePlot->setLayout(bodeLayout);
+    btemporalPlot->setLayout(temporalLayout);
+    bspectrogramPlot->setLayout(spectrogramLayout);
+
+    bodeLayout->addWidget(bodePlot);
+    temporalLayout->addWidget(temporalPlot);
+    spectrogramLayout->addWidget(spectrogramPlot);
+
+
+    vLayout->addWidget(bbodePlot);
+    vLayout->addWidget(btemporalPlot);
+    vLayout->addWidget(bspectrogramPlot);
     vLayout->setSizeConstraint(QLayout::SetMaximumSize);
     hLayout->addWidget(measures);
     hLayout->addLayout(vLayout);

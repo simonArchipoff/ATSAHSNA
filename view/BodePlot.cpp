@@ -1,5 +1,4 @@
 #include "BodePlot.h"
-#include "SpectrogramPlot.h"
 
 
 
