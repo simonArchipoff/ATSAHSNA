@@ -54,8 +54,7 @@ signals:
 public:
   QPushButton * start_button;
 };
-
-
+/*
 template<class QPARAM>
 class QResult : public QWidget {
 public:
@@ -84,8 +83,4 @@ public:
 typedef class QResult<QParamResponse>   QResponse;
 typedef class QResult<QParamDistortion> QDistortion;
 //typedef class QResult<QParamSpectrogram,QDisplaySpectrogram> QSpectrogram;
-
-
-
-
-
+*/

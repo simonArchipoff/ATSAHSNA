@@ -58,6 +58,7 @@ ResultBase::ResultBase(QString name, QWidget *parent):QWidget(parent),layout(new
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
     hlayout->addWidget(b);
+    b->setCheckable(true);
     connect(b,&QPushButton::clicked,this,&ResultBase::popWindow);
 }
 
@@ -66,7 +67,11 @@ void ResultBase::addWidget(QWidget *w){
 }
 
 void ResultBase::popWindow(bool b){
-    auto w = getConfigureWidget();
-    w->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
-    w->setVisible(b);
+    configureWidget->setVisible(b);
+    if(b){
+        layout->insertWidget(1,configureWidget);
+    } else {
+        layout->removeWidget(configureWidget);
+    }
 }
+

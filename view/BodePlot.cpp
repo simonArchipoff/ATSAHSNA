@@ -1,19 +1,29 @@
 #include "BodePlot.h"
 
 
-
 #include <algorithm>
 #include <cmath>
 
+#include <QFormLayout>
+#include <QCheckBox>
 
 BodePlot::BodePlot(QWidget*parent):ResultBase(tr("Bode Plot"),parent),fp(new FrequencyPlot(parent)){
     addWidget(fp);
+    auto m = new BodePlotMenu;
+    setConfigureWidget(m);
+    connect(m, &BodePlotMenu::displayPhase, fp, &FrequencyPlot::displayPhase);
 }
 void BodePlot::setResult(const ResultResponse & r, QString name, QColor c){
     fp->setPlot(r.response, name, c);
 
 }
 
+
+BodePlotMenu::BodePlotMenu(){
+    auto * phase = new QCheckBox(tr("phase"),this);
+    phase->setChecked(true);
+    connect(phase,&QCheckBox::stateChanged, this, &BodePlotMenu::displayPhase);
+}
 
 
 void clean_spectrum(VD &s){
@@ -826,3 +836,5 @@ unsigned char black_body_rgb[3*256] =
      ,255,254,249
      ,255,255,255};
 */
+
+

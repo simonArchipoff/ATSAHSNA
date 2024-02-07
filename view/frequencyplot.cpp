@@ -77,4 +77,9 @@ void FrequencyPlot::updatePlot( const FDF&v, QString name){
     p->setCurve(v);
 }
 
-
+void FrequencyPlot::displayPhase(bool b){
+    for(auto & i : plots){
+        i->setDisplayPhase(b);
+    }
+    replot();
+}

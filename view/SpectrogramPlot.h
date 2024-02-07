@@ -28,12 +28,17 @@ class SpectrogramPlots : public ResultBase{
 
 public:
     SpectrogramPlots(QWidget* parent = nullptr);
-    virtual QWidget * getConfigureWidget() override{
-        return new QWidget(this);
-    }
     void setResult(const ResultResponse & r, QString name);
     void removeResult(QString);
 private:
     QMap<QString, SpectrogramPlot *> m;
     QHBoxLayout * layout;
+};
+
+
+
+class SpectrogramPlotMenu : public QWidget{
+    Q_OBJECT
+public:
+    SpectrogramPlotMenu(){}
 };

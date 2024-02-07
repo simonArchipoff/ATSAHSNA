@@ -40,6 +40,7 @@ public:
     void updatePlot(const ResultResponse & r, QString name){
         updatePlot(r.response, name);
     }
+    void displayPhase(bool b);
 protected:
     QMap<QString,PlotAmplitudePhase *> plots;
     QCPAxis *frequencyAxis;

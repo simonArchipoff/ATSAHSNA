@@ -14,15 +14,19 @@ class ResultBase : public QWidget{
 public:
     ResultBase(QString name, QWidget * parent);
 
+
+    void setConfigureWidget(QWidget * w){
+        configureWidget = w;
+        //configureWidget->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    }
+
+
 protected:
     void addWidget(QWidget * w);
-    virtual QWidget * getConfigureWidget(){
-#pragma warning "this should be removed"
-        return new QWidget;
-    }
 
 private:
     void popWindow(bool b);
     QVBoxLayout * layout;
+    QWidget * configureWidget;
 };
 

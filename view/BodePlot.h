@@ -41,8 +41,18 @@ public:
         updatePlot(r.response, name);
     }
 
+
+
 protected:
     FrequencyPlot * fp;
 };
 
 
+class BodePlotMenu : public QWidget{
+    Q_OBJECT
+public:
+    BodePlotMenu();
+
+signals:
+    void displayPhase(bool b);
+};

@@ -118,3 +118,4 @@ void SpectrogramPlots::removeResult(QString name){
     m.remove(name);
     delete r;
 }
+
