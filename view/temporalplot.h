@@ -17,8 +17,7 @@ public:
     QCPGraph * values;
 };
 
-class TemporalPlot : public MyQCustomPlot
-{
+class TemporalPlot : public ResultBase{
     Q_OBJECT
 public:
     TemporalPlot(QWidget * parent=nullptr);
@@ -28,11 +27,17 @@ public:
     void updatePlot(const ResultResponse&v, QString name){
         updatePlot(v.response, name);
     }
+    void replot(){
+        plot->replot();
+    }
     void removeResult(QString);
 protected:
     QMap<QString,PlotTemporal *> plots;
     RoundRobinColor color_round_robin;
     QCPAxis *temporalAxis;
     QCPAxis *amplitudeAxis;
+
+private:
+    MyQCustomPlot * plot;
 };
 

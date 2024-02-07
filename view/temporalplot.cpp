@@ -13,13 +13,13 @@ void PlotTemporal::setCurve(const FDF&f){
 }
 
 
-TemporalPlot::TemporalPlot(QWidget * parent):MyQCustomPlot(parent){
-    setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    temporalAxis = xAxis;
-    amplitudeAxis = yAxis;
+TemporalPlot::TemporalPlot(QWidget * parent):ResultBase(tr("temporal plot"),parent),plot(new MyQCustomPlot(parent)){
+    plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    temporalAxis = plot->xAxis;
+    amplitudeAxis = plot->yAxis;
     temporalAxis->setLabel(tr("time (s)"));
     amplitudeAxis->setLabel(tr("Amplitude"));
-
+    addWidget(plot);
 }
 TemporalPlot::~TemporalPlot(){
     for(auto i : plots){
@@ -32,7 +32,7 @@ TemporalPlot::~TemporalPlot(){
 
 void TemporalPlot::setPlot(const FDF & f, QString name, QColor color){
     if(!plots.contains(name)){
-        auto pa = addGraph(temporalAxis, amplitudeAxis);
+        auto pa = plot->addGraph(temporalAxis, amplitudeAxis);
 
         QPen pen_amplitude;
 
@@ -58,10 +58,8 @@ void TemporalPlot::removeResult(QString name){
     auto r = plots[name];
     plots.remove(name);
     if(r){
-        this->removePlottable(r->values);
-        replot();
+        plot->removePlottable(r->values);
+        plot->replot();
         delete r;
     }
-
-
 }

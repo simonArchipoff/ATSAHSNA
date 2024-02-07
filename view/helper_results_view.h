@@ -9,7 +9,6 @@ public:
     MyQCustomPlot(QWidget * parent=nullptr);
 };
 
-
 class ResultBase : public QWidget{
     Q_OBJECT
 public:
@@ -17,9 +16,13 @@ public:
 
 protected:
     void addWidget(QWidget * w);
-    virtual QWidget * getConfigureWidget() = 0;
+    virtual QWidget * getConfigureWidget(){
+#pragma warning "this should be removed"
+        return new QWidget;
+    }
 
 private:
     void popWindow(bool b);
     QVBoxLayout * layout;
 };
+

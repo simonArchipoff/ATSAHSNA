@@ -6,9 +6,11 @@
 #include <cmath>
 
 
-BodePlot::BodePlot(QWidget*parent):FrequencyPlot(parent){}
+BodePlot::BodePlot(QWidget*parent):ResultBase(tr("Bode Plot"),parent),fp(new FrequencyPlot(parent)){
+    addWidget(fp);
+}
 void BodePlot::setResult(const ResultResponse & r, QString name, QColor c){
-    setPlot(r.response, name, c);
+    fp->setPlot(r.response, name, c);
 
 }
 

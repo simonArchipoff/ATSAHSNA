@@ -36,7 +36,6 @@ public:
     ~FrequencyPlot();
     void setPlot(const FDF & f, QString name, QColor c, bool phaseDisp=true);
     void removeResult(QString name);
-
     void updatePlot(const FDF&v,QString name);
     void updatePlot(const ResultResponse & r, QString name){
         updatePlot(r.response, name);
