@@ -9,11 +9,11 @@ QResponseView::QResponseView(QWidget * parent):QWidget(parent),
     ,temporalPlot(new TemporalPlot(this))
     ,spectrogramPlot(new SpectrogramPlots(this))
     ,measures(new QMeasuresView(this)){
-    //setLayout(hLayout);
-    QHBoxLayout * hLayout = new QHBoxLayout(this);
-    QVBoxLayout* vLayout = new QVBoxLayout();
 
+    QHBoxLayout * hLayout = new QHBoxLayout;
+    QVBoxLayout* vLayout = new QVBoxLayout;
 
+    setLayout(hLayout);
 
 
     vLayout->addWidget(bodePlot);

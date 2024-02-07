@@ -49,12 +49,14 @@ MyQCustomPlot::MyQCustomPlot(QWidget *parent)
 
 ResultBase::ResultBase(QString name, QWidget *parent):QWidget(parent),layout(new QVBoxLayout){
     setLayout(layout);
-    QHBoxLayout * hlayout = new QHBoxLayout(this);
+    QHBoxLayout * hlayout = new QHBoxLayout;
     layout->addLayout(hlayout);
     auto * label = new QLabel(name,this);
     hlayout->addWidget(label);
     hlayout->addStretch();
-    auto * b = new QPushButton("",this);
+    auto * b = new QPushButton("☰",this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
     hlayout->addWidget(b);
     connect(b,&QPushButton::clicked,this,&ResultBase::popWindow);
 }

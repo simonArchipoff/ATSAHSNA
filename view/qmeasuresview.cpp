@@ -9,7 +9,7 @@
 
 QResultView::QResultView(QColor color, QString name, QWidget *parent)
     :QWidget(parent)
-    ,layout(new QHBoxLayout(this))
+    ,layout(new QHBoxLayout)
     ,color(color)
     ,name(name)
     ,colorFrame(new QFrame(this)){
@@ -75,7 +75,6 @@ QResultHarmonicsView::QResultHarmonicsView(QColor color, const ResultHarmonics &
     ,result(r){
     auto text = new QCheckBox(tr("text"), this);
     layout->addWidget(text);
-
 }
 
 void QResultHarmonicsView::setSpectrogramDisplay(bool newSpectrogram_display){
@@ -106,8 +105,11 @@ void QResultResponseView::updateResult(const ResultResponse &r){
 }
 
 QMeasuresView::QMeasuresView(QWidget * parent):QWidget(parent),layout(new QVBoxLayout(this)){
+  //  auto l = new QVBoxLayout(this);
+    layout->addStretch();
     setLayout(layout);
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    //setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
 }
 
 void QMeasuresView::removeResult(QString name){

@@ -105,7 +105,7 @@ public:
             return nullptr;
         }else{
             auto q = measureToQWidget(rr_color.getNext(),r,this);
-            layout->addWidget(q);
+            layout->insertWidget(layout->count() -1, q);
             harmonicsMap.insert(q->getName(),q);
             return q;
         }
@@ -117,7 +117,7 @@ public:
             return responseMap[n];
         }else{
             auto q = measureToQWidget(rr_color.getNext(),r,this);
-            layout->addWidget(q);
+            layout->insertWidget(layout->count()-1,q);
             responseMap.insert(q->getName(),q);
             return q;
         }
@@ -129,7 +129,7 @@ signals:
     void remove(QString);
 protected:
     RoundRobinColor rr_color;
-    QLayout * layout;
+    QVBoxLayout * layout;
     QMap<QString,QResultHarmonicsView*> harmonicsMap;
     QMap<QString,QResultResponseView*> responseMap;
 };
