@@ -12,6 +12,7 @@ BodePlot::BodePlot(QWidget*parent):ResultBase(tr("Bode Plot"),parent),fp(new Fre
     auto m = new BodePlotMenu;
     setConfigureWidget(m);
     connect(m, &BodePlotMenu::displayPhase, fp, &FrequencyPlot::displayPhase);
+
 }
 void BodePlot::setResult(const ResultResponse & r, QString name, QColor c){
     fp->setPlot(r.response, name, c);
@@ -21,8 +22,11 @@ void BodePlot::setResult(const ResultResponse & r, QString name, QColor c){
 
 BodePlotMenu::BodePlotMenu(){
     auto * phase = new QCheckBox(tr("phase"),this);
+    auto * layout = new QVBoxLayout(this);
+    layout->addWidget(phase);
     phase->setChecked(true);
     connect(phase,&QCheckBox::stateChanged, this, &BodePlotMenu::displayPhase);
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 
