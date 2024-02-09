@@ -1,5 +1,4 @@
 #pragma once
-#include <AudioIO.h>
 #include "concurrentqueue.h"
 #include <Analysis.h>
 #include <RingBuffer.h>
@@ -13,7 +12,7 @@ class Receiver {
 public://this code look the signal in a window of twice it sice, this is sub optimal, the better would be, i think, signal size + buffer size
        // anyway, this is why this code has some "size*2" everywhere, inside DelayComputer as well, this should be made more explicit.
     Receiver(const VCD & signal, int number_output, double threshold=0.98)
-        :pool(32,signal.size()), tmp(signal.size() * 2), dc(signal),ringBuffers(number_output),time_waited(0),size(signal.size()){
+        :pool(32,signal.size()), tmp(signal.size() * 2), dc(signal,signal.size()),ringBuffers(number_output),time_waited(0),size(signal.size()){
         threshold_level=threshold;
         for(auto &i : ringBuffers){
             i.reset(3*signal.size());
@@ -81,7 +80,7 @@ private:
     std::vector<RingBuffer<T>> ringBuffers;
 
     int time_waited;
-    const DelayComputer dc;
+    DelayComputer<T> dc;
     const T threshold_level;
     const uint timeout;
     const int size;

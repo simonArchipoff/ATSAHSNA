@@ -103,6 +103,7 @@ QBackendJack::~QBackendJack(){
 template<class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
 
+
 void QBackendJack::timerEvent(QTimerEvent * e){
     auto r = backend->getResultResponse();
     if(!std::holds_alternative<std::monostate>(r))

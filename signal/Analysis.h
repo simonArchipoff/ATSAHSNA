@@ -51,78 +51,77 @@ double rms(iterator begin, iterator end){
 template<typename T>
 class ConvolutionByConstant {
   public:
-  ConvolutionByConstant(const vector<T> & v, uint other_operand_size):ConvolutionByConstant(array_VD_to_VCD(v),other_operand_size){};
-  ConvolutionByConstant(const vector<complex<T>> & v, uint other_operand_size)
+  ConvolutionByConstant(vector<complex<T>> v, uint other_operand_size)
       :dft(v.size() + other_operand_size - 1)
       ,dftr(dft.getSize())
-      //,fft_const(getBuffer<T>(dft.getSize()))
-  {
-      vector<complex<T>> tmp(v);
-      tmp.resize(dft.getSize(),0);
-      dft.execute(tmp.data(),fft_const);
+      ,input(v){
+      input.resize(dft.getSize(),0);
+      output.resize(dft.getSize());
+      fft_const.resize(dft.getSize());
+      dft.execute(v.data(),fft_const.data());
   }
 
-  void convolution_fft(const T * v, int size){
-
-  }
+  ConvolutionByConstant(vector<T> & v, uint other_operand_size):ConvolutionByConstant(array_VD_to_VCD(v),other_operand_size){};
 
 
-#if 0
-  template<typename iterator>
-  void convolution_fft(iterator begin, iterator end){
-      int input_size = std::distance(begin,end);
-      assert( input_size <= dft.getSize());
-      dft.setInput(begin,end);
-      dft.fft();
+  void convolution_fft(const complex<T> * v, int n){
+      assert( n <= dft.getSize());
+      std::fill(input.begin(),input.end(),0);
+      std::copy(v,v+n,input.begin());
+      dft.execute(input.data(),output.data());
       for(uint i = 0; i < dft.getSize() ; i++){
-          in[i] = outdft[i] * fft_const[i];
+          input[i] = output[i] * fft_const[i];
       }
-      dft.rfft();
+      dft.execute(input.data(),output.data());
       std::transform(getOutput(),getOutput() + getOutputSize(), getOutput(),[](std::complex<T> s){return s * std::complex<T>(1./5.,0);});
   }
-#endif
+
   int getOutputSize(){
       return dft.getSize();
   }
-  std::complex<double> * getOutput(){
-      return (std::complex<double>*)dft.getOutput();
+  std::complex<T> * getOutput(){
+      return (std::complex<T>*) output.data();
+  }
+  std::complex<T> * getInput(){
+      return input.data();
   }
   uint getSize() const;
 
   private:
-  DFFT<T,complex<T>> dft;
-  DFFTr<complex<T>,T> dftr;
-  std::complex<T> *fft_const;
+  DFFT<complex<T>,complex<T>> dft;
+  DFFTr<complex<T>,complex<T>> dftr;
+  std::vector<std::complex<T>> fft_const
+                               ,output;
+  std::vector<complex<T>> input;
+
 };
 
-
-#if 0
-
+template<typename T>
 class DelayComputer
 {
 public:
   DelayComputer();
-  DelayComputer(const VCD &c){
-    setReference(c);
+  DelayComputer(VCD &c):conv(c,c.size()){
   }
+  DelayComputer(VD &c):conv(c,c.size()){}
   ~DelayComputer();
-  void setReference(const VCD &c);
-  std::pair<int, double> getDelays(const VCD &s){
-    return getDelays(s.begin(), s.end());
+
+  std::pair<int, double> getDelays(VCD &s){
+      return getDelays(s.data(), s.size());
   }
   int getSize() const {
     return conv.getSize();
   }
 
-  template<typename iterator>
-  std::pair<int, double> getDelays(iterator begin, iterator end){
-    conv.convolution_fft(begin,end);
-    auto r = rms(begin,end);
+  std::pair<int, double> getDelays(T * v, int n){
+    conv.convolution_fft(v, n);
+    auto r = rms(v,v+n);
     auto * out = conv.getOutput();
+    auto buff = conv.getInput(); //reuse this array as tmp value
     std::transform(out
 		   ,out + conv.getOutputSize()
 		   ,buff
-		   ,[](std::complex<double> c){return std::abs(c);});
+           ,[](std::complex<T> c){return std::abs(c);});
     auto m = std::max_element(buff,buff+conv.getOutputSize());
     auto d = m-buff;
     auto lag = d - (conv.getSize()+1)/3 + 1;
@@ -132,11 +131,94 @@ public:
   }
 
 private:
-  double * buff;
-  ConvolutionByConstant conv;
+  ConvolutionByConstant<T> conv;
   double refLevel;
 };
 
+
+#if 0
+
+ConvolutionByConstant::ConvolutionByConstant():fft_const(nullptr){}
+
+void ConvolutionByConstant::setOperand(const VCD & v, uint other_operand_size){
+    int size = v.size() + other_operand_size - 1;
+    fft_const = (std::complex<double>*) fftw_alloc_complex(size);
+    dft.init(size);
+    auto * in = (std::complex<double> *) dft.getInput();
+    std::fill(in, in+size,std::complex<double>(0,0));
+    memcpy(in,v.data(), v.size() * sizeof(*in));
+    VCD tmp(v);
+    tmp.resize(size);
+    dft.fft();
+    memcpy((void*)fft_const, (void*) dft.getOutput(), dft.getSize() * sizeof(*fft_const));
+}
+/*
+VCD ConvolutionByConstant::convolution_fft(const VCD & v){
+    auto * in = (std::complex<double>*) dft.getInput();
+    for(uint i = 0; i < v.size(); i++){
+        in[i] = v[i];
+    }
+    for(uint i = v.size(); i < dft.getSize(); i++){
+        in[i] = 0;
+    }
+    //fft
+    dft.fft();
+    auto * out = (std::complex<double>*) dft.getOutput();
+    // multiply
+    for(uint i = 0; i < dft.getSize() ; i++){
+        in[i] = out[i] * fft_const[i];
+    }
+    dft.rfft();
+    VCD o(dft.getSize());
+    for(uint i = 0; i < o.size(); i++){
+        o[i] = out[i]/double(dft.getSize());
+    }
+    return o;
+}
+*/
+
+
+uint ConvolutionByConstant::getSize() const{
+    return dft.getSize();
+}
+
+
+
+DelayComputer::DelayComputer():buff(nullptr){}
+DelayComputer::~DelayComputer(){
+    if(buff)
+        fftw_free(buff);
+}
+void DelayComputer::setReference(const VCD & c){
+    VCD tmp = reverse_and_conj(c);
+    //tmp.resize(c.size()*2);
+    conv.setOperand(tmp,c.size()*2);
+    if(buff)
+        fftw_free(buff);
+    buff = fftw_alloc_real(conv.getOutputSize());
+    this->refLevel = 1; // bit ugly hack, this allows to compute un-normalized delay
+    auto r = getDelays(c);
+    assert(r.first == 0);
+    this->refLevel = r.second;
+}
+
+/*
+std::pair<uint,double> DelayComputer::getDelays(const VCD &s){
+    //return getDelays(s.begin(),s.end());
+    auto tmp = conv.convolution_fft(s);
+    auto r = rms(s.begin(),s.end());
+    VD vd(tmp.size());
+    std::transform(tmp.begin()
+                   ,tmp.end()
+                   ,vd.begin()
+                   ,[](std::complex<double> c){return std::abs(c);});
+    auto m = std::max_element(vd.begin(),vd.end());
+    auto d = m-vd.begin();
+    if(d - (int) s.size() + 1 < 0)
+        return std::pair{0,0};
+    return std::pair{d - s.size()  + 1,(*m/this->refLevel) / r};
+}
+*/
 #endif
 
 

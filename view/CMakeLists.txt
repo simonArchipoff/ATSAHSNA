@@ -42,13 +42,17 @@ add_library(view
 
     qmeasuresview.h
     qmeasuresview.cpp
+
+    QJackView.h
+                         QJackView.cpp
+
+
 )
 
 if(ENABLE_JACK)
-    add_library(view QJackView.h
-                     QJackView.cpp)
+ #   add_library(view )
 endif()
 
-target_link_libraries(view PUBLIC Qt${QT_VERSION_MAJOR}::Widgets backend qcustomplot)
+target_link_libraries(view PUBLIC Qt6::Widgets backend qcustomplot)
 target_include_directories(view PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} )
 

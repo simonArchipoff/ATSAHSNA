@@ -69,8 +69,8 @@ public:
         FFTWScopedLocker l;
         fftwf_destroy_plan(plan);
     }
-    void execute(float * in, std::complex<float> * out){
-        fftwf_execute_dft_r2c(plan, reinterpret_cast<float *>(in), reinterpret_cast<fftwf_complex *>(out));
+    void execute(const float * in, std::complex<float> * out){
+        fftwf_execute_dft_r2c(plan, const_cast<float*>(reinterpret_cast<const float *>(in)), reinterpret_cast<fftwf_complex *>(out));
     }
     int getOutputSize() const{
         return size / 2 + 1;
@@ -88,8 +88,8 @@ public:
         FFTWScopedLocker l;
         fftwf_destroy_plan(plan);
     }
-    void execute( std::complex<float> * in,float * out){
-        fftwf_execute_dft_c2r(plan, reinterpret_cast<fftwf_complex *>(in), reinterpret_cast<float *>(out));
+    void execute(const std::complex<float> * in,float * out){
+        fftwf_execute_dft_c2r(plan,const_cast<fftwf_complex*>(reinterpret_cast<const fftwf_complex *>(in)), reinterpret_cast<float *>(out));
     }
 
 };
@@ -104,8 +104,8 @@ public:
         FFTWScopedLocker l;
         fftwf_destroy_plan(plan);
     }
-    void execute(std::complex<float> * in, std::complex<float> * out){
-        fftwf_execute_dft(plan, reinterpret_cast<fftwf_complex *>(in), reinterpret_cast<fftwf_complex *>(out));
+    void execute(const std::complex<float> * in, std::complex<float> * out){
+        fftwf_execute_dft(plan, const_cast<fftwf_complex*>(reinterpret_cast<const fftwf_complex *>(in)), reinterpret_cast<fftwf_complex *>(out));
     }
 };
 template<>
@@ -119,8 +119,8 @@ public:
         FFTWScopedLocker l;
         fftwf_destroy_plan(plan);
     }
-    void execute(std::complex<float> * in, std::complex<float> * out){
-        fftwf_execute_dft(plan, reinterpret_cast<fftwf_complex *>(in), reinterpret_cast<fftwf_complex *>(out));
+    void execute(const std::complex<float> * in, std::complex<float> * out){
+        fftwf_execute_dft(plan,const_cast<fftwf_complex*>(reinterpret_cast<const fftwf_complex *>(in)), reinterpret_cast<fftwf_complex *>(out));
     }
 };
 
@@ -154,8 +154,8 @@ public:
     int getOutputSize() const {
         return size/2 + 1;
     }*/
-    void execute(std::complex<double> * in, double *out){
-        fftw_execute_dft_c2r(plan, reinterpret_cast<fftw_complex *>(out), reinterpret_cast<double *>(in));
+    void execute(const std::complex<double> * in, double *out){
+        fftw_execute_dft_c2r(plan, const_cast<fftw_complex*>(reinterpret_cast<const fftw_complex *>(in)), reinterpret_cast<double *>(out));
     }
 };
 template<>
@@ -169,8 +169,8 @@ public:
         FFTWScopedLocker l;
         fftw_destroy_plan(plan);
     }
-    void execute(std::complex<double> * in, std::complex<double> * out){
-        fftw_execute_dft(plan, reinterpret_cast<fftw_complex *>(in), reinterpret_cast<fftw_complex *>(out));
+    void execute(const std::complex<double> * in, std::complex<double> * out){
+        fftw_execute_dft(plan,const_cast<fftw_complex*>(reinterpret_cast<const fftw_complex *>(in)), reinterpret_cast<fftw_complex *>(out));
     }
 };
 template<>
@@ -184,7 +184,7 @@ public:
         FFTWScopedLocker l;
         fftw_destroy_plan(plan);
     }
-    void execute(std::complex<double> * in, std::complex<double> * out){
-        fftw_execute_dft(plan, reinterpret_cast<fftw_complex *>(in), reinterpret_cast<fftw_complex *>(out));
+    void execute(const std::complex<double> * in, std::complex<double> * out){
+        fftw_execute_dft(plan, const_cast<fftw_complex*>(reinterpret_cast<const fftw_complex *>(in)), reinterpret_cast<fftw_complex *>(out));
     }
 };

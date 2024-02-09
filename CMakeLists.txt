@@ -15,10 +15,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wpedantic -Wextra")
 
 
-
-
+find_package(PkgConfig)
 
 Include(FetchContent)
+
+
+option(ENABLE_JACK "Activer le backend Jack" ON)
+message(STATUS "Variable ENABLE_JACK: ${ENABLE_JACK}")
+if(ENABLE_JACK)
+    #find_package(Jack)
+    pkg_check_modules(JACK REQUIRED jack)
+    add_definitions(-DENABLE_JACK=1)
+endif()
+
+
 
 FetchContent_Declare(
   Catch2
@@ -34,7 +44,7 @@ FetchContent_Declare(
 
 #FetchContent_MakeAvailable(KFR)
 
-FetchContent_MakeAvailable(Catch2)
+#FetchContent_MakeAvailable(Catch2)
 
 FetchContent_Declare(
   QCustomPlot
@@ -48,8 +58,8 @@ FetchContent_MakeAvailable(QCustomPlot)
 
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-find_package(QT NAMES Qt6 COMPONENTS Core Widgets  LinguistTools REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
+#find_package(QT NAMES Qt6 COMPONENTS Core Widgets  LinguistTools REQUIRED)
+find_package(Qt6 COMPONENTS Core Widgets LinguistTools REQUIRED)
 
 include(CMakePrintHelpers)
 

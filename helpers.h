@@ -25,11 +25,11 @@ void remove_right(uint n, vector<T> & in){
     in.resize(in.size() - n);
 }
 
-__attribute__((unused))
-static VCD array_VD_to_VCD(const VD & input){
+template<typename T>
+vector<complex<T>> array_VD_to_VCD(const vector<T> & input){
     VCD out(input.size());
     for(uint i = 0; i < input.size(); i++){
-        out[i] = complex<double>(input[i],0);
+        out[i] = complex<T>(input[i],0);
     }
     return out;
 }

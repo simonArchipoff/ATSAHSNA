@@ -12,32 +12,13 @@
 
 #include "widget_chatgpt.h"
 
-#include <QtCharts>
-#include <QPointF>
+
 #include <qlogging.h>
 
-class MiniSpectrum : public QChartView {
-    public:
-    MiniSpectrum(QWidget * parent):QChartView(parent){
-        chart = new QChart;
-        setChart(chart);
-        chart->addSeries(&amplitude);
-        setFixedSize(100, 20);
-        chart->legend()->hide();
-    }
-        void setData(QVector<std::pair<double,double>> & v){
-        QList<QPointF> a;
-        for(int i = 0; i < v.size(); i++){
-            a.append(QPointF(v[i].first, i == 0 ? 0 : v[i].second) );
-        }
-        amplitude.replace(a);
-    }
-    ~MiniSpectrum(){
-    }
-
-private:
-    QLineSeries amplitude;
-    QChart * chart;
+class MiniSpectrum : public QWidget {
+    Q_OBJECT
+public:
+    MiniSpectrum(QWidget * parent):QWidget(parent){}
 };
 
 class QJackPortView : public QWidget{

@@ -45,7 +45,7 @@ class QBackendJack : public QObject {
     Q_OBJECT
 public:
     QBackendJack(QJackView * gui, QString name);
-    ~QBackendJack();
+    virtual ~QBackendJack();
 signals:
     void changed();
     void resultResponse(const BackendJack::ResultResponseVar &);
@@ -75,15 +75,13 @@ public:
     void addFaustBackend();
     void addFaustBackendWithFile(QString path);
 
-#ifdef ENABLE_JACK
-    void addJackBackend();
-#endif
     void addResponseDisplay();
     void addHarmonicsDisplay();
     void addSpectrogramDisplay();
 
     QVector<QBackendFaust *> faust;
 #ifdef ENABLE_JACK
+    void addJackBackend();
     QBackendJack * jack;
 #endif
     MainWindow * mw;
