@@ -15,29 +15,29 @@
 #include <AudioIO.h>
 #include "Acquisition.h"
 
-template<typename T>
+
 class RTModule {
 public:
-    virtual void rt_process(const AudioIO<T>& inputs, AudioIO<T> & outputs) = 0;
+    virtual void rt_process(const AudioIO<float>& inputs, AudioIO<float> & outputs) = 0;
     virtual void rt_after_process(){};
 };
 
 
-template<typename T>
-class RTModuleResponse : public RTModule<T> {
+
+class RTModuleResponse : public RTModule {
 public:
-    RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number){
+    RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number):acq(computeChirp(p,  sampleRate),SenderMode::All,1,100,1,10000){
         assert(sampleRate > 0);
         this->integration_number = integration_number;
         this->sampleRate = sampleRate;
-        auto s = computeChirp(p,  sampleRate);
-        acq.init(s);
-        acq.start();
+        //acq.init(s);
+        //acq.start();
     }
+    virtual ~RTModuleResponse(){}
 
     void startResponse();
     bool tryGetResponse(ResultResponse & response){
-        typename Acquisition<T>::result r;
+        typename Acquisition::result r;
         /*while(responseQueue.try_dequeue(r)){
           acc_raw_signal.add(r.result);
           acc_delay.add(static_cast<double>(r.delay));
@@ -54,42 +54,42 @@ public:
     void setContinuous(bool);
     void setIntegrationSize(int s=1);
 
-    virtual void rt_process(const AudioIO<T> & inputs, vector<VD> & outputs) {
-        auto r = acq.rt_process(inputs[0],outputs[0]);
+    virtual void rt_process(const AudioIO<float> & inputs, AudioIO<float>& outputs) {
+        acq.rt_process(inputs,outputs);
         try{
             //responseQueue.enqueue(std::get<Acquisition<T>::result>(r));
         } catch(const std::bad_variant_access& ex){
         }
 
     }
-    virtual void rt_after_process() override;
+    virtual void rt_after_process() override{}
 
 private:
     //    VCD chirp;
-    Acquisition<T> acq;
+    Acquisition acq;
     uint sampleRate;
     ParamResponse paramResponse;
     bool continuous;
     int integration_number;
 
     //accumulate results
-    Accumulate<vector<T>,T> acc_raw_signal;
-    Accumulate<T,T> acc_delay;
+    Accumulate<vector<float>,float> acc_raw_signal;
+    Accumulate<float,float> acc_delay;
 };
 
 
-template<typename T>
-class RTModuleHandler{
+
+struct RTModuleHandler{
 public:
-    void setModule(std::shared_ptr<RTModule<T>> m){
+    void setModule(std::shared_ptr<RTModule> m){
         toRTQueue.enqueue(m);
     }
     void startResponse(ParamResponse p,bool continuous,int integration){
         if(this->m){
             m.reset();
         }
-        //m = std::make_shared<RTModuleResponse<T>>(sampleRate, p, integration);
-        //setModule(responseRTModule);
+        m = std::make_shared<RTModuleResponse>(sampleRate, p, integration);
+        setModule(m);
     }
     void startHarmonics();
 
@@ -109,6 +109,7 @@ public:
           result.clear();
           return false;
         }*/
+        return false;
     }
 
 protected:
@@ -134,9 +135,9 @@ protected:
         }
     }
 
-    moodycamel::ConcurrentQueue<std::shared_ptr<RTModule<T>>> toRTQueue;
+    moodycamel::ConcurrentQueue<std::shared_ptr<RTModule>> toRTQueue;
 
-    std::shared_ptr<RTModule<T>> module;
+    std::shared_ptr<RTModule> module;
 
 private:
     void rt_updateModule(){
@@ -144,6 +145,6 @@ private:
             module = m;
         }
     }
-    std::shared_ptr<RTModule<T>> m;
+    std::shared_ptr<RTModule> m;
     uint sampleRate = 0;
 };

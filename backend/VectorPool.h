@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdlib>
 #include <vector>
 #include <AudioIO.h>
 
@@ -16,7 +17,7 @@ public:
             delete[] i;
         }
     }
-    VectorCStyle<T> * getVector(){
+    VectorCStyle<T> getVector(){
         for(auto & i : pool){
             if(i){
                 auto tmp = i;
@@ -27,7 +28,7 @@ public:
                 return res;
             }
         }
-        return nullptr;
+        abort();
     }
     void putVectorBack(VectorCStyle<T> &v){
         for(auto & i : pool){

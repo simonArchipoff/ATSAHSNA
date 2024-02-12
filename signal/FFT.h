@@ -41,7 +41,7 @@ public:
     DFFTdouble(int size):size(size){}
     ~DFFTdouble(){
     }
-    int getSize(){
+    int getSize() const {
         return size;
     }
     int getOutputSize() const{
@@ -94,7 +94,7 @@ public:
 
 };
 template<>
-class DFFT<std::complex<float> *,std::complex<float> *> : public DFFTfloat{
+class DFFT<std::complex<float> ,std::complex<float> > : public DFFTfloat{
 public:
     DFFT(int size):DFFTfloat(size){
         FFTWScopedLocker l;
@@ -109,7 +109,7 @@ public:
     }
 };
 template<>
-class DFFTr<std::complex<float> *,std::complex<float> *> : public DFFTfloat{
+class DFFTr<std::complex<float>,std::complex<float>> : public DFFTfloat{
 public:
     DFFTr(int size):DFFTfloat(size){
         FFTWScopedLocker l;

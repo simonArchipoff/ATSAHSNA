@@ -32,7 +32,7 @@ struct ParamJack {
 };
 
 
-class BackendJack : public Backend, public RTModuleHandler<float> {
+class BackendJack : public Backend, public RTModuleHandler {
 public:
     BackendJack();
     virtual ~BackendJack();

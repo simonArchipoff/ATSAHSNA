@@ -7,13 +7,11 @@
 
 
 
-template<typename T>
 class Receiver {
 public://this code look the signal in a window of twice it sice, this is sub optimal, the better would be, i think, signal size + buffer size
        // anyway, this is why this code has some "size*2" everywhere, inside DelayComputer as well, this should be made more explicit.
     Receiver(const VCD & signal, int number_output, double threshold=0.98)
-        :pool(32,signal.size()), tmp(signal.size() * 2), dc(signal,signal.size()),ringBuffers(number_output),time_waited(0),size(signal.size()){
-        threshold_level=threshold;
+        :pool(32,signal.size()), tmp(signal.size() * 2), dc(signal,signal.size()),threshold_level(threshold),ringBuffers(number_output),time_waited(0),size(signal.size()){
         for(auto &i : ringBuffers){
             i.reset(3*signal.size());
         }
@@ -21,9 +19,9 @@ public://this code look the signal in a window of twice it sice, this is sub opt
 
     struct result {
         template<typename iterator>
-        result(T level, iterator begin, iterator end, int time):level(level),signal(begin,end),time(time){}
-        T level = 0.0;
-        std::vector<T> signal;
+        result(float level, iterator begin, iterator end, int time):level(level),signal(begin,end),time(time){}
+        float level = 0.0;
+        std::vector<float> signal;
         int time;
     };
 
@@ -31,7 +29,7 @@ public://this code look the signal in a window of twice it sice, this is sub opt
         internalResult ir;
         if(resultsQueue.try_dequeue(ir)){
             r.level = ir.level;
-            r.result = std::vector<T>(ir.data.begin(), ir.data.end());
+            //r.data = std::vector<float>(ir.data.begin(), ir.data.end());
             r.time = ir.time;
             vectorQueue.enqueue(ir.data.data());
             return true;
@@ -39,7 +37,7 @@ public://this code look the signal in a window of twice it sice, this is sub opt
         return false;
     }
 
-    void rt_process(const AudioIO<T> & inputs){
+    void rt_process(const AudioIO<float> & inputs){
         for(int i = 0; i<inputs.size(); i++){
             auto input = inputs[i];
             int frames = inputs[i].size();
@@ -48,14 +46,14 @@ public://this code look the signal in a window of twice it sice, this is sub opt
             if(rb.freespace() < frames){
                 rb.pop(frames-rb.freespace());
             }
-            rb.write(input);
+            rb.write(input.data(),input.size());
             time_waited += frames;
 
             if(rb.available() >= 2*size){
-                rb.read(2*size,tmp.begin());
+                rb.read(2*size,tmp.data());
 
 #pragma warning "this is not rt"
-                auto r = dc.getDelays(array_VD_to_VCD(tmp));
+                auto r = dc.getDelays(tmp.data(),tmp.size());
                 if(r.second > threshold_level){
                     rb.pop(2*size);
                     auto time = r.first + time_waited - rb.available(); //r.first + time_waited - p.dc.getSize();
@@ -65,7 +63,7 @@ public://this code look the signal in a window of twice it sice, this is sub opt
                     result.time = time;
                     std::copy(tmp.begin() + r.first
                               ,tmp.begin() + r.first + size
-                              ,result.data);
+                              ,result.data.begin());
                     resultsQueue.enqueue(result);
 
                 } else {
@@ -75,29 +73,29 @@ public://this code look the signal in a window of twice it sice, this is sub opt
         }
     }
 private:
-    VectorPool<T> pool;
-    std::vector<T> tmp;
-    std::vector<RingBuffer<T>> ringBuffers;
+    VectorPool<float> pool;
+    std::vector<float> tmp;
+    std::vector<RingBuffer<float>> ringBuffers;
 
     int time_waited;
-    DelayComputer<T> dc;
-    const T threshold_level;
-    const uint timeout;
+    DelayComputer dc;
+    const float threshold_level;
+    const uint timeout = 10000;
     const int size;
 
     struct internalResult {
-        VectorCStyle<T> data;
-        T level;
+        VectorCStyle<float> data;
+        float level;
         int time;
     };
 
-    void putVectorBack(T * v){
+    void putVectorBack(float * v){
         vectorQueue.enqueue(v);
     }
     void putVectorBack(internalResult&r){
-        putVectorBack(r.data);
+        putVectorBack(r.data.data());
     }
-    moodycamel::ConcurrentQueue<T*> vectorQueue;
+    moodycamel::ConcurrentQueue<float*> vectorQueue;
     moodycamel::ConcurrentQueue<internalResult> resultsQueue;
 };
 

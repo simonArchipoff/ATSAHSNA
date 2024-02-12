@@ -7,7 +7,7 @@
 
 enum SenderMode {All,RoundRobin};
 
-template<typename T>
+
 class Sender {
  public:
   template<typename U>
@@ -15,7 +15,7 @@ class Sender {
     : state(Timeoffing), mode(RoundRobin), signal(signal), number_rec(number), timeoff(timeoff),
     current_output(0), current_send(0), current_timeoff(0), current_number_rec(0) {}
 
-  void rt_output(AudioIO<T> output){
+  void rt_output(AudioIO<float> output){
     assert(output.size() > 0);
     assert(output[0].size()>0);
     auto out = output[current_output];
@@ -23,7 +23,7 @@ class Sender {
     while(idx < out.size()){
       switch(state){
       case Sending:
-	idx = rt_send(idx, out);
+          idx = rt_send(idx, out.data() ,output.begin()->size());
 	assert(idx <= output.size());
 	break;
       case SendingFinished:
@@ -41,7 +41,7 @@ class Sender {
 	break;
 
       case Timeoffing:
-	idx = rt_timeoff(idx,out);
+    idx = rt_timeoff(idx,out.data(),output.begin()->size());
 	break;
       case TimeoffFinished:
 	state = Sending;
@@ -54,16 +54,16 @@ class Sender {
     }
 
     if(mode == All){
-      for(auto * i : output){
+      for(auto i : output){
 	if(i != out)
-	  std::copy(out.begin(), out.end(), i->begin());
+      std::copy(out.begin(), out.end(), i.begin());
       }
     }
   }
 
 
  private:
-  int rt_timeoff(int start_idx, T * output, int nb_frames){
+  int rt_timeoff(int start_idx, float * output, int nb_frames){
     assert(state == Timeoffing);
     assert(start_idx < nb_frames);
     assert(current_timeoff < timeoff);
@@ -78,7 +78,7 @@ class Sender {
     }
   }
   
-  int rt_send(int start_idx, T * output, int nb_frames){
+  int rt_send(int start_idx, float * output, int nb_frames){
     assert(state == Sending);
     assert(current_number_rec < number_rec);
     const int signalsize = static_cast<int>(signal.size());
@@ -112,7 +112,7 @@ class Sender {
   //they are used for the round robin logic
   State state;
   SenderMode mode;
-  const std::vector<T> signal;
+  const std::vector<float> signal;
   int number_rec;
   int timeoff;
   int current_output;

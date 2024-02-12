@@ -10,14 +10,25 @@ class VectorCStyle{
 public:
   VectorCStyle():v_size(0),v(nullptr){}
   VectorCStyle(uint size, T *v):v_size(size),v(v){}
+  VectorCStyle(const VectorCStyle<T> &i):VectorCStyle<T>(i.v_size,i.v){
+  }
   T& operator[](uint i){
     assert(i < v_size);
     return v[i];
   }
+/*
+  VectorCStyle<T> & operator=(const VectorCStyle<T> &i){
+    VectorCStyle<T> s(i);
+    return s;
+  }
+*/
+  bool operator!=(const VectorCStyle<T> & a){
+    return !(a.v_size == v_size && a.v == v);
+  }
   T* data(){
     return v;
   }
-  uint size(){
+  uint size() const{
     return v_size;
   }
   T*begin(){
@@ -40,6 +51,7 @@ public:
       channels[i] = VectorCStyle(size,v[i]);
     }
   }
+  /*
   template<typename C>
   AudioIO(C v){
     number_channels = v.size();
@@ -47,7 +59,7 @@ public:
       channels[i] = VectorCStyle(v[i].size(),v[i].data());
     }
   }
-
+*/
   void addChannel(uint size, T*v){
     channels[number_channels++] = VectorCStyle(size,v);
     assert(number_channels <= max_channels);
@@ -56,16 +68,25 @@ public:
   uint getNumberChannels(){
     return number_channels;
   }
-  VectorCStyle<T> & operator[](uint i){
+  VectorCStyle<T> & operator[](uint i) {
     assert(i < number_channels);
     return channels[i];
   }
 
-  VectorCStyle<T> * begin(){
+  const VectorCStyle<T> & operator[](uint i) const {
+    assert(i < number_channels);
+    return channels[i];
+  }
+
+  VectorCStyle<T> * begin() {
     return &channels[0];
   }
-  VectorCStyle<T> * end(){
+  VectorCStyle<T> * end() {
     return &channels[number_channels];
+  }
+
+  int size() const{
+    return number_channels;
   }
 
 private:
