@@ -26,7 +26,7 @@ public:
 
 class RTModuleResponse : public RTModule {
 public:
-    RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number):acq(computeChirp(p,  sampleRate),SenderMode::All,1,100,1,10000){
+    RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number):acq(computeChirp(p,  sampleRate),SenderMode::All,1,0,1,10000){
         assert(sampleRate > 0);
         this->integration_number = integration_number;
         this->sampleRate = sampleRate;

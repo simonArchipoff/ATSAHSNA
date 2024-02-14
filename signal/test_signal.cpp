@@ -60,8 +60,7 @@ TEST_CASE("Convolution FFT Test 2 ") {
         auto b = VD({0.5,0.3});
         auto resnumpy = VD({0.5000000000000002,1.3,2.1,2.9000000000000004,1.2000000000000002});
 
-        ConvolutionByConstant c;
-        c.setOperand(array_VD_to_VCD(a),b.size());
+        ConvolutionByConstant  //;;(array_VD_to_VCD(a))E
 
         auto result = array_VCD_to_VD(c.convolution_fft(array_VD_to_VCD(b)));
 

@@ -73,7 +73,7 @@ class ConvolutionByConstant {
   void convolution_fft(const T*v,int n){
       auto s = getOutput();
       for(int i = 0; i < n; i++){
-          s[i] = v[i];
+        s[i] = v[i];
       }
       convolution_fft(s,n);
   }
@@ -125,6 +125,13 @@ public:
     /*template<typename T>
     DelayComputer(const vector<T>&v):conv(v.data(),v.size(),v.size()){}*/
     DelayComputer(const VCD&s, int n):conv(s.data(),n, n){
+      this->refLevel = 1;
+      vector<float> t;
+      t.resize(s.size());
+      std::transform(s.begin(),s.end(),t.data(),[](auto s){return s.real();});
+      auto r = getDelays(t.data(),t.size());
+
+      this->refLevel = r.second;
     }
   //~DelayComputer();
 /*
@@ -148,10 +155,10 @@ public:
     auto m = std::max_element(buff,buff+conv.getOutputSize(),
                               [](auto a, auto b){return std::abs(a) < std::abs(b);});
     auto d = m-buff;
-    auto lag = d - (conv.getSize()+1)/3 + 1;
+    auto lag = d - (conv.getSize()/2+1) + 1;
     if(lag < 0)
       return std::pair{-1,0};
-    return std::pair{lag,(std::abs(*m)/this->refLevel) / r};
+    return std::pair{lag,((std::abs(*m)/r) / this->refLevel)};
   }
 
 private:

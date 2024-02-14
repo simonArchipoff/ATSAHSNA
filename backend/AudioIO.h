@@ -2,7 +2,7 @@
 #include <cassert>
 #include <sys/types.h>
 
-const uint max_channels = 64;
+const uint max_channels = 8;
 
 //class for encapsulating raw C style vectors
 template<typename T>

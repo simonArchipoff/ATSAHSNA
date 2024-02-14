@@ -5,6 +5,12 @@ project(ATSAHSNA VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
+
+
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets LinguistTools)
+
+qt_standard_project_setup()
+
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -44,7 +50,7 @@ FetchContent_Declare(
 
 #FetchContent_MakeAvailable(KFR)
 
-#FetchContent_MakeAvailable(Catch2)
+FetchContent_MakeAvailable(Catch2)
 
 FetchContent_Declare(
   QCustomPlot
@@ -58,8 +64,8 @@ FetchContent_MakeAvailable(QCustomPlot)
 
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-#find_package(QT NAMES Qt6 COMPONENTS Core Widgets  LinguistTools REQUIRED)
-find_package(Qt6 COMPONENTS Core Widgets LinguistTools REQUIRED)
+find_package(QT NAMES Qt6 COMPONENTS Core Widgets  LinguistTools REQUIRED)
+
 
 include(CMakePrintHelpers)
 
@@ -75,8 +81,8 @@ add_subdirectory(signal)
 add_subdirectory(view)
 add_subdirectory(app)
 
-#add_executable(tests test_helpers.cpp signal/test_signal.cpp backend/test_backend.cpp )
-#target_link_libraries(tests PRIVATE signal Catch2::Catch2WithMain fftw3 backend)
+add_executable(tests test_helpers.cpp signal/test_signal.cpp backend/test_backend.cpp backend/test_rtmodule.cpp )
+target_link_libraries(tests PRIVATE signal Catch2::Catch2WithMain fftw3 backend)
 
 
 

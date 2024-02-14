@@ -5,7 +5,7 @@
 #include <cstring>
 #include <jack/jack.h>
 #include "RTModule.h"
-#include "qtmetamacros.h"
+
 
 #include <mutex>
 #include <variant>

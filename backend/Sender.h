@@ -18,18 +18,18 @@ class Sender {
   void rt_output(AudioIO<float> output){
     assert(output.size() > 0);
     assert(output[0].size()>0);
-    auto out = output[current_output];
+    auto * out = &output[current_output];
     int idx = 0;
-    while(idx < out.size()){
+    while(idx < out->size()){
       switch(state){
       case Sending:
-          idx = rt_send(idx, out.data() ,output.begin()->size());
-	assert(idx <= output.size());
+          idx = rt_send(idx, out->data() ,out->size());
+          assert(idx <= out->size());
 	break;
       case SendingFinished:
 	if(mode == RoundRobin){
 	  current_output = current_output + 1 % output.size();
-	  out = output[current_output];
+      out = &output[current_output];
 
 	}
 	if((current_output == 0 || mode == All) && ++current_number_rec == number_rec){
@@ -41,7 +41,7 @@ class Sender {
 	break;
 
       case Timeoffing:
-    idx = rt_timeoff(idx,out.data(),output.begin()->size());
+    idx = rt_timeoff(idx,out->data(),out->size());
 	break;
       case TimeoffFinished:
 	state = Sending;
@@ -55,9 +55,9 @@ class Sender {
 
     if(mode == All){
       for(auto i : output){
-	if(i != out)
-      std::copy(out.begin(), out.end(), i.begin());
-      }
+        if(&i != out)
+            std::copy(out->begin(), out->end(), i.begin());
+        }
     }
   }
 
@@ -66,7 +66,7 @@ class Sender {
   int rt_timeoff(int start_idx, float * output, int nb_frames){
     assert(state == Timeoffing);
     assert(start_idx < nb_frames);
-    assert(current_timeoff < timeoff);
+    assert(current_timeoff <= timeoff);
     (void)output;
     const auto current_timeoff_left = timeoff - current_timeoff;
     if( current_timeoff_left > nb_frames - start_idx){
