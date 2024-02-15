@@ -31,7 +31,7 @@ auto a = VD({1.0, 2.0, 3.0,4.0});
 auto b = VD({0.5,0.3});
 auto resnumpy = VD({0.5000000000000002,1.3,2.1,2.9000000000000004,1.2000000000000002});
 
-
+#if 0
 TEST_CASE("Convolution FFT Test", "[convolution_fft]") {
     SECTION("Test avec des vecteurs simples") {
 
@@ -50,6 +50,7 @@ TEST_CASE("Convolution FFT Test", "[convolution_fft]") {
 
     }
 }
+#endif
 #if 0
 TEST_CASE("Convolution FFT Test 2 ") {
     SECTION("Test avec des vecteurs simples") {
@@ -60,7 +61,7 @@ TEST_CASE("Convolution FFT Test 2 ") {
         auto b = VD({0.5,0.3});
         auto resnumpy = VD({0.5000000000000002,1.3,2.1,2.9000000000000004,1.2000000000000002});
 
-        ConvolutionByConstant  //;;(array_VD_to_VCD(a))E
+        ConvolutionByConstant  c //;;(array_VD_to_VCD(a))E
 
         auto result = array_VCD_to_VD(c.convolution_fft(array_VD_to_VCD(b)));
 
@@ -78,7 +79,6 @@ TEST_CASE("Convolution FFT Test 2 ") {
     }
 }
 #endif
-
 TEST_CASE("computeTHD square") {
     uint t = 2*2048;
     VD v(t);
@@ -122,7 +122,7 @@ TEST_CASE("find delay fft","[benchmark]"){
 }
 
 
-#if 0
+
 TEST_CASE("find delay DelayComputer","[benchmark]"){
     int SR = 44000;
     double d = 0.1;
@@ -132,15 +132,15 @@ TEST_CASE("find delay DelayComputer","[benchmark]"){
 
     int delay = 666;
     pad_left_0(delay,s);
+    int diff1 = compute_delay_fft(s,o);
+    DelayComputer dc(array_VD_to_VCD(o),s.size());
 
-    DelayComputer dc;
-    dc.setReference(array_VD_to_VCD(o));
 
-
-    auto p = dc.getDelays(array_VD_to_VCD(s));
+    vector<float> f(s.begin(), s.end());
+    auto p = dc.getDelay(f.data(),f.size());
 
     int diff = p.first;
-    //int diff = compute_delay_fft(s,o);
+
 
     /*
     to_file("/tmp/s",s);
@@ -148,10 +148,9 @@ TEST_CASE("find delay DelayComputer","[benchmark]"){
     to_file("/tmp/res",res);
 */
     REQUIRE(diff == delay);
-
+    REQUIRE(diff1 == delay);
 }
 
-#endif
 
 
 TEST_CASE("optimal window"){

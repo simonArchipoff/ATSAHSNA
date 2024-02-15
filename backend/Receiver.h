@@ -53,7 +53,7 @@ public://this code look the signal in a window of twice it sice, this is sub opt
                 rb.read(2*size - 1 ,tmp.data());
 
 #pragma warning "this is not rt"
-                auto r = dc.getDelays(tmp.data(),tmp.size());
+                auto r = dc.getDelay(tmp.data(),tmp.size());
                 if(r.second > threshold_level){
                     rb.pop(2*size);
                     auto time = r.first + time_waited - rb.available(); //r.first + time_waited - p.dc.getSize();
