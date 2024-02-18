@@ -18,6 +18,7 @@ class Sender {
   void rt_output(AudioIO<float> output){
     assert(output.size() > 0);
     assert(output[0].size()>0);
+    output.fill0();
     auto * out = &output[current_output];
     int idx = 0;
     while(idx < out->size()){
@@ -61,6 +62,9 @@ class Sender {
     }
   }
 
+  const std::vector<float> & getSignal(){
+    return signal;
+  }
 
  private:
   int rt_timeoff(int start_idx, float * output, int nb_frames){
@@ -105,6 +109,8 @@ class Sender {
       return start_idx + left;
     }
   }
+
+
 
  private:
   enum State { Sending, SendingFinished, Timeoffing, TimeoffFinished, Finished};

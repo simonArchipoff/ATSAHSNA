@@ -1,6 +1,7 @@
 #pragma once
 #include <cassert>
 #include <sys/types.h>
+#include <algorithm>
 
 const uint max_channels = 8;
 
@@ -87,6 +88,12 @@ public:
 
   int size() const{
     return number_channels;
+  }
+
+  void fill0(){
+    for(int i = 0; i < number_channels; i++){
+      std::fill(channels[i].begin(), channels[i].end(),0);
+    }
   }
 
 private:

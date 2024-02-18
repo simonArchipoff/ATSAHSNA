@@ -65,8 +65,6 @@ TEST_CASE("RTModuleHandler") {
     p.freqMin = 5000;
     p.freqMin=2000;
     rtm.startResponse(p,1,1);
-
-
     rtm.run();
     REQUIRE(false);
 }

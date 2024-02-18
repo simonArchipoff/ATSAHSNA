@@ -5,7 +5,15 @@
 #include <VectorPool.h>
 #include <AudioIO.h>
 
-
+struct ReceiverResult {
+public:
+    ReceiverResult(){}
+    template<typename iterator>
+    ReceiverResult(float level, iterator begin, iterator end, int time):level(level),signal(begin,end),time(time){}
+    float level = 0.0;
+    std::vector<float> signal;
+    int time;
+};
 
 class Receiver {
 public://this code look the signal in a window of twice it sice, this is sub optimal, the better would be, i think, signal size + buffer size
@@ -17,19 +25,11 @@ public://this code look the signal in a window of twice it sice, this is sub opt
         }
     }
 
-    struct result {
-        template<typename iterator>
-        result(float level, iterator begin, iterator end, int time):level(level),signal(begin,end),time(time){}
-        float level = 0.0;
-        std::vector<float> signal;
-        int time;
-    };
-
-    bool tryGetResult(struct result & r){
+    bool tryGetResult(struct ReceiverResult & r){
         internalResult ir;
         if(resultsQueue.try_dequeue(ir)){
             r.level = ir.level;
-            //r.data = std::vector<float>(ir.data.begin(), ir.data.end());
+            r.signal = std::vector<float>(ir.data.begin(), ir.data.end());
             r.time = ir.time;
             vectorQueue.enqueue(ir.data.data());
             return true;
@@ -55,8 +55,8 @@ public://this code look the signal in a window of twice it sice, this is sub opt
 #pragma warning "this is not rt"
                 auto r = dc.getDelay(tmp.data(),tmp.size());
                 if(r.second > threshold_level){
-                    rb.pop(2*size);
                     auto time = r.first + time_waited - rb.available(); //r.first + time_waited - p.dc.getSize();
+                    rb.pop(2*size);
                     internalResult result;
                     result.data = pool.getVector();
                     result.level = r.second;
@@ -65,7 +65,6 @@ public://this code look the signal in a window of twice it sice, this is sub opt
                               ,tmp.begin() + r.first + size
                               ,result.data.begin());
                     resultsQueue.enqueue(result);
-
                 } else {
                     rb.pop(input.size());
                 }

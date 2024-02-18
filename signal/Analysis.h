@@ -133,8 +133,7 @@ class DelayComputer
   double refLevel;
   public:
   DelayComputer();
-  template<typename T>
-  DelayComputer(T * v, int n){}
+
   /*template<typename T>
     DelayComputer(const vector<T>&v):conv(v.data(),v.size(),v.size()){}*/
   template<typename T>
@@ -155,19 +154,38 @@ class DelayComputer
       refLevel = r.second;
   }
   //~DelayComputer();
-/*
+/*«
   std::pair<int, double> getDelays(VCD &s){
       return getDelays(s.data(), s.size());
   }
 */
 
-  template<typename T>
-    std::pair<int, double> getDelay(T * v, int n){
+
+  std::pair<int, double> getDelay(const complex<double> * v, int n){
+      for(int i= 0; i < dft.getSize(); i++){
+          input[i] = i < n ? v[i].real() : 0;
+      }
+      return _getDelay();
+    }
+
+  std::pair<int, double> getDelay(const complex<float> * v, int n){
+      for(int i= 0; i < dft.getSize(); i++){
+          input[i] = i < n ? v[i].real() : 0;
+      }
+      return _getDelay();
+  }
+  std::pair<int, double> getDelay(const float * v, int n){
       for(int i= 0; i < dft.getSize(); i++){
           input[i] = i < n ? v[i] : 0;
       }
       return _getDelay();
-    }
+  }
+  std::pair<int, double> getDelay(const double * v, int n){
+      for(int i= 0; i < dft.getSize(); i++){
+          input[i] = i < n ? v[i] : 0;
+      }
+      return _getDelay();
+  }
 
   protected:
   std::pair<int, double> _getDelay(){

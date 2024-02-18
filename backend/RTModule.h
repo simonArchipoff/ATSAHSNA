@@ -37,15 +37,16 @@ public:
 
     void startResponse();
     bool tryGetResponse(ResultResponse & response){
-        typename Acquisition::result r;
-        /*while(responseQueue.try_dequeue(r)){
-          acc_raw_signal.add(r.result);
-          acc_delay.add(static_cast<double>(r.delay));
-        }*/
+        ReceiverResult r;
+        while(acq.tryGetResult(r)){
+          acc_raw_signal.add(r.signal);
+          //acc_delay.add(static_cast<double>(r.time));
+        }
         if(acc_raw_signal.size > 0){
             auto o = acc_raw_signal.get();
-            //auto in = acq.getSignal();
-            //response = computeResponse(paramResponse,in,o,sampleRate);
+          VD od(o.begin(),o.end());
+            VD id(acq.getSignal().begin(), acq.getSignal().end());
+            response = computeResponse(paramResponse,id,od,sampleRate);
             return true;
         }
         return false;
@@ -54,10 +55,12 @@ public:
     void setContinuous(bool);
     void setIntegrationSize(int s=1);
 
-    virtual void rt_process(const AudioIO<float> & inputs, AudioIO<float>& outputs) {
+    virtual void rt_process(const AudioIO<float> & inputs, AudioIO<float>& outputs) override {
         acq.rt_process(inputs,outputs);
+        ReceiverResult r;
+
         try{
-            //responseQueue.enqueue(std::get<Acquisition<T>::result>(r));
+
         } catch(const std::bad_variant_access& ex){
         }
 

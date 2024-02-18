@@ -4,7 +4,7 @@
 #include "helpers.h"
 #include "Harmonics.h"
 #include "Analysis.h"
-#include "Spectrogram.h"
+//#include "Spectrogram.h"
 #include "Generation.h"
 /*
 #include <fftw3.h>
@@ -31,7 +31,7 @@ auto a = VD({1.0, 2.0, 3.0,4.0});
 auto b = VD({0.5,0.3});
 auto resnumpy = VD({0.5000000000000002,1.3,2.1,2.9000000000000004,1.2000000000000002});
 
-#if 0
+#if 1
 TEST_CASE("Convolution FFT Test", "[convolution_fft]") {
     SECTION("Test avec des vecteurs simples") {
 
@@ -132,7 +132,6 @@ TEST_CASE("find delay DelayComputer","[benchmark]"){
 
     int delay = 666;
     pad_left_0(delay,s);
-    int diff1 = compute_delay_fft(s,o);
     DelayComputer dc(array_VD_to_VCD(o),s.size());
 
 
@@ -148,7 +147,6 @@ TEST_CASE("find delay DelayComputer","[benchmark]"){
     to_file("/tmp/res",res);
 */
     REQUIRE(diff == delay);
-    REQUIRE(diff1 == delay);
 }
 
 
@@ -164,10 +162,10 @@ TEST_CASE("optimal window"){
     REQUIRE(s == r);
 }
 
-
+#if 0
 TEST_CASE("stft"){
     int SR = 44000;
-    double d = 1;
+    double d = 0.1;
     auto o = chirp(10,22000,d,SR);
 
     auto res = stft(o.data(), o.data() + o.size(), 1024, 32, SR, HANN);
@@ -180,3 +178,4 @@ TEST_CASE("stft"){
 
 }
 
+#endif

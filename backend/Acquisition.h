@@ -16,19 +16,14 @@ public:
     sender.rt_output(outputs);
     receiver.rt_process(inputs);
   }
-  struct result;
-  bool tryGetResult(result & r){
 
-    abort();
+  const vector<float> & getSignal(){
+   return sender.getSignal();
   }
 
-  struct result{
-    vector<float> result;
-    int time_sent;
-    int time_result;
-    int input_index;
-    int output_index;
-  };
+  bool tryGetResult(ReceiverResult & r){
+    return receiver.tryGetResult(r);
+  }
 
 
 protected:
