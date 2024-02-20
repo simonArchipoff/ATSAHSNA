@@ -10,7 +10,7 @@
 #include <QVBoxLayout>
 #include <jack/types.h>
 
-#include "widget_chatgpt.h"
+//#include "widget_chatgpt.h"
 
 
 #include <qlogging.h>
@@ -51,7 +51,6 @@ public:
 private:
     QVBoxLayout *layout;
     QMap<jack_port_id_t , QJackPortView *> portMap;
-
 };
 
 class QJackView : public QWidget {

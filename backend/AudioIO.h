@@ -11,8 +11,8 @@ class VectorCStyle{
 public:
   VectorCStyle():v_size(0),v(nullptr){}
   VectorCStyle(uint size, T *v):v_size(size),v(v){}
-  VectorCStyle(const VectorCStyle<T> &i):VectorCStyle<T>(i.v_size,i.v){
-  }
+  /*VectorCStyle(const VectorCStyle<T> &i):VectorCStyle<T>(i.v_size,i.v){
+  }*/
   T& operator[](uint i){
     assert(i < v_size);
     return v[i];
@@ -91,7 +91,7 @@ public:
   }
 
   void fill0(){
-    for(int i = 0; i < number_channels; i++){
+    for(uint i = 0; i < number_channels; i++){
       std::fill(channels[i].begin(), channels[i].end(),0);
     }
   }

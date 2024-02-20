@@ -6,20 +6,20 @@
 #include <omp.h>
 
 ResultSpectrogram spectrogram(const std::vector<double> &data
-                              ,int nb_octaves
-                              ,int resolution
+                              ,uint nb_octaves
+                              ,uint resolution
                               , uint sampleRate){
-    int n = std::exp2(find2power(data.size()))+1; //signal length
+    uint n = std::exp2(find2power(data.size()))+1; //signal length
     float fs = sampleRate; //sampling frequency
 
 
-    int f = resolution;
+    uint f = resolution;
     std::vector<float> sig(n);
 
     //output: n x scales complex numbers
     std::vector<std::complex<float>> tfm(sig.size() * f);
 
-    for(int i = 0 ; i < n; i++){
+    for(uint i = 0 ; i < n; i++){
         if(i < data.size())
             sig[i] = static_cast<float>(data[i]);
         else
@@ -40,7 +40,7 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
 
     std::vector<float> frequencies(f);
     scs.getFrequencies(frequencies.data(),f);
-    for(int i = 0; i < f ; i++){
+    for(uint i = 0; i < f ; i++){
         res.frequencies[ (f - 1) - i] = frequencies[i];
     }
 
@@ -49,7 +49,7 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
 
     //flip matrix and compute abs value
 #pragma omp parallel for
-    for(int p = 0; p < n * f; p += 1){
+    for(uint p = 0; p < n * f; p += 1){
         auto row =  (f-1) - (p / n);
         auto col = p % n ;
         res.data[n*row + col] = static_cast<double>(std::abs(tfm[p]));
@@ -58,7 +58,7 @@ ResultSpectrogram spectrogram(const std::vector<double> &data
 }
 
 
-ResultSpectrogram stft(const float * begin, const float * end, int size_fft, int increment_fft, unsigned int sampleRate, window_type window_type){
+ResultSpectrogram stft(const float * begin, const float * end, uint size_fft, uint increment_fft, uint sampleRate, window_type window_type){
     auto w = window(size_fft,window_type);
     DFFT<float,std::complex<float>> fft(size_fft);
 
@@ -77,9 +77,9 @@ ResultSpectrogram stft(const float * begin, const float * end, int size_fft, int
         float * input = fftwf_alloc_real(size_fft);
         std::complex<float> * output = (std::complex<float>*) fftwf_alloc_complex(fft.getOutputSize());
 #pragma omp for
-        for(int i = 0; i < res.max_idx_time_rank ; i++){
-            for(int j = 0; j < size_fft; j++){
-                const int current_input_idx = i*(increment_fft)+j;
+        for(uint i = 0; i < res.max_idx_time_rank ; i++){
+            for(uint j = 0; j < size_fft; j++){
+                const uint current_input_idx = i*(increment_fft)+j;
                 assert(current_input_idx < input_size);
                 input[j] = w[j] * begin[current_input_idx];
 

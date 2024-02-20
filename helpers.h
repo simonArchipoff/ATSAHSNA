@@ -38,7 +38,7 @@ template<typename T, typename U>
 vector<T> array_complex_to_real(const vector<complex<U>> & s){
     vector<T> r;
     r.resize(s.size());
-    for(int i = 0; i < r.size(); i++){
+    for(uint i = 0; i < r.size(); i++){
         r[i] = s[i].real();
     }
     return r;

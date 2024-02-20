@@ -8,9 +8,34 @@ PlotAmplitudePhase::PlotAmplitudePhase(QString name, QColor c,QCPGraph * amplitu
 }
 
 void PlotAmplitudePhase::setCurve(const FDF&f){
-    setCurve(f.getFrequency(),
-             f.getAmplitude20log10(),
-             f.getPhase());
+    auto fr = f.getFrequency();
+    auto fa = f.getAmplitude20log10();
+    auto fp = f.getPhase();
+
+    const int n = 1048;
+
+    if(fr.size() < n){
+        setCurve(fr,
+                 fa,
+                 fp);
+        return;
+    }
+
+    VD frd(n), fad(n),fpd(n);
+    const double s = 1.l/n;
+    for(uint i = 0; i < n; i++){
+        const double d = (exp(i * s) - 1) / (M_E - 1)  ;
+        const uint idx = d * fr.size();
+        assert(idx >= 0);
+        assert(idx < fr.size());
+
+        frd[i] = fr[idx];
+        fad[i] = fa[idx];
+        fpd[i] = fp[idx];
+    }
+    setCurve(frd,
+             fad,
+             fpd);
 }
 
 void PlotAmplitudePhase::setCurve(const VD&f, const VD&a, const VD&p){

@@ -44,7 +44,7 @@ public:
         }
         if(acc_raw_signal.size > 0){
             auto o = acc_raw_signal.get();
-          VD od(o.begin(),o.end());
+            VD od(o.begin(),o.end());
             VD id(acq.getSignal().begin(), acq.getSignal().end());
             response = computeResponse(paramResponse,id,od,sampleRate);
             return true;
@@ -57,13 +57,6 @@ public:
 
     virtual void rt_process(const AudioIO<float> & inputs, AudioIO<float>& outputs) override {
         acq.rt_process(inputs,outputs);
-        ReceiverResult r;
-
-        try{
-
-        } catch(const std::bad_variant_access& ex){
-        }
-
     }
     virtual void rt_after_process() override{}
 
@@ -98,20 +91,20 @@ public:
 
     bool getResultHarmonics(vector<ResultHarmonics>& result){
         result.clear();
-        abort();
         return false;
     }
     bool getResultResponse(vector<ResultResponse>& result){
-        /*result.clear();
+        result.clear();
         result.resize(1);
         ResultResponse r;
-        if(responseRTModule && responseRTModule->tryGetResponse(r)){
-          result[0] = r;
-          return true;
-        } else {
-          result.clear();
-          return false;
-        }*/
+        if (auto response = std::dynamic_pointer_cast<RTModuleResponse>(module)){
+            if(response->tryGetResponse(r)){
+                result[0] = r;
+                return true;
+            } else {
+                return false;
+            }
+        }
         return false;
     }
 
@@ -121,7 +114,6 @@ protected:
     }
 
     void rt_process(const AudioIO<float> & inputs, AudioIO<float> & outputs){
-        (void)outputs;
         rt_updateModule();
         if(!module){
             for(auto & v:outputs){

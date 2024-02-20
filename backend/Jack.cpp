@@ -66,7 +66,7 @@ void * BackendJack::audio_thread(void * arg){
         }
 
         AudioIO<float> outputs;
-        int nbOutput = jb->outputPorts.size();
+        uint nbOutput = jb->outputPorts.size();
         for(uint i = 0; i < nbOutput; i++){
             auto out = (float*)jack_port_get_buffer(jb->outputPorts[i], nframes);
             outputs.addChannel(nframes,out);

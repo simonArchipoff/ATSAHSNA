@@ -95,6 +95,7 @@ QBackendJack::QBackendJack(QJackView * gui, QString name):backend(new QJack()),j
     connect(jack_gui,&QJackView::requestResponse,this,[this](auto p, auto c, auto i){
         this->backend->startResponse(p,c,i);
         });
+    startTimer(100*1./30);
 }
 QBackendJack::~QBackendJack(){
     delete backend;

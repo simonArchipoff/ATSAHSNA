@@ -19,7 +19,7 @@ class Receiver {
 public://this code look the signal in a window of twice it sice, this is sub optimal, the better would be, i think, signal size + buffer size
        // anyway, this is why this code has some "size*2" everywhere, inside DelayComputer as well, this should be made more explicit.
     Receiver(const VCD & signal, int number_output, double threshold=0.98)
-        :pool(32,signal.size()), tmp(signal.size() * 2 - 1), dc(signal,signal.size()),threshold_level(threshold),ringBuffers(number_output),time_waited(0),size(signal.size()){
+        :pool(32,signal.size()), tmp(signal.size() * 2 - 1), ringBuffers(number_output),time_waited(0),dc(signal,signal.size()),threshold_level(threshold),size(signal.size()){
         for(auto &i : ringBuffers){
             i.reset(3*signal.size());
         }
@@ -40,7 +40,7 @@ public://this code look the signal in a window of twice it sice, this is sub opt
     void rt_process(const AudioIO<float> & inputs){
         for(int i = 0; i<inputs.size(); i++){
             auto input = inputs[i];
-            int frames = inputs[i].size();
+            uint frames = inputs[i].size();
 
             auto & rb = ringBuffers[i];
             if(rb.freespace() < frames){
@@ -52,7 +52,6 @@ public://this code look the signal in a window of twice it sice, this is sub opt
             if(rb.available() >= 2*size - 1){
                 rb.read(2*size - 1 ,tmp.data());
 
-#pragma warning "this is not rt"
                 auto r = dc.getDelay(tmp.data(),tmp.size());
                 if(r.second > threshold_level){
                     auto time = r.first + time_waited - rb.available(); //r.first + time_waited - p.dc.getSize();
@@ -80,7 +79,7 @@ private:
     DelayComputer dc;
     const float threshold_level;
     const uint timeout = 10000;
-    const int size;
+    const uint size;
 
     struct internalResult {
         VectorCStyle<float> data;

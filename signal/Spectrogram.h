@@ -5,7 +5,6 @@
 #include "Analysis.h"
 
 
-
 struct ParamSpectrogram : ParamResponse {
     int nb_octave;
     int resolution;
@@ -14,17 +13,17 @@ struct ParamSpectrogram : ParamResponse {
 
 struct ResultSpectrogram{
 
-    ResultSpectrogram(double duration, int max_idx_time_rank, int max_freq_rank)
+    ResultSpectrogram(double duration, uint max_idx_time_rank, uint max_freq_rank)
         : duration(duration), max_idx_time_rank(max_idx_time_rank), max_freq_rank(max_freq_rank) {
         // Initialisation des vecteurs data et frequencies avec des valeurs par défaut
         data.resize(max_freq_rank * max_idx_time_rank);
         frequencies.resize(max_freq_rank);
     }
 
-    int sampleRate;
+    uint sampleRate;
     double duration;
-    int max_idx_time_rank;
-    int max_freq_rank;
+    uint max_idx_time_rank;
+    uint max_freq_rank;
 
     double at(int freq_rank, int time_rank) const {
         assert(freq_rank * max_idx_time_rank + time_rank < data.size());
@@ -42,22 +41,22 @@ struct ResultSpectrogram{
 
 
 
-ResultSpectrogram stft(const float * begin, const float * end, int size_fft, int increment_fft, unsigned int sampleRate, window_type window=HANN);
+ResultSpectrogram stft(const float * begin, const float * end, uint size_fft, uint increment_fft, uint sampleRate, window_type window=HANN);
 inline
-ResultSpectrogram stft(const double * begin, const double * end, int size_fft, int increment_fft, unsigned int sampleRate, window_type window=HANN){
+ResultSpectrogram stft(const double * begin, const double * end, uint size_fft, uint increment_fft, uint sampleRate, window_type window=HANN){
     vector<float> input(begin,end);
     return stft(input.data(),input.data() + input.size(), size_fft, increment_fft, sampleRate, window);
 }
 
 ResultSpectrogram spectrogram(const std::vector<double> &data
-                              , int nb_octave
-                              , int resolution
-                              , unsigned int sampleRate);
+                              , uint nb_octave
+                              , uint resolution
+                              , uint sampleRate);
 
 
 inline ResultSpectrogram spectrogram(const FDF & response
-                              , int nb_octave
-                              , int resolution){
+                              , uint nb_octave
+                              , uint resolution){
     auto data = response.frequencyDomainTotemporal();
     return spectrogram(data,nb_octave,resolution,response.getSampleRate());
 }

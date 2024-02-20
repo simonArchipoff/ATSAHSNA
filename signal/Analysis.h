@@ -47,8 +47,6 @@ double rms(iterator begin, iterator end){
 
 
 
-
-
 template<typename T>
 class ConvolutionByConstant {
   public:

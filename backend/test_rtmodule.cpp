@@ -4,12 +4,11 @@
 #include <catch2/benchmark/catch_benchmark.hpp>
 
 
-#include "Harmonics.h"
+//#include "Harmonics.h"
 #include "Faust.h"
 #include <cstring>
 
 #include "RTModule.h"
-
 
 #include <mutex>
 #include <variant>
@@ -37,8 +36,6 @@ public:
         in.addChannel(SIZE,inv.data());
         out.addChannel(SIZE,outv.data());
 
-
-
         for(int x = 0; x <1024 ; x++){
 
             rt_process(in,out);
@@ -55,8 +52,6 @@ public:
         }
     }
 };
-
-
 
 TEST_CASE("RTModuleHandler") {
     TestRTModuleBackend rtm;

@@ -12,7 +12,7 @@ class Sender {
  public:
   template<typename U>
   Sender(const U& signal, SenderMode m, int number, int timeoff)
-    : state(Timeoffing), mode(RoundRobin), signal(signal), number_rec(number), timeoff(timeoff),
+    : state(Timeoffing), mode(m), signal(signal), number_rec(number), timeoff(timeoff),
     current_output(0), current_send(0), current_timeoff(0), current_number_rec(0) {}
 
   void rt_output(AudioIO<float> output){
@@ -20,7 +20,7 @@ class Sender {
     assert(output[0].size()>0);
     output.fill0();
     auto * out = &output[current_output];
-    int idx = 0;
+    uint idx = 0;
     while(idx < out->size()){
       switch(state){
       case Sending:
