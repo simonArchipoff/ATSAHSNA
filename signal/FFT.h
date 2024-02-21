@@ -63,7 +63,11 @@ class DFFT<float, std::complex<float>> : public DFFTfloat{
 public:
     DFFT(int size):DFFTfloat(size){
         FFTWScopedLocker l;
-        plan = fftwf_plan_dft_r2c_1d(size,nullptr,nullptr,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        auto a = fftwf_alloc_complex(size);
+        auto b = fftwf_alloc_real(size);
+        plan = fftwf_plan_dft_r2c_1d(size,b,a,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        fftwf_free(a);
+        fftwf_free(b);
     }
     ~DFFT(){
         FFTWScopedLocker l;
@@ -82,7 +86,11 @@ class DFFTr<std::complex<float>, float> : public DFFTfloat{
 public:
     DFFTr(int size):DFFTfloat(size){
         FFTWScopedLocker l;
-        plan = fftwf_plan_dft_c2r_1d(size,nullptr,nullptr,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        auto a = fftwf_alloc_complex(size);
+        auto b = fftwf_alloc_real(size);
+        plan = fftwf_plan_dft_c2r_1d(size,a,b,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        fftwf_free(a);
+        fftwf_free(b);
     }
     ~DFFTr(){
         FFTWScopedLocker l;
@@ -98,13 +106,18 @@ class DFFT<std::complex<float> ,std::complex<float> > : public DFFTfloat{
 public:
     DFFT(int size):DFFTfloat(size){
         FFTWScopedLocker l;
-        plan = fftwf_plan_dft_1d(size,nullptr,nullptr,FFTW_FORWARD,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        auto a = fftwf_alloc_complex(size);
+        auto b = fftwf_alloc_complex(size);
+        plan = fftwf_plan_dft_1d(size,a,b,FFTW_FORWARD, FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        fftwf_free(a);
+        fftwf_free(b);
     }
     ~DFFT(){
         FFTWScopedLocker l;
         fftwf_destroy_plan(plan);
     }
     void execute(const std::complex<float> * in, std::complex<float> * out){
+        static_assert(sizeof(fftwf_complex) == sizeof(std::complex<float>));
         fftwf_execute_dft(plan, const_cast<fftwf_complex*>(reinterpret_cast<const fftwf_complex *>(in)), reinterpret_cast<fftwf_complex *>(out));
     }
 };
@@ -113,7 +126,11 @@ class DFFTr<std::complex<float>,std::complex<float>> : public DFFTfloat{
 public:
     DFFTr(int size):DFFTfloat(size){
         FFTWScopedLocker l;
-        plan = fftwf_plan_dft_1d(size,nullptr,nullptr,FFTW_BACKWARD,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        auto a = fftwf_alloc_complex(size);
+        auto b = fftwf_alloc_complex(size);
+        plan = fftwf_plan_dft_1d(size,a,b,FFTW_BACKWARD,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        fftwf_free(a);
+        fftwf_free(b);
     }
     ~DFFTr(){
         FFTWScopedLocker l;
@@ -129,7 +146,11 @@ class DFFT<double, std::complex<double>>:public DFFTdouble{
 public:
     DFFT(int size):DFFTdouble(size){
         FFTWScopedLocker l;
-        plan = fftw_plan_dft_r2c_1d(size,nullptr,nullptr,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        auto a = fftw_alloc_real(size);
+        auto b = fftw_alloc_complex(size);
+        plan = fftw_plan_dft_r2c_1d(size,a,b,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        fftw_free(a);
+        fftw_free(b);
     }
     ~DFFT(){
         FFTWScopedLocker l;
@@ -144,7 +165,11 @@ class DFFT<std::complex<double>, double>:public DFFTdouble{
 public:
     DFFT(int size):DFFTdouble(size){
         FFTWScopedLocker l;
-        plan = fftw_plan_dft_c2r_1d(size,nullptr,nullptr,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        auto a = fftw_alloc_real(size);
+        auto b = fftw_alloc_complex(size);
+        plan = fftw_plan_dft_c2r_1d(size,b,a,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        fftw_free(a);
+        fftw_free(b);
     }
     ~DFFT(){
         FFTWScopedLocker l;
@@ -163,7 +188,11 @@ class DFFT<std::complex<double>, std::complex<double>> : public DFFTdouble{
 public:
     DFFT(int size):DFFTdouble(size){
         FFTWScopedLocker l;
-        plan = fftw_plan_dft_1d(size,nullptr,nullptr,FFTW_FORWARD,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        auto a = fftw_alloc_complex(size);
+        auto b = fftw_alloc_complex(size);
+        plan = fftw_plan_dft_1d(size,a,b,FFTW_FORWARD,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        fftw_free(a);
+        fftw_free(b);
     }
     ~DFFT(){
         FFTWScopedLocker l;
@@ -178,7 +207,11 @@ class DFFTr<std::complex<double>, std::complex<double>> : public DFFTdouble{
 public:
     DFFTr(int size):DFFTdouble(size){
         FFTWScopedLocker l;
-        plan = fftw_plan_dft_1d(size,nullptr,nullptr,FFTW_BACKWARD,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        auto a = fftw_alloc_complex(size);
+        auto b = fftw_alloc_complex(size);
+        plan = fftw_plan_dft_1d(size,a,b,FFTW_BACKWARD,FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        fftw_free(a);
+        fftw_free(b);
     }
     ~DFFTr(){
         FFTWScopedLocker l;

@@ -4,6 +4,7 @@
 #include <RingBuffer.h>
 #include <VectorPool.h>
 #include <AudioIO.h>
+#include <iostream>
 
 struct ReceiverResult {
 public:
@@ -18,7 +19,7 @@ public:
 class Receiver {
 public://this code look the signal in a window of twice it sice, this is sub optimal, the better would be, i think, signal size + buffer size
        // anyway, this is why this code has some "size*2" everywhere, inside DelayComputer as well, this should be made more explicit.
-    Receiver(const VCD & signal, int number_output, double threshold=0.98)
+    Receiver(const VCD & signal, int number_output, double threshold=0.9)
         :pool(32,signal.size()), tmp(signal.size() * 2 - 1), ringBuffers(number_output),time_waited(0),dc(signal,signal.size()),threshold_level(threshold),size(signal.size()){
         for(auto &i : ringBuffers){
             i.reset(3*signal.size());
@@ -51,8 +52,13 @@ public://this code look the signal in a window of twice it sice, this is sub opt
 
             if(rb.available() >= 2*size - 1){
                 rb.read(2*size - 1 ,tmp.data());
-
                 auto r = dc.getDelay(tmp.data(),tmp.size());
+#if 0
+                static int fooa = 0;
+                std::string path = "/tmp/";
+                to_file(path+std::to_string(fooa)+"_" + std::to_string(r.second) + "_" + std::to_string(r.first),tmp);
+                fooa++;
+#endif
                 if(r.second > threshold_level){
                     auto time = r.first + time_waited - rb.available(); //r.first + time_waited - p.dc.getSize();
                     rb.pop(2*size);
@@ -61,7 +67,7 @@ public://this code look the signal in a window of twice it sice, this is sub opt
                     result.level = r.second;
                     result.time = time;
                     std::copy(tmp.begin() + r.first
-                              ,tmp.begin() + r.first + size
+                             ,tmp.begin() + r.first + size
                               ,result.data.begin());
                     resultsQueue.enqueue(result);
                 } else {
