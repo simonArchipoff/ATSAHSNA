@@ -117,6 +117,7 @@ void QBackendJack::timerEvent(QTimerEvent * e){
 void delegate::addJackBackend(){
     auto j = mw->backends->addJack();
     jack = new QBackendJack(j,"jack");
+    connect(jack,&QBackendJack::resultResponse, mw->displays,&QResponseView::setResults);
     //j->set_sample_rate(jack->getSampleRate()); // bit ugly, I dont know why the callback isn't called
 }
 #endif

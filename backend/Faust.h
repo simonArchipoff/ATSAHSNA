@@ -50,8 +50,8 @@ public:
 
     bool didSomethingChanged();
 
-    variant<const vector<ResultHarmonics>> getResultHarmonics();
-    variant<const vector<ResultResponse>>  getResultResponse();
+    variant<const vector<ResultHarmonics>,std::monostate> getResultHarmonics();
+    variant<const vector<ResultResponse>, std::monostate>  getResultResponse();
     void buildUserInterface(UI * ui);
 protected:
     mutex lock;

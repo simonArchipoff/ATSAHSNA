@@ -194,8 +194,19 @@ class DelayComputer
       }
       dftr.execute(input.data(),output.data());
       auto m = std::max_element(output.begin(),output.end(),[](auto a, auto b){return std::abs(a) < std::abs(b);});
+
       auto d = m - output.begin();
       auto lag = d - size_ref + 1;
+#if 0
+      vector<float> t(output.size());
+      for(uint i = 0; i < t.size(); i++){
+          t[i] = (std::abs(output[i]) / level) / this->refLevel;
+      }
+      static int foob = 0;
+      std::string path = "/tmp/";
+      to_file(path+"max"+std::to_string(foob)+"_" + std::to_string(lag) ,t);
+      foob++;
+#endif
       return std::pair{lag,((std::abs(*m)/level) / this->refLevel)};
   }
 };

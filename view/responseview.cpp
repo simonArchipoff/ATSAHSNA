@@ -41,7 +41,7 @@ bool QResponseView::isSpectrogramInit(){
     return spectrogramPlot;
 }
 
-void QResponseView::setResults(std::variant<const std::vector<ResultResponse> > &r){
+void QResponseView::setResults(std::variant<const std::vector<ResultResponse>,std::monostate> &r){
     std::vector<ResultResponse> v = std::get<const std::vector<ResultResponse>>(r);
     for(uint i = 0; i < v.size(); i++){
         setResult(v[i]);
