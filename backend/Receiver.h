@@ -12,6 +12,7 @@ public:
     template<typename iterator>
     ReceiverResult(float level, iterator begin, iterator end, int time):level(level),signal(begin,end),time(time){}
     float level = 0.0;
+    int idx;
     std::vector<float> signal;
     int time;
 };
@@ -32,6 +33,7 @@ public://this code look the signal in a window of twice it sice, this is sub opt
             r.level = ir.level;
             r.signal = std::vector<float>(ir.data.begin(), ir.data.end());
             r.time = ir.time;
+            r.idx = ir.idx;
             vectorQueue.enqueue(ir.data.data());
             return true;
         }
@@ -59,16 +61,26 @@ public://this code look the signal in a window of twice it sice, this is sub opt
                 to_file(path+std::to_string(fooa)+"_" + std::to_string(r.second) + "_" + std::to_string(r.first),tmp);
                 fooa++;
 #endif
-                if(r.second > threshold_level){
+                if(r.second > threshold_level && r.first >= 0){
                     auto time = r.first + time_waited - rb.available(); //r.first + time_waited - p.dc.getSize();
-                    rb.pop(2*size);
+                    rb.pop(size);
                     internalResult result;
                     result.data = pool.getVector();
                     result.level = r.second;
+                    result.idx = i;
                     result.time = time;
+                    assert(tmp.size() >= r.first + size);
+
+                    assert(result.data.size() <= size);
+                    for(uint i = 0; i < size; i++){
+                        assert(r.first + i < tmp.size());
+                        result.data[i] = tmp[r.first + i];
+                    }
+                    /*
                     std::copy(tmp.begin() + r.first
                              ,tmp.begin() + r.first + size
-                              ,result.data.begin());
+                             ,result.data.begin());
+                    */
                     resultsQueue.enqueue(result);
                 } else {
                     rb.pop(input.size());
@@ -90,6 +102,7 @@ private:
     struct internalResult {
         VectorCStyle<float> data;
         float level;
+        int idx;
         int time;
     };
 

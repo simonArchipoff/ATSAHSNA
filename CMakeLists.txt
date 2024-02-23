@@ -5,7 +5,8 @@ project(ATSAHSNA VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-
+add_compile_options(-fsanitize=address)
+add_link_options(-fsanitize=address)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets LinguistTools)
 

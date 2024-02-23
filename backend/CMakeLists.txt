@@ -26,7 +26,7 @@ if(ENABLE_JACK)
         RingBuffer.cpp
 
         RTModule.h
-
+        VectorPool.h
         Acquisition.h
         Sender.h
         Receiver.h

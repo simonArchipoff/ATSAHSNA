@@ -3,7 +3,7 @@
 #include <cassert>
 #include <algorithm>
 #include <AudioIO.h>
-
+#include "concurrentqueue.h"
 
 enum SenderMode {All,RoundRobin};
 
@@ -46,7 +46,8 @@ class Sender {
 	break;
       case TimeoffFinished:
 	state = Sending;
-	current_send = 0;
+    current_send = 0;
+    sendReportQueue.enqueue(SendReport{current_number_rec,current_output});
 	break;
       case Finished:
 	return;
@@ -65,6 +66,11 @@ class Sender {
   const std::vector<float> & getSignal(){
     return signal;
   }
+
+  struct SendReport {
+    int rec;
+    int idx;
+  };
 
  private:
   int rt_timeoff(int start_idx, float * output, int nb_frames){
@@ -125,4 +131,5 @@ class Sender {
   int current_send;
   int current_timeoff;
   int current_number_rec;
+  moodycamel::ConcurrentQueue<SendReport> sendReportQueue;
 };

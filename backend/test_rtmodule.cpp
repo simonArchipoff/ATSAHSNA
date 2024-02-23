@@ -18,14 +18,17 @@
 
 
 
-class TestRTModuleBackend : public BackendFaust, public RTModuleHandler {
+class TestRTModuleBackend :  public RTModuleHandler {
 public:
 
-    TestRTModuleBackend():BackendFaust(std::string("foo")){
-        setCode("process = @(10);",44100);
+    TestRTModuleBackend(){
+        b = new BackendFaust(std::string("foo"));
+        b->setCode("process = @(10);",44100);
         RTModuleHandler::setSampleRate(44100);
     }
-
+    ~TestRTModuleBackend(){
+        delete b;
+    }
     void run(){
         AudioIO<float> in,out;
         vector<float> inv,outv;
@@ -44,13 +47,14 @@ public:
             for(int i = 0; i < SIZE; i++){
                 ind[i] = out[0][i];
             }
-            auto outd = acquisition(vector<VD>({ind}));
+            auto outd = b->acquisition(vector<VD>({ind}));
 
             for(int i = 0; i < SIZE; i++){
                 in[0][i] = outd[0][i];
             }
         }
     }
+    BackendFaust * b;
 };
 
 TEST_CASE("RTModuleHandler") {
@@ -61,5 +65,11 @@ TEST_CASE("RTModuleHandler") {
     p.freqMin=2000;
     rtm.startResponse(p,1,1);
     rtm.run();
+    vector<ResultResponse> r1,r2,r3,r4,r5;
+    auto a = rtm.getResultResponse(r1);
+    auto b = rtm.getResultResponse(r2);
+    auto c = rtm.getResultResponse(r3);
+    auto d = rtm.getResultResponse(r4);
+    auto e = rtm.getResultResponse(r5);
     REQUIRE(false);
 }

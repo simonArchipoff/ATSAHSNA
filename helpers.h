@@ -56,7 +56,7 @@ static VD array_VCD_to_VD(const VCD & input){
 template<typename T>
 void to_file(const std::string & s, const std::vector<T> & v){
     using namespace std;
-    std::ofstream out(s,ios::out | ios::binary);
+    std::ofstream out(s, ios::out | ios::binary);
     out.write((char*)v.data(), sizeof(T)*v.size());
     out.close();
 }
@@ -90,12 +90,13 @@ public:
         if(acc.size() == 0){
             acc = v;
         } else {
-            std::transform(acc.begin(),acc.end(),acc.begin(),v.end(),std::plus<T>());
+            assert(v.size() == acc.size());
+            std::transform(acc.cbegin(),acc.cend(),acc.cbegin(),v.begin(),std::plus<T>());
         }
         size++;
     }
     C get(){
-        C res = acc;
+        C res(acc.size());
         std::transform(res.begin(), res.end(), res.begin(),[this](const T & v){
             return v/T(size);
         });

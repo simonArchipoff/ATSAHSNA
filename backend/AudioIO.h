@@ -14,6 +14,7 @@ public:
   /*VectorCStyle(const VectorCStyle<T> &i):VectorCStyle<T>(i.v_size,i.v){
   }*/
   T& operator[](uint i){
+    assert(i >= 0);
     assert(i < v_size);
     return v[i];
   }

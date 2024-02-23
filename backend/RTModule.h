@@ -26,7 +26,7 @@ public:
 
 class RTModuleResponse : public RTModule {
 public:
-    RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number):acq(computeChirp(p,  sampleRate),SenderMode::All,1,0,1,10000){
+    RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number):acq(computeChirp(p,  sampleRate),SenderMode::All,4,10,1,10000){
         assert(sampleRate > 0);
         this->integration_number = integration_number;
         this->sampleRate = sampleRate;
@@ -39,15 +39,16 @@ public:
     bool tryGetResponse(ResultResponse & response){
         ReceiverResult r;
         while(acq.tryGetResult(r)){
-          acc_raw_signal.add(r.signal);
-          //acc_delay.add(static_cast<double>(r.time));
-        }
-        if(acc_raw_signal.size > 0){
-            auto o = acc_raw_signal.get();
-            VD od(o.begin(),o.end());
-            VD id(acq.getSignal().begin(), acq.getSignal().end());
-            response = computeResponse(paramResponse,id,od,sampleRate);
-            return true;
+            acc_raw_signal.add(r.signal);
+            //acc_delay.add(static_cast<double>(r.time));
+
+            if(acc_raw_signal.size > 0){
+                auto o = acc_raw_signal.get();
+                VD od(o.begin(),o.end());
+                VD id(acq.getSignal().begin(), acq.getSignal().end());
+                response = computeResponse(paramResponse,id,od,sampleRate);
+                return true;
+            }
         }
         return false;
     }
@@ -80,7 +81,7 @@ public:
     void setModule(std::shared_ptr<RTModule> m){
         toRTQueue.enqueue(m);
     }
-    void startResponse(ParamResponse p,bool continuous,int integration){
+    void startResponse(ParamResponse p, bool continuous, int integration){
         if(this->m){
             m.reset();
         }
@@ -95,10 +96,11 @@ public:
     }
     bool getResultResponse(vector<ResultResponse>& result){
         result.clear();
-        result.resize(1);
+
         ResultResponse r;
         if (auto response = std::dynamic_pointer_cast<RTModuleResponse>(module)){
             if(response->tryGetResponse(r)){
+                result.resize(1);
                 result[0] = r;
                 return true;
             } else {
