@@ -23,7 +23,7 @@ public:
 
     TestRTModuleBackend(){
         b = new BackendFaust(std::string("foo"));
-        b->setCode("process = @(10);",44100);
+        b->setCode("import(\"filters.lib\");\nprocess = @(10):fi.zero(1);",44100);
         RTModuleHandler::setSampleRate(44100);
     }
     ~TestRTModuleBackend(){
@@ -58,6 +58,7 @@ public:
 };
 
 TEST_CASE("RTModuleHandler") {
+    {
     TestRTModuleBackend rtm;
     ParamResponse p;
     p.duration=0.01;
@@ -71,5 +72,8 @@ TEST_CASE("RTModuleHandler") {
     auto c = rtm.getResultResponse(r3);
     auto d = rtm.getResultResponse(r4);
     auto e = rtm.getResultResponse(r5);
+    rtm.startResponse(p,1,1);
+    rtm.run();
+    }
     REQUIRE(false);
 }

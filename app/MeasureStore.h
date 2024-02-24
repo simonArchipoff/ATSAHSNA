@@ -1,6 +1,5 @@
 #pragma once
 #include <QObject>
-#include "qtmetamacros.h"
 #include <QList>
 
 #include <Response.h>

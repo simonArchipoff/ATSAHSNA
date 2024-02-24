@@ -97,7 +97,7 @@ public:
     }
     C get(){
         C res(acc.size());
-        std::transform(res.begin(), res.end(), res.begin(),[this](const T & v){
+        std::transform(acc.begin(), acc.end(), res.begin(),[this](const T & v){
             return v/T(size);
         });
         return res;

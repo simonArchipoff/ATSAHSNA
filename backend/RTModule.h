@@ -33,7 +33,9 @@ public:
         //acq.init(s);
         //acq.start();
     }
-    virtual ~RTModuleResponse(){}
+    virtual ~RTModuleResponse(){
+
+    }
 
     void startResponse();
     bool tryGetResponse(ResultResponse & response){
@@ -78,6 +80,9 @@ private:
 
 struct RTModuleHandler{
 public:
+    ~RTModuleHandler(){
+        m.reset();
+    }
     void setModule(std::shared_ptr<RTModule> m){
         toRTQueue.enqueue(m);
     }
