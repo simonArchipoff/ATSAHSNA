@@ -17,6 +17,9 @@ public:
 
     void read(uint size,T * res) const{
         assert(size <= available());
+        /*for(int i = 0; i < size; i++){
+            res[i] = buff[(i+begin) % buff.size()];
+        }*/
         if(buff.size() - begin >= size){
             std::copy(buff.cbegin() + begin, buff.cbegin() + begin + size,res);
         } else {
@@ -25,6 +28,11 @@ public:
             std::copy(buff.cbegin() + begin, buff.end(), res);
             std::copy(buff.cbegin(), buff.cbegin() + (size - tmp)  , res + tmp);
         }
+    }
+
+
+    const std::vector<T> raw_read(){
+        return buff;
     }
 
     void pop(uint size){
@@ -41,6 +49,7 @@ public:
         if(freespace() < size){
             pop(size - freespace());
         }
+
         if(size <= buff.size() - end){
             std::copy(b,b+size,buff.begin() + end);
             end += size;
@@ -53,6 +62,12 @@ public:
         }
         this->size += size;
     }
+    void write(const T b){
+        buff[end] = b;
+        end = (end + 1) % buff.size();
+        this->size++;
+    }
+
     uint available() const {
         return size;
     }

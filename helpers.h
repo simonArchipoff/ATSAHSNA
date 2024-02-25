@@ -76,6 +76,12 @@ void to_file(const std::string &s, const T*begin, const T*end){
     return to_file(s,v);
 }
 
+template<typename T>
+void append_to_file(const std::string &s, const T * p, int size){
+    using namespace std;
+    std::ofstream out(s, ios::out | ios::binary | ios::app);
+    out.write((char*)p, sizeof(T)*size);
+}
 
 template<typename C, typename T>
 class Accumulate{
@@ -91,16 +97,21 @@ public:
             acc = v;
         } else {
             assert(v.size() == acc.size());
-            std::transform(acc.cbegin(),acc.cend(),acc.cbegin(),v.begin(),std::plus<T>());
+            for(uint i = 0 ; i < acc.size(); i++){
+                acc[i] += v[i];
+            }
         }
         size++;
     }
     C get(){
         C res(acc.size());
-        std::transform(acc.begin(), acc.end(), res.begin(),[this](const T & v){
-            return v/T(size);
-        });
+        for(uint i = 0; i < res.size(); i++){
+            res[i] = acc[i] / T(size);
+        }
         return res;
+    }
+    int getNumberAcc(){
+        return size;
     }
 
 };

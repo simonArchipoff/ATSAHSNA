@@ -55,14 +55,10 @@ public://this code look the signal in a window of twice it sice, this is sub opt
             if(rb.available() >= 2*size - 1){
                 rb.read(2*size - 1 ,tmp.data());
                 auto r = dc.getDelay(tmp.data(),tmp.size());
-#if 0
-                static int fooa = 0;
-                std::string path = "/tmp/";
-                to_file(path+std::to_string(fooa)+"_" + std::to_string(r.second) + "_" + std::to_string(r.first),tmp);
-                fooa++;
-#endif
+
                 if(r.second > threshold_level && r.first >= 0){
                     auto time = r.first + time_waited - rb.available(); //r.first + time_waited - p.dc.getSize();
+                    std::cerr << r.first << std::endl;
                     rb.pop(size);
                     internalResult result;
                     result.data = pool.getVector();
@@ -76,6 +72,13 @@ public://this code look the signal in a window of twice it sice, this is sub opt
                         assert(r.first + i < tmp.size());
                         result.data[i] = tmp[r.first + i];
                     }
+#if 1
+                        static int fooa = 0;
+                    std::string path = "/tmp/s";
+                        to_file(path+std::to_string(fooa)+"_" + std::to_string(r.second) + "_" + std::to_string(r.first),tmp.data() + r.first, size);
+                    to_file(path+"foo"+std::to_string(fooa), rb.raw_read());
+                    fooa++;
+#endif
                     /*
                     std::copy(tmp.begin() + r.first
                              ,tmp.begin() + r.first + size
@@ -86,6 +89,16 @@ public://this code look the signal in a window of twice it sice, this is sub opt
                     rb.pop(input.size());
                 }
             }
+        }
+    }
+    ~Receiver(){
+        float * v;
+        while(vectorQueue.try_dequeue(v)){
+            pool.putVectorBack(v);
+        }
+        internalResult r;
+        while(resultsQueue.try_dequeue(r)){
+            pool.putVectorBack(r.data);
         }
     }
 private:

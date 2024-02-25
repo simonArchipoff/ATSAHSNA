@@ -203,8 +203,8 @@ class DelayComputer
           t[i] = (std::abs(output[i]) / level) / this->refLevel;
       }
       static int foob = 0;
-      std::string path = "/tmp/";
-      to_file(path+"max"+std::to_string(foob)+"_" + std::to_string(lag) ,t);
+      std::string path = "/tmp/dc";
+      to_file(path+"max"+std::to_string(foob)+"_" + std::to_string(lag) ,);
       foob++;
 #endif
       return std::pair{lag,((std::abs(*m)/level) / this->refLevel)};

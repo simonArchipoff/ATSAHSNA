@@ -31,9 +31,12 @@ public:
         abort();
     }
     void putVectorBack(VectorCStyle<T> &v){
+        putVectorBack(v.data());
+    }
+    void putVectorBack(T * v){
         for(auto & i : pool){
             if(!i){
-                i = v.data();
+                i = v;
                 return;
             }
         }

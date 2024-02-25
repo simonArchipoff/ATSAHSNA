@@ -23,8 +23,8 @@ public:
 
     TestRTModuleBackend(){
         b = new BackendFaust(std::string("foo"));
-        b->setCode("import(\"filters.lib\");\nprocess = @(10):fi.zero(1);",44100);
-        RTModuleHandler::setSampleRate(44100);
+        b->setCode("import(\"filters.lib\");\nprocess = @(1536);",48000);
+        RTModuleHandler::setSampleRate(48000);
     }
     ~TestRTModuleBackend(){
         delete b;
@@ -32,14 +32,14 @@ public:
     void run(){
         AudioIO<float> in,out;
         vector<float> inv,outv;
-        const int SIZE = 32;
+        const int SIZE = 1536;
         inv.resize(SIZE);
         outv.resize(SIZE);
 
         in.addChannel(SIZE,inv.data());
         out.addChannel(SIZE,outv.data());
 
-        for(int x = 0; x <1024 ; x++){
+        for(int x = 0; x <48000*10 / SIZE ; x++){
 
             rt_process(in,out);
             vector<double> ind;
@@ -61,10 +61,11 @@ TEST_CASE("RTModuleHandler") {
     {
     TestRTModuleBackend rtm;
     ParamResponse p;
-    p.duration=0.01;
-    p.freqMin = 5000;
-    p.freqMin=2000;
-    rtm.startResponse(p,1,1);
+    p.duration=0.5;
+    p.freqMin = 20;
+    p.freqMax = 20000;
+    rtm.startResponse(p,1,4);
+
     rtm.run();
     vector<ResultResponse> r1,r2,r3,r4,r5;
     auto a = rtm.getResultResponse(r1);
@@ -72,7 +73,7 @@ TEST_CASE("RTModuleHandler") {
     auto c = rtm.getResultResponse(r3);
     auto d = rtm.getResultResponse(r4);
     auto e = rtm.getResultResponse(r5);
-    rtm.startResponse(p,1,1);
+
     rtm.run();
     }
     REQUIRE(false);
