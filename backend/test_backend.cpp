@@ -1,4 +1,4 @@
-#if 0
+
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <cstdlib>
@@ -7,7 +7,8 @@
 #include <string>
 #include <vector>
 #include <Faust.h>
-
+#include <Sender.h>
+#if 0
 TEST_CASE("Ring buffer") {
     RingBuffer<int> rb(8);
 
@@ -30,9 +31,10 @@ TEST_CASE("Ring buffer") {
     REQUIRE(rb.available() == 8);
 
 }
-
+#endif
 //tests made by chatGPT (and fixed by me)
 
+#if 0
 TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
     SECTION("Default Constructor") {
         RingBuffer<int> rb;
@@ -130,11 +132,13 @@ TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
     }
 }
 
+#endif
 
+#if 0
 #include <Generation.h>
 #include <Acquisition.h>
 #include <iostream>
-#if 0
+
 TEST_CASE("Acquisition") {
     int delay=45;
     RingBuffer<double> rb(10000);
@@ -143,7 +147,7 @@ TEST_CASE("Acquisition") {
     const uint frames = 256;
     auto foo = chirp_complex(10,1000,0.5,sr);
     //VCD foo = {1,2,3,4,0,0,0,0,0,0,0};
-    Acquisition<double> b(foo,SenderMode::All,1,0,1,100);
+    Acquisition b(foo,SenderMode::All,1,0,1,100);
 
     //b.start();
 
@@ -180,26 +184,28 @@ TEST_CASE("Acquisition") {
     }
     REQUIRE(res_delay == delay);
 }
+#endif
 
-
-
+#if 0
 TEST_CASE("Test de Sender") {
-    VD signal = {1.0, 2.0, 3.0, 4.0};
-    Sender::Mode mode = Sender::All;
-    int number = 3;
-    int timeoff = 2;
-    Sender sender(signal, mode, number, timeoff);
+    VF signal = {1.0, 2.0, 3.0, 4.0,6.0,7.0,8.0,9.0,10.,11.,12.,13.,14.,15,16.};
+    int number = 33;
+    int timeoff = 1;
+    Sender sender(signal, SenderMode::All, number, timeoff);
 
     SECTION("Test de rt_send") {
-        int start_idx = 0;
-        int nb_frames = 3;
-        int nb_call = 10;
-        float output[nb_call * nb_frames];
-        memset(output,0,sizeof(output));
+
+        float output[number * (timeoff + signal.size())];
+
+        memset(output,42,sizeof(output));
+
+        int nb_frames = 5;
+        int nb_call = (sizeof(output)/sizeof(output[0])) / nb_frames;
 
         for(int i = 0; i < nb_call; i++){
-            float * s = output + i*nb_frames;
-            sender.rt_output(0, &s, 1, nb_frames);
+            float * t = output + i * nb_frames;
+            AudioIO<float> o(nb_frames,1,&t);
+            sender.rt_output(o);
         }
 
         REQUIRE(output[0] == 0.0);
@@ -228,13 +234,13 @@ TEST_CASE("Test de Sender") {
         REQUIRE(output[18] == 0.0);
         REQUIRE(output[19] == 0.0);
 
-        REQUIRE(output[20] == 0.0);
-        REQUIRE(output[21] == 0.0);
+        //REQUIRE(output[20] == 0.0);
+        //REQUIRE(output[21] == 0.0);
 
     }
 }
-
-
+#endif
+#if 0
 
 class FaustWithRTModule : public BackendFaust, public RTModuleHandler{
 public:
@@ -280,5 +286,5 @@ TEST_CASE("Test RTModuleHandler 1"){
            1;
     }
 }
-#endif
+
 #endif

@@ -14,9 +14,9 @@ public:
 
   void rt_process(const AudioIO<float> & inputs, AudioIO<float> & outputs){
     sender.rt_output(outputs);
-    //append_to_file("/tmp/input",inputs[0].v, inputs[0].size());
+    append_to_file("/tmp/output",outputs[0].v, outputs[0].size());
     receiver.rt_process(inputs);
-    //append_to_file("/tmp/output",outputs[0].v, outputs[0].size());
+    append_to_file("/tmp/input",inputs[0].v, inputs[0].size());
   }
 
   const vector<float> & getSignal(){

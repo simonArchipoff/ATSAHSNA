@@ -26,7 +26,7 @@ def plot_curve_and_stft(file_path, fs=48000):
     plt.ylabel('Valeur')
 
     # Calcul de la STFT
-    f, t, Zxx = stft(data, fs=fs, nperseg=256)
+    f, t, Zxx = stft(data, fs=fs, nperseg=1024)
     
     # Affichage de la STFT
     plt.subplot(1, 2, 2)

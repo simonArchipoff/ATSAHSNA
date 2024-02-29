@@ -44,6 +44,7 @@ void BackendJack::start(){
         jack_set_port_connect_callback (client, jackPortConnectCallback, this);
         jack_set_xrun_callback(client, jackXRunCallback,this);
         outputGain = -3;
+
     }
     ready = !jack_activate(client);
     RTModuleHandler::setSampleRate(getSampleRate());

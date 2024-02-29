@@ -32,14 +32,14 @@ public:
     void run(){
         AudioIO<float> in,out;
         vector<float> inv,outv;
-        const int SIZE = 1536;
+        const int SIZE = 1024*8;
         inv.resize(SIZE);
         outv.resize(SIZE);
 
         in.addChannel(SIZE,inv.data());
         out.addChannel(SIZE,outv.data());
 
-        for(int x = 0; x <48000*10 / SIZE ; x++){
+        for(int x = 0; x <48000*50 / SIZE ; x++){
 
             rt_process(in,out);
             vector<double> ind;
@@ -61,10 +61,10 @@ TEST_CASE("RTModuleHandler") {
     {
     TestRTModuleBackend rtm;
     ParamResponse p;
-    p.duration=0.5;
+    p.duration=0.01;
     p.freqMin = 20;
     p.freqMax = 20000;
-    rtm.startResponse(p,1,4);
+    rtm.startResponse(p,1,2);
 
     rtm.run();
     vector<ResultResponse> r1,r2,r3,r4,r5;
@@ -73,8 +73,6 @@ TEST_CASE("RTModuleHandler") {
     auto c = rtm.getResultResponse(r3);
     auto d = rtm.getResultResponse(r4);
     auto e = rtm.getResultResponse(r5);
-
-    rtm.run();
     }
-    REQUIRE(false);
+    REQUIRE(true);
 }

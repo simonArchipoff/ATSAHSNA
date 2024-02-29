@@ -16,51 +16,52 @@ class Sender {
     current_output(0), current_send(0), current_timeoff(0), current_number_rec(0) {}
 
   void rt_output(AudioIO<float> output){
-    assert(output.size() > 0);
-    assert(output[0].size()>0);
-    output.fill0();
-    auto * out = &output[current_output];
-    uint idx = 0;
-    while(idx < out->size()){
-      switch(state){
-      case Sending:
-          idx = rt_send(idx, out->data() ,out->size());
-          assert(idx <= out->size());
-	break;
-      case SendingFinished:
-	if(mode == RoundRobin){
-	  current_output = current_output + 1 % output.size();
-      out = &output[current_output];
+      assert(output.size() > 0);
+      assert(output[0].size() > 0);
+      output.fill0();
 
-	}
-	if((current_output == 0 || mode == All) && ++current_number_rec == number_rec){
-	  state = Finished;
-	} else {
-	  state = Timeoffing;
-	  current_timeoff=0;
-	}
-	break;
+      auto * out = &output[current_output];
+      uint idx = 0;
+      while(idx != out->size()){
+          switch(state){
+          case Sending:
+              idx = rt_send(idx, out->data() ,out->size());
+              assert(idx <= out->size());
+              break;
+          case SendingFinished:
+              if(mode == RoundRobin){
+                  current_output = (current_output + 1) % output.size();
+                  out = &output[current_output];
 
-      case Timeoffing:
-    idx = rt_timeoff(idx,out->data(),out->size());
-	break;
-      case TimeoffFinished:
-	state = Sending;
-    current_send = 0;
-    sendReportQueue.enqueue(SendReport{current_number_rec,current_output});
-	break;
-      case Finished:
-	return;
-	break;
+              }
+              if((current_output == 0 || mode == All) && ++current_number_rec == number_rec){
+                  state = Finished;
+              } else {
+                  state = Timeoffing;
+                  current_timeoff=0;
+              }
+              break;
+
+          case Timeoffing:
+              idx = rt_timeoff(idx,out->data(),out->size());
+              break;
+          case TimeoffFinished:
+              state = Sending;
+              current_send = 0;
+              sendReportQueue.enqueue(SendReport{current_number_rec,current_output});
+              break;
+          case Finished:
+              return;
+              break;
+          }
       }
-    }
-
-    if(mode == All){
-      for(auto i : output){
-        if(&i != out)
-            std::copy(out->begin(), out->end(), i.begin());
-        }
-    }
+      assert(idx == output[0].size());
+      if(mode == All){
+          for(VectorCStyle<float> * i = output.begin(); i != output.end(); i++){
+              if(i != out)
+                  std::copy(out->begin(), out->end(), i->begin());
+          }
+      }
   }
 
   const std::vector<float> & getSignal(){
@@ -80,7 +81,7 @@ class Sender {
     (void)output;
     const auto current_timeoff_left = timeoff - current_timeoff;
     if( current_timeoff_left > nb_frames - start_idx){
-      current_timeoff = nb_frames - start_idx;
+      current_timeoff += nb_frames - start_idx;
       return nb_frames;
     } else {
       state = TimeoffFinished;
@@ -94,25 +95,26 @@ class Sender {
     const int signalsize = static_cast<int>(signal.size());
     assert(start_idx < nb_frames);
     assert(current_send < signalsize);
-    const auto current_sending_left = signalsize - current_send;
-    const auto left = nb_frames - start_idx;
-    if(current_sending_left <= left){
+    const auto signal_left = signalsize - current_send;
+    const auto output_left = nb_frames - start_idx;
+    if(signal_left <= output_left){
       std::transform(signal.begin() + current_send
-		     ,signal.end()
-		     ,output + start_idx
-		     ,[](double s){return static_cast<float>(s);});
-
+                    ,signal.end()
+                    ,output + start_idx
+                    ,[](double s){return static_cast<float>(s);});
+      current_send += signal_left;
+      assert(current_send == signalsize);
       state = SendingFinished;
-      return start_idx + left;
-    } else {// currend_sending_left > left
+      return start_idx + signal_left;
+    } else { // currend_sending_left > left
       std::transform(signal.begin() + current_send
-		     ,signal.begin() + current_send + left
-		     ,output + start_idx
-		     ,[](double s){return static_cast<float>(s);});
-      current_send += left;
-
-      assert(start_idx + left == nb_frames);
-      return start_idx + left;
+                    ,signal.begin() + current_send + output_left
+                    ,output + start_idx
+                    ,[](double s){return static_cast<float>(s);});
+      current_send += output_left;
+      assert(current_send <= signal.size());
+      assert(start_idx + output_left == nb_frames);
+      return start_idx + output_left;
     }
   }
 

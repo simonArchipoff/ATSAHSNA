@@ -134,3 +134,4 @@ struct Accumulate<double,double>{
     }
 
 };
+

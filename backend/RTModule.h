@@ -15,6 +15,8 @@
 #include <AudioIO.h>
 #include "Acquisition.h"
 
+#include "../benchmark.h"
+
 
 class RTModule {
 public:
@@ -26,7 +28,8 @@ public:
 
 class RTModuleResponse : public RTModule {
 public:
-    RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number):acq(computeChirp(p,  sampleRate),SenderMode::All,4,10,1,10000){
+    RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number):acq(computeChirp(p,  sampleRate),SenderMode::All,2,4800,1,10000),
+        benchmark("RTModuleResponse"){
         assert(sampleRate > 0);
         this->integration_number = integration_number;
         this->sampleRate = sampleRate;
@@ -34,7 +37,7 @@ public:
         //acq.start();
     }
     virtual ~RTModuleResponse(){
-
+        benchmark.printResults();
     }
 
     void startResponse();
@@ -60,7 +63,9 @@ public:
     void setIntegrationSize(int s=1);
 
     virtual void rt_process(const AudioIO<float> & inputs, AudioIO<float>& outputs) override {
+        benchmark.start();
         acq.rt_process(inputs,outputs);
+        benchmark.stop();
     }
     virtual void rt_after_process() override{}
 
@@ -75,6 +80,7 @@ private:
     //accumulate results
     Accumulate<vector<float>,float> acc_raw_signal;
     Accumulate<float,float> acc_delay;
+    Benchmark benchmark;
 };
 
 
@@ -149,6 +155,5 @@ private:
         }
     }
     std::shared_ptr<RTModuleResponse> m_response;
-
     uint sampleRate = 0;
 };
