@@ -34,7 +34,7 @@ class FrequencyPlot : public MyQCustomPlot
 public:
     FrequencyPlot(QWidget * parent=nullptr);
     ~FrequencyPlot();
-    void setPlot(const FDF & f, QString name, QColor c, bool phaseDisp=true);
+    void setPlot(const FDF & f, QString name, QColor c);
     void removeResult(QString name);
     void updatePlot(const FDF&v,QString name);
     void updatePlot(const ResultResponse & r, QString name){
@@ -46,4 +46,5 @@ protected:
     QCPAxis *frequencyAxis;
     QCPAxis *amplitudeAxis;
     QCPAxis *phaseAxis;
+    bool display_phase = true;
 };
