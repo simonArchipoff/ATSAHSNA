@@ -2,8 +2,9 @@
 
 #define FAUSTFLOAT double
 #include <cstdint>
-#include <faust/dsp/llvm-dsp.h>
 #include <cstring>
+
+#include <faust/dsp/llvm-dsp.h>
 #include <faust/gui/APIUI.h>
 #include <mutex>
 #include <variant>

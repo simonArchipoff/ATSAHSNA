@@ -1,7 +1,7 @@
 #include "QJackView.h"
 #include "Response.h"
 #include "qboxlayout.h"
-#include "widget_chatgpt.h"
+#include <widget_chatgpt.h>
 #include <QDebug>
 #include <QVBoxLayout>
 #include <QPushButton>

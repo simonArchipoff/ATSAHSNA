@@ -5,12 +5,45 @@
 #include <QSlider>
 #include <QPushButton>
 #include <QFormLayout>
-
+#include <QComboBox>
 #include <Harmonics.h>
 #include <Response.h>
 #include <Spectrogram.h>
 #include <qspinbox.h>
 
+class SignalTypeSelector : public QWidget {
+    Q_OBJECT
+
+public:
+    SignalTypeSelector(QWidget *parent = nullptr) : QWidget(parent) {
+        // Créer un QComboBox
+        comboBox = new QComboBox(this);
+
+        // Ajouter les options à partir de l'énumération SIGNAL_TYPE
+        comboBox->addItem("Chirp", QVariant(ParamResponse::CHIRP));
+        comboBox->addItem("Dirac", QVariant(ParamResponse::DIRAC));
+        comboBox->addItem("Undefined", QVariant(ParamResponse::UNDEFINED));
+
+        // Connecter le signal currentIndexChanged à notre slot
+        connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SignalTypeSelector::handleSelectionChange);
+    }
+
+    ParamResponse::SIGNAL_TYPE getSelectedSignalType() const {
+        // Récupérer la valeur sélectionnée dans le QComboBox
+        return static_cast<ParamResponse::SIGNAL_TYPE>(comboBox->currentData().toInt());
+    }
+
+signals:
+    void signalTypeChanged(ParamResponse::SIGNAL_TYPE type);
+
+private slots:
+    void handleSelectionChange(int index) {
+        emit signalTypeChanged(static_cast<ParamResponse::SIGNAL_TYPE>(comboBox->itemData(index).toInt()));
+    }
+
+private:
+    QComboBox *comboBox;
+};
 
 //this is chat gpt code
 class ParamResponseWidget : public QWidget
@@ -34,6 +67,7 @@ private:
     QDoubleSpinBox* freqMinSlider;
     QDoubleSpinBox* freqMaxSlider;
     QDoubleSpinBox* durationSlider;
+    SignalTypeSelector * signalSelector;
     QPushButton* validateButton;
 };
 
