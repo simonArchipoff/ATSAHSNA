@@ -14,7 +14,6 @@ void VUMeter::paintEvent(QPaintEvent *event) {
     int height = this->height();
     int barHeight = 20;
     int barWidth = width * level;
-    qDebug() << level;
 
     painter.fillRect(0, 0, width, height, Qt::black);
 

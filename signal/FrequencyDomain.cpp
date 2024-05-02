@@ -79,7 +79,7 @@ vector <double> FDF::getAmplitude() const {
 vector <double> FDF::getAmplitude20log10() const {
     vector<double> res = getAmplitude();
 #pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
-    for(uint i = 1; i < res.size(); i++){
+    for(uint i = 0; i < res.size(); i++){
         res[i] = 20 * log10(res[i]);
     }
     return res;
