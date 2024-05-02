@@ -119,7 +119,8 @@ QParamResponse::Param QParamResponse::getParam(){
   auto fmin = this->fmin->value();
   auto fmax = this->fmax->value();
   auto duration = this->duration->value();
-  return ParamResponse{fmin,
+  return ParamResponse{ParamResponse::SIGNAL_TYPE::CHIRP,
+                       fmin,
                        fmax,
                        duration};
 }

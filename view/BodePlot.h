@@ -24,8 +24,8 @@ public:
 
     //void setResult(std::variant<const std::vector<ResultResponse>> & r);
     void setResult(const ResultResponse &r, QString name, QColor c);
-    void setPlot(const FDF & f, QString name, QColor c, bool phaseDisp=true){
-        fp->setPlot(f,name,c,phaseDisp);
+    void setPlot(const FDF & f, QString name, QColor c){
+        fp->setPlot(f,name,c);
     }
     void replot(){
         fp->replot();

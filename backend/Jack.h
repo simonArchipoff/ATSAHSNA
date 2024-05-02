@@ -8,9 +8,7 @@
 #include "spectrummonitor.h"
 
 
-#include <mutex>
 #include <variant>
-#include <optional>
 #include <string.h>
 #include <iostream>
 
@@ -164,7 +162,7 @@ protected:
     static void jackPortConnectCallback(jack_port_id_t a, jack_port_id_t b, int connect, void * back){
         BackendJack * backend = static_cast<BackendJack *>(back);
         backend->jack_port_connect(a,b,connect);
-        jack_set_buffer_size(backend->client,1024*8);
+        //jack_set_buffer_size(backend->client,1024*8);
     }
 
 

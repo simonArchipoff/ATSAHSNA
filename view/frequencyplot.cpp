@@ -66,7 +66,7 @@ FrequencyPlot::~FrequencyPlot(){
     }
 }
 
-void FrequencyPlot::setPlot(const FDF & f, QString name, QColor color, bool phaseDisp){
+void FrequencyPlot::setPlot(const FDF & f, QString name, QColor color){
     if(!plots.contains(name)){
         auto pa = addGraph(frequencyAxis, amplitudeAxis);
         auto pp = addGraph(frequencyAxis, phaseAxis);
@@ -77,14 +77,15 @@ void FrequencyPlot::setPlot(const FDF & f, QString name, QColor color, bool phas
         pen_amplitude = pen_phase;
         pen_phase.setStyle(Qt::DotLine);
         pen_amplitude.setStyle(Qt::SolidLine);
-        phaseAxis->setVisible(phaseDisp);
+        phaseAxis->setVisible(display_phase);
         pa->setPen(pen_amplitude);
         pp->setPen(pen_phase);
 
         plots.insert(name,new PlotAmplitudePhase(name, color,pa,pp));
     }
-    plots[name]->setDisplayPhase(phaseDisp);
+    plots[name]->setDisplayPhase(display_phase);
     plots[name]->setCurve(f);
+    phaseAxis->setVisible(display_phase);
 }
 
 void FrequencyPlot::removeResult(QString name){
@@ -103,6 +104,7 @@ void FrequencyPlot::updatePlot( const FDF&v, QString name){
 }
 
 void FrequencyPlot::displayPhase(bool b){
+    display_phase = b;
     for(auto & i : plots){
         i->setDisplayPhase(b);
     }

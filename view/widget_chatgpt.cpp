@@ -80,6 +80,8 @@ ParamResponseWidget::ParamResponseWidget(QWidget *parent) : QWidget(parent)
     durationSlider->setRange(1, 100);
     durationSlider->setValue(10);
 
+    signalSelector = new SignalTypeSelector(this);
+
     // Création du bouton "Valider"
     validateButton = new QPushButton("Valider");
     connect(validateButton, &QPushButton::clicked, this, &ParamResponseWidget::onValidateClicked);
@@ -89,6 +91,7 @@ ParamResponseWidget::ParamResponseWidget(QWidget *parent) : QWidget(parent)
     layout->addRow("Min Frequency:", freqMinSlider);
     layout->addRow("Max Frequency:", freqMaxSlider);
     layout->addRow("Duration:", durationSlider);
+    layout->addRow("Signal",signalSelector);
     layout->addWidget(validateButton);
 
     setLayout(layout);
@@ -98,6 +101,7 @@ ParamResponse ParamResponseWidget::getParamResponse() const
 {
     // Récupération des valeurs des sliders
     ParamResponse paramResponse;
+    paramResponse.signal_type = signalSelector->getSelectedSignalType();
     paramResponse.freqMin = freqMinSlider->value();
     paramResponse.freqMax = freqMaxSlider->value();
     paramResponse.duration = static_cast<double>(durationSlider->value()) / 10.0;

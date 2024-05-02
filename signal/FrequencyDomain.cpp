@@ -70,7 +70,7 @@ uint FDF::getSampleRate() const{
 
 vector <double> FDF::getAmplitude() const {
     vector<double> res(response.size()/2);
-    for(uint i = 0; i < res.size(); i++){
+    for(uint i = 1; i < res.size(); i++){
         res[i] = abs(response[i]);
     }
     return res;
@@ -79,7 +79,7 @@ vector <double> FDF::getAmplitude() const {
 vector <double> FDF::getAmplitude20log10() const {
     vector<double> res = getAmplitude();
 #pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
-    for(uint i = 0; i < res.size(); i++){
+    for(uint i = 1; i < res.size(); i++){
         res[i] = 20 * log10(res[i]);
     }
     return res;
@@ -88,7 +88,7 @@ vector <double> FDF::getAmplitude20log10() const {
 vector <double> FDF::getPhase() const {
     vector<double> res(response.size()/2);
 #pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
-    for(uint i = 0; i < res.size(); i++){
+    for(uint i = 1; i < res.size(); i++){
         res[i] = atan2(response[i].imag(), response[i].real()) * 180/(M_PI);
     }
     return res;
@@ -99,7 +99,7 @@ vector <double> FDF::getPhase() const {
 vector <double> FDF::getFrequency() const {
     vector<double> res(response.size()/2);
 #pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
-    for(uint i = 0; i < res.size(); i++){
+    for(uint i = 1; i < res.size(); i++){
         res[i] = i * f1;
         if(i > 1)
             assert(res[i-1] < res[i]);
@@ -219,11 +219,24 @@ VCD computeDFT(const VD &input){
 
 VD FDF::frequencyDomainTotemporal() const {
     VD o;
-    rfft(response,o,this->response.size());
+    rfft(response, o, this->response.size());
     for(auto & i : o)
         i *= response.size();
     return o;
 }
+
+VD FDF::frequencyDomainToStepTemporal() const{
+    const VD tmp = frequencyDomainTotemporal();
+    VD o;
+    o.resize(tmp.size(),0.0);
+    for(uint i = 0; i < tmp.size(); i++){
+        for(uint j = 0; j + i < o.size(); j++){
+            o[i+j] += tmp[i];
+        }
+    }
+    return o;
+}
+
 
 /*
 struct APF {

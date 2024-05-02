@@ -48,6 +48,7 @@ public:
 
     //inverse transform :
     VD frequencyDomainTotemporal() const;
+    VD frequencyDomainToStepTemporal() const;
     FDF reduce(uint factor) const;
 protected:
     VCD response;

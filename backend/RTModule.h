@@ -5,10 +5,7 @@
 #include <Analysis.h>
 #include <Harmonics.h>
 #include <Response.h>
-#include <tuple>
-#include <variant>
 #include "../helpers.h"
-#include <set>
 #include <memory>
 #include "Response.h"
 #include "concurrentqueue.h"
@@ -17,14 +14,11 @@
 
 #include "../benchmark.h"
 
-
 class RTModule {
 public:
     virtual void rt_process(const AudioIO<float>& inputs, AudioIO<float> & outputs) = 0;
     virtual void rt_after_process(){};
 };
-
-
 
 class RTModuleResponse : public RTModule {
 public:

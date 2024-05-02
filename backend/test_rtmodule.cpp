@@ -32,7 +32,7 @@ public:
     void run(){
         AudioIO<float> in,out;
         vector<float> inv,outv;
-        const int SIZE = 1024*8;
+        const int SIZE = 1523;
         inv.resize(SIZE);
         outv.resize(SIZE);
 
