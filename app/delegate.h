@@ -8,7 +8,7 @@
 #include <QWeakPointer>
 #include <qtmetamacros.h>
 #ifdef ENABLE_JACK
-#include "Jack.h"
+#include "QJack.h"
 #include "QJackView.h"
 #endif
 

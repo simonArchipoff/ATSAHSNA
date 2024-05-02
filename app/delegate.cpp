@@ -11,10 +11,12 @@
 
 #include <BodePlot.h>
 #include <qnamespace.h>
+
 #ifdef ENABLE_JACK
-#include "Jack.h"
+#include "QJack.h"
 #include "QJackView.h"
 #endif
+
 delegate::delegate(MainWindow * m):mw{m}
 {
 #ifdef ENABLE_JACK
@@ -68,7 +70,7 @@ bool QBackendFaust::isReady() const{
 }
 
 #ifdef ENABLE_JACK
-QBackendJack::QBackendJack(QJackView * gui, QString name):backend(new QJack()),jack_gui{gui}{
+QBackendJack::QBackendJack(QJackView * gui, QString name):backend(new QJack(this)),jack_gui{gui}{
     connect(jack_gui,&QJackView::requestNewInputPort, this,[this](QString s){backend->addInputPort(s.toStdString());});
     connect(jack_gui,&QJackView::requestNewOutputPort,this,[this](QString s){backend->addOutputPort(s.toStdString());});
 
@@ -90,7 +92,7 @@ QBackendJack::QBackendJack(QJackView * gui, QString name):backend(new QJack()),j
     });
 //    void jack_port_connect_s(jack_port_id_t a, jack_port_id_t b, int connect, QString nameb);
 
-
+    connect(backend,&QJack::levels,jack_gui,&QJackView::updateLevels);
     backend->start();
     connect(jack_gui,&QJackView::requestResponse,this,[this](auto p, auto c, auto i){
         this->backend->startResponse(p,c,i);

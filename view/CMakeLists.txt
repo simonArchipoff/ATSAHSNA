@@ -44,9 +44,9 @@ add_library(view
     qmeasuresview.cpp
 
     QJackView.h
-                         QJackView.cpp
-
-
+    QJackView.cpp
+    vumetre.h
+    vumetre.cpp
 )
 
 if(ENABLE_JACK)

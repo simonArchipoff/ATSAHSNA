@@ -98,23 +98,27 @@ void QJackView::disconnectPort(jack_port_id_t a, jack_port_id_t b){
     portManager->disconnectPort(a,b);
 }
 
+void QJackView::updateLevels(Levels l){
+    portManager->updateLevels(l);
+    update();
+}
 
 
 
 
-QJackPortView::QJackPortView(QWidget *parent) : QWidget(parent), spectrum{new MiniSpectrum{parent}} {
+
+QJackPortView::QJackPortView(QWidget *parent) : QWidget(parent) {
     name = new QLabel(this);
     nameConnexion = new QLabel(this);
+    vumeter = new VUMeter(this);
 
     QHBoxLayout * hlayout = new QHBoxLayout(this);
     setLayout(hlayout);
     hlayout->addWidget(name);
     hlayout->addWidget(nameConnexion);
-    hlayout->addWidget(spectrum);
+    hlayout->addWidget(vumeter);
 }
 QJackPortView::~QJackPortView(){
-    if(spectrum)
-        delete spectrum;
 }
 
 void QJackPortView::setName(QString portName) {
@@ -123,6 +127,10 @@ void QJackPortView::setName(QString portName) {
 
 void QJackPortView::setConnexionName(QString connName) {
     nameConnexion->setText("Connection Name: " + connName);
+}
+
+void QJackPortView::setLevel(float l){
+    vumeter->updateLevel(l);
 }
 
 
@@ -143,14 +151,16 @@ QJackPortManager::~QJackPortManager() {
 void QJackPortManager::add(jack_port_id_t port, QString portName) {
     QJackPortView *view = new QJackPortView(this);
     portMap[port] = view;
+    portMapName[portName] = port;
     view->setName(portName);
     layout->addWidget(view);
 
 }
 
 void QJackPortManager::remove(jack_port_id_t port) {
-    if (portMap.contains(port)) {
+    if (portMap.contains(port)){
         QJackPortView *view = portMap[port];
+        erase_if(portMapName,[port](const QMap<QString, jack_port_id_t>::iterator it) { return it.value() == port; });
         portMap.remove(port);
         layout->removeWidget(view);
         //delete view;
@@ -162,6 +172,15 @@ QJackPortView* QJackPortManager::getPort(jack_port_id_t port) {
         return portMap[port];
     }
     return nullptr;
+}
+
+void QJackPortManager::updateLevels(Levels l){
+    for(int i = 0; i < l.spectrum_size; i++){
+        if(l.ids[i]){
+            QString qs(l.ids[i]);
+            portMap[portMapName[qs]]->setLevel(l.level[i]);
+        }
+    }
 }
 
 void QJackPortManager::connectPort(jack_port_id_t a, jack_port_id_t b,QString nameb){

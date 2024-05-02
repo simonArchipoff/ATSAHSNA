@@ -37,13 +37,19 @@ int compute_delay(const VD & out, const VD & in);
 
 
 template<typename iterator>
-double rms(iterator begin, iterator end){
+double rms(const iterator begin, const iterator end){
   double sq_sum = std::inner_product(begin, end, begin, 0.0,
 				     [](auto const & x, auto const & y) { return x + y; },
       [](auto const & x, auto const & y) { return std::abs(x.real()*y.real()); });
   return std::sqrt(sq_sum / std::distance(begin,end));
 }
 
+inline float rms_r(const float*begin, const float*end){
+  float sq_sum = std::inner_product(begin, end, begin, 0.0,
+      [](auto const & x, auto const & y) { return x + y; },
+      [](auto const & x, auto const & y) { return std::abs(x*y); });
+  return std::sqrt(sq_sum / std::distance(begin,end));
+}
 
 
 

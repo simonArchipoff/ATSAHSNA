@@ -9,7 +9,6 @@
 
 #include <jack/types.h>
 #include <jack/jack.h>
-#include <mutex>
 #include <stdio.h>
 #include <variant>
 
@@ -75,7 +74,16 @@ void * BackendJack::audio_thread(void * arg){
 
         jb->rt_process(inputs, outputs);
 
+        for(int i = 0; i < jb->inputPorts.size(); i++){
+            jb->LevelMonitor::observe(jack_port_short_name(jb->inputPorts[i]),inputs[i]);
+        }
+        for(int i = 0; i < jb->outputPorts.size(); i++){
+            jb->LevelMonitor::observe(jack_port_short_name(jb->outputPorts[i]),outputs[i]);
+        }
+
         jack_cycle_signal(jb->client,0);
+
+        jb->LevelMonitor::send();
         jb->rt_after_process();
     }
 }

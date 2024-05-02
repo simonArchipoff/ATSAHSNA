@@ -22,6 +22,13 @@ if(ENABLE_JACK)
     list(APPEND BACKEND_SOURCES
         Jack.h
         Jack.cpp
+
+        QJack.h
+        QJack.cpp
+
+        spectrummonitor.h
+        spectrummonitor.cpp
+
         RingBuffer.h
         RingBuffer.cpp
 

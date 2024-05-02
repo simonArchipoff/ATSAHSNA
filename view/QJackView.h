@@ -9,17 +9,11 @@
 #include <QLineEdit>
 #include <QVBoxLayout>
 #include <jack/types.h>
-
-//#include "widget_chatgpt.h"
-
-
+#include <vumetre.h>
+#include <spectrummonitor.h>
 #include <qlogging.h>
 
-class MiniSpectrum : public QWidget {
-    Q_OBJECT
-public:
-    MiniSpectrum(QWidget * parent):QWidget(parent){}
-};
+
 
 class QJackPortView : public QWidget{
     Q_OBJECT
@@ -28,12 +22,12 @@ public:
     ~QJackPortView();
     void setName(QString);
     void setConnexionName(QString);
-
+    void setLevel(float l);
 
 protected:
     QLabel * name;
     QLabel * nameConnexion;
-    MiniSpectrum * spectrum;
+    VUMeter * vumeter;
 };
 
 class QJackPortManager : public QWidget {
@@ -47,10 +41,12 @@ public:
     void connectPort(jack_port_id_t a, jack_port_id_t b,QString nameb);
     void disconnectPort(jack_port_id_t a, jack_port_id_t b);
     QJackPortView * getPort(jack_port_id_t  port);
+    void updateLevels(Levels l);
 
 private:
     QVBoxLayout *layout;
-    QMap<jack_port_id_t , QJackPortView *> portMap;
+    QMap<jack_port_id_t, QJackPortView *> portMap;
+    QMap<QString, jack_port_id_t> portMapName;
 };
 
 class QJackView : public QWidget {
@@ -63,7 +59,7 @@ public:
     void removePort(jack_port_id_t port);
     void connectPort(jack_port_id_t a, jack_port_id_t b, QString namea, QString nameb);
     void disconnectPort(jack_port_id_t a, jack_port_id_t b);
-
+    void updateLevels(Levels l);
 
 signals:
     void requestNewInputPort(QString);
