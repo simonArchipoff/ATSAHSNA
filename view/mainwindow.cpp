@@ -18,11 +18,12 @@
 MainWindow::MainWindow(QWidget *parent)
     :QMainWindow{parent}
     ,backends{new QBackendsView(this)}
-    ,displays{new QResponseView{this}}
+    ,response{new QResponseView{this}}
+    ,harmonic{new QHarmonicView{this}}
     //,paramResponseWidget{nullptr}
     //,paramHarmonicsWidget{nullptr}
     //,paramSpectrogramWidget{nullptr}
-  //,measures{new QMeasure{this}}
+    //,measures{new QMeasure{this}}
 {
   //QToolBar * toolbar = addToolBar("main toolbar");
   //QAction * start_measure = toolbar->addAction("mesure");
@@ -34,7 +35,10 @@ MainWindow::MainWindow(QWidget *parent)
   setCentralWidget(s);
   s->addWidget(backends);
 
-  s->addWidget(displays);
+  QTabWidget * tabs = new QTabWidget(this);
+  tabs->addTab(response,tr("response"));
+  tabs->addTab(harmonic,tr("harmonics"));
+  s->addWidget(tabs);
   s->setStretchFactor(0,5);
   s->setStretchFactor(1,1);
   //setWidth(backends->minimumSizeHint().width());
@@ -138,30 +142,22 @@ void MainWindow::createMenus()
   connect(spectrogram, &QAction::toggled, this, &MainWindow::onAddSpectrogramWidgetRequested);
 
   menuBar()->addMenu(analyseMenu);
-  spectrum->setChecked(true);
-  temporal->setChecked(true);
-  spectrogram->setChecked(true);
-
-  //onAddSpectrumWidgetRequested(true);
-  //onAddTemporalWidgetRequested(false);
-  //onAddSpectrogramWidgetRequested(false);
-
-  //connect(this, &MainWindow::addResponseWidgetRequested, this, &MainWindow::onAddSpectrumWidgetRequested);
-  //connect(this, &MainWindow::addHarmonicsWidgetRequested, this, &MainWindow::onAddTemporalWidgetRequested);
-  //connect(this, &MainWindow::addSpectrogramWidgetRequested, this, &MainWindow::onAddSpectrogramWidgetRequested);
+  spectrum->setChecked(true);  onAddSpectrumWidgetRequested(true);
+  temporal->setChecked(false); onAddTemporalWidgetRequested(false);
+  spectrogram->setChecked(false);  onAddSpectrogramWidgetRequested(false);
 
 }
 
 void MainWindow::onAddSpectrumWidgetRequested(bool b){
-  displays->setBodeView(b);
+  response->setBodeView(b);
 }
 
 void MainWindow::onAddTemporalWidgetRequested(bool b){
-  displays->setTemporalView(b);
+  response->setTemporalView(b);
 }
 
 void MainWindow::onAddSpectrogramWidgetRequested(bool b){
-  displays->setSpectrogramView(b);
+  response->setSpectrogramView(b);
 }
 
 

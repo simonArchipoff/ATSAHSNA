@@ -30,7 +30,7 @@ class QHarmonicView : public QWidget {
 public:
     QHarmonicView(QWidget * parent=nullptr);
 
-    void setResult(const std::variant<const std::vector<ResultHarmonics>> &);
+    void setResults(const std::variant<const std::vector<ResultHarmonics>, std::monostate> &);
     void setResult(const ResultHarmonics &);
 protected:
     THDPlot * plot;

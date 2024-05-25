@@ -119,7 +119,7 @@ void QBackendJack::timerEvent(QTimerEvent * e){
 void delegate::addJackBackend(){
     auto j = mw->backends->addJack();
     jack = new QBackendJack(j,"jack");
-    connect(jack,&QBackendJack::resultResponse, mw->displays,&QResponseView::setResults);
+    connect(jack,&QBackendJack::resultResponse, mw->response,&QResponseView::setResults);
     //j->set_sample_rate(jack->getSampleRate()); // bit ugly, I dont know why the callback isn't called
 }
 #endif
@@ -147,7 +147,8 @@ void delegate::addFaustBackend() {
     auto f = mw->backends->addFaust(name);
     auto fb = new QBackendFaust(f, name);
     faust.push_back(fb);
-    connect(fb,&QBackendFaust::resultResponse, mw->displays,&QResponseView::setResults);
+    connect(fb,&QBackendFaust::resultResponse, mw->response,&QResponseView::setResults);
+    connect(fb,&QBackendFaust::resultHarmonics, mw->harmonic, &QHarmonicView::setResults);
     /*connect(fb, &QBackendFaust::resultHarmonics, h, &THDPlot::setResult,
             Qt::UniqueConnection);*/
 }
@@ -157,16 +158,16 @@ void delegate::addFaustBackendWithFile(QString path) {
     auto f = mw->backends->addFaust(name);
     auto fb = new QBackendFaust(f, name);
     faust.push_back(fb);
-    connect(fb,&QBackendFaust::resultResponse, mw->displays,&QResponseView::setResults);
+    connect(fb,&QBackendFaust::resultResponse, mw->response,&QResponseView::setResults);
+    connect(fb,&QBackendFaust::resultHarmonics, mw->harmonic, &QHarmonicView::setResults);
     f->setFile(path);
     /*connect(fb, &QBackendFaust::resultHarmonics, h, &THDPlot::setResult,
             Qt::UniqueConnection);*/
 }
 
 void delegate::addResponseDisplay(){
-    if(!mw->displays->isBodeInit()){
-        auto bode = mw->displays->getBodePlot();
-
+    if(!mw->response->isBodeInit()){
+        auto bode = mw->response->getBodePlot();
     }
 }
 void delegate::addHarmonicsDisplay(){
@@ -175,8 +176,8 @@ void delegate::addHarmonicsDisplay(){
     }*/
 }
 void delegate::addSpectrogramDisplay(){
-    if(!mw->displays->isSpectrogramInit()){
-        auto spectrogram = mw->displays->getSpectrogramPlot();
+    if(!mw->response->isSpectrogramInit()){
+        auto spectrogram = mw->response->getSpectrogramPlot();
     }
 }
 

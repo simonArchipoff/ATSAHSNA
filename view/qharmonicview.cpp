@@ -1,13 +1,13 @@
 #include "qharmonicview.h"
 
 THDPlot::THDPlot(QWidget* parent):FrequencyPlot(parent){
+    displayPhase(false);
 }
 
 void THDPlot::setResult(const ResultHarmonics & r){
         auto name = QString{r.name.data()};
         setPlot(r.harmonicSpectrum, name,false);
         plots[name]->phaseDisplayed = false;
-        //phase_axis->hide();
 }
 
 void THDPlot::setResult(const std::vector<ResultHarmonics> &v){
@@ -20,7 +20,6 @@ void THDPlot::setResult(const std::vector<ResultHarmonics> &v){
 
 
 THDText::THDText(QWidget * parent):QWidget(parent){
-
 }
 
 
@@ -35,5 +34,14 @@ QHarmonicView::QHarmonicView(QWidget * parent)
     setLayout(mainLayout);
 }
 
-void QHarmonicView::setResult(const std::variant<const std::vector<ResultHarmonics>> &r){
+void QHarmonicView::setResults(const std::variant<const std::vector<ResultHarmonics>, std::monostate> &r){
+    std::vector<ResultHarmonics> v = std::get<const std::vector<ResultHarmonics>>(r);
+    for(uint i = 0; i < v.size(); i++){
+        setResult(v[i]);
+    }
+    plot->replot();
+}
+
+void QHarmonicView::setResult(const ResultHarmonics &r){
+    plot->setResult(r);
 }

@@ -30,14 +30,7 @@ Regarding IO and data acquisition :
 - more backends (C, C++, Python, soundfile, something more standard like pulseaudio) 
 - some tests for more trust in the computations.
 
-Regarding treatment and analysis :
-- something to smooth data (amplitude and phase)
-- something to deal with noisy measures (a wiener filter (?))
 
-Later :
-- Implementing what's needed to measures an impedance and/or do computation with inputs
-- a full laplace transform backend, with physical measures (?)
-- Some kind of knob-turning algorithm to create model of a measured function (eg, turning a faust equalizer's knobs to flatten a response).
 
 to install and try (should works on Arch Linux at least) :
 ```

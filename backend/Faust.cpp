@@ -164,7 +164,7 @@ std::variant<const std::vector<ResultResponse>,std::monostate> BackendFaust::get
 
 std::variant<const std::vector<ResultHarmonics>,std::monostate>  BackendFaust::getResultHarmonics(){
     const std::lock_guard<std::mutex> g(this->lock);
-    dspInstance->instanceClear();
+    //dspInstance->instanceClear();
     vector<ResultHarmonics> res;
     auto in = sinusoid(paramHarmonics.frequency, 10.0/paramHarmonics.freqMin, getSampleRate());
     auto out = acquisition(vector<VD>(numberInput(),in));

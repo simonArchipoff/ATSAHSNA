@@ -12,6 +12,7 @@
 #include <Spectrogram.h>
 #include <BodePlot.h>
 #include <responseview.h>
+#include <qharmonicview.h>
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -19,8 +20,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     QBackendsView *backends;
-    QResponseView *displays;
-
+    QResponseView *response;
+    QHarmonicView *harmonic;
 private:
     void createMenus();
 public:
