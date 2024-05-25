@@ -6,12 +6,18 @@
 #include "frequencyplot.h"
 #include "Harmonics.h"
 
+#include <qmeasuresview.h>
+
 class THDPlot : public FrequencyPlot
 {
 public:
     THDPlot(QWidget* parent);
-    void setResult(const ResultHarmonics & r);
+    void setResult(const ResultHarmonics & r, QString name, QColor c);
     void setResult(const std::vector<ResultHarmonics> &);
+
+    void updatePlot(const ResultHarmonics & r, QString name){
+        FrequencyPlot::updatePlot(r.harmonicSpectrum,name);
+    }
 };
 
 class THDText : public QWidget {
@@ -32,9 +38,12 @@ public:
 
     void setResults(const std::variant<const std::vector<ResultHarmonics>, std::monostate> &);
     void setResult(const ResultHarmonics &);
+
+    void removeResult(QString);
+
 protected:
     THDPlot * plot;
     THDText * text;
-
+    QMeasuresView * measures;
 };
 

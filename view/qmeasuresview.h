@@ -102,7 +102,7 @@ public:
         QString n(r.name.c_str());
         if(harmonicsMap.contains(n)){
             harmonicsMap[n]->updateResult(r);
-            return nullptr;
+            return harmonicsMap[n];
         }else{
             auto q = measureToQWidget(rr_color.getNext(),r,this);
             layout->insertWidget(layout->count() -1, q);

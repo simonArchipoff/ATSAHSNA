@@ -64,8 +64,6 @@ void QResponseView::setResult(const ResultResponse &r){
         bodePlot->updatePlot(m->getResult().response,m->getName());
         spectrogramPlot->setResult(m->getResult(),m->getName());
     }
-
-
 }
 
 void QResponseView::removeResult(QString name){
@@ -73,7 +71,6 @@ void QResponseView::removeResult(QString name){
     bodePlot->removeResult(name);
     spectrogramPlot->removeResult(name);
     this->measures->removeResult(name);
-
 }
 
 

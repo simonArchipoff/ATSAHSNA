@@ -1,7 +1,5 @@
 #include "BodePlot.h"
 
-
-#include <algorithm>
 #include <cmath>
 
 #include <QFormLayout>
