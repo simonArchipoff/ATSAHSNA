@@ -129,8 +129,8 @@ void QJackPortView::setConnexionName(QString connName) {
     nameConnexion->setText("Connection Name: " + connName);
 }
 
-void QJackPortView::setLevel(float l){
-    vumeter->updateLevel(l);
+void QJackPortView::setLevel(float l,float max){
+    vumeter->updateLevel(l,max);
 }
 
 
@@ -178,7 +178,7 @@ void QJackPortManager::updateLevels(Levels l){
     for(int i = 0; i < l.spectrum_size; i++){
         if(l.ids[i]){
             QString qs(l.ids[i]);
-            portMap[portMapName[qs]]->setLevel(l.level[i]);
+            portMap[portMapName[qs]]->setLevel(l.level[i],l.max[i]);
         }
     }
 }

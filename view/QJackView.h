@@ -22,7 +22,7 @@ public:
     ~QJackPortView();
     void setName(QString);
     void setConnexionName(QString);
-    void setLevel(float l);
+    void setLevel(float l,float max);
 
 protected:
     QLabel * name;

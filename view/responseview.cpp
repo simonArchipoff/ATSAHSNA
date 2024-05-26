@@ -15,7 +15,6 @@ QResponseView::QResponseView(QWidget * parent):QWidget(parent),
 
     setLayout(hLayout);
 
-
     vLayout->addWidget(bodePlot);
     vLayout->addWidget(temporalPlot);
     vLayout->addWidget(spectrogramPlot);

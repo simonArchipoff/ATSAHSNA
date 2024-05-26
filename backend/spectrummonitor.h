@@ -25,6 +25,8 @@ struct Levels{
             if(ids[i] == nullptr || (0 == strcmp(ids[i], name))){
                 ids[i] = name;
                 level[i] = std::max((1. -coef) * level[i] +  coef * 10 * log(rms_r(f.v, f.v + f.v_size)),-150.);
+                auto m = std::minmax_element(f.v,f.v+f.v_size);
+                max[i] = 10 * log(std::max(-(*m.first),*(m.second)));
                 return;
             }
         }
@@ -40,6 +42,7 @@ struct Levels{
     }
     const char * ids[spectrum_size];
     float level[spectrum_size];
+    float max[spectrum_size];
 
 };
 
