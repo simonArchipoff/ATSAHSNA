@@ -22,6 +22,7 @@ void THDPlot::setResult(const std::vector<ResultHarmonics> &v){
 
 
 THDText::THDText(QWidget * parent):QWidget(parent){
+    setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
 }
 
 
