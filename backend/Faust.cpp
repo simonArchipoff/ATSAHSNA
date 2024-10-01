@@ -1,7 +1,6 @@
 #include "Faust.h"
 #include "Harmonics.h"
 #include <faust/dsp/llvm-dsp.h>
-#include <list>
 #include <iostream>
 #include <mutex>
 #include <Generation.h>

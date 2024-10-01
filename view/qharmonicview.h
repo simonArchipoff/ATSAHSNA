@@ -30,7 +30,7 @@ public:
     void removeResult(QString);
 
 protected:
-    const int nb_harmonics = 20;
+    const uint nb_harmonics = 20;
     QTableWidget * table;
     QMap<QString, int> m;
 };

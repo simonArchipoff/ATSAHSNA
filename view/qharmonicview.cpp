@@ -28,7 +28,7 @@ THDText::THDText(QWidget * parent):QTableWidget(parent){
     setColumnCount(nb_harmonics+3);
     QStringList headers;
     headers << "Nom" << "THD (%)" << "THD+N (%)";
-    for (int i = 1; i <= nb_harmonics; ++i) {
+    for (uint i = 1; i <= nb_harmonics; ++i) {
         headers << QString("H%1 (dB)").arg(i);
     }
     setHorizontalHeaderLabels(headers);
@@ -66,7 +66,7 @@ void THDText::setResult(const ResultHarmonics &r, QString name, QColor c){
     setItem(row, 2, new QTableWidgetItem(QString::number(r.thdNoiseRate * 100)));
 
     // Mettre à jour les niveaux d'harmoniques
-    for (int i = 0; i < nb_harmonics&& i < r.harmonicsLevel.size(); ++i) {
+    for (uint i = 0; i < nb_harmonics&& i < r.harmonicsLevel.size(); ++i) {
         setItem(row, 3 + i, new QTableWidgetItem(QString::number(20*log10(r.harmonicsLevel[i]))));
     }
 }

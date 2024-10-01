@@ -26,7 +26,7 @@ void PlotAmplitudePhase::setCurve(const FDF&f){
     for(uint i = 0; i < n; i++){
         const double d = (exp(i * s) - 1) / (M_E - 1)  ;
         const uint idx = d * fr.size();
-        assert(idx >= 0);
+        //assert(idx >= 0);
         assert(idx < fr.size());
 
         frd[i] = fr[idx];

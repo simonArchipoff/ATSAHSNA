@@ -1,13 +1,11 @@
 #include "mainwindow.h"
 
-#include <signal.h>
 #include <QDebug>
 #include <QScopedPointer>
 #include <QToolBar>
 #include <QVBoxLayout>
 #include <QFileDialog>
 
-#include "qnamespace.h"
 //#include "task.h"
 #include "qbackend.h"
 
@@ -39,8 +37,11 @@ MainWindow::MainWindow(QWidget *parent)
   tabs->addTab(response,tr("response"));
   tabs->addTab(harmonic,tr("harmonics"));
   s->addWidget(tabs);
-  s->setStretchFactor(0,5);
-  s->setStretchFactor(1,1);
+  //s->setStretchFactor(0,1);
+  //s->setStretchFactor(1,5);
+
+  //int totalWidth = s->size().width();  // Taille totale du splitter
+  s->setSizes({100,400});
   //setWidth(backends->minimumSizeHint().width());
   //auto l = new QVBoxLayout;
   //s->addWidget(backends.data());
