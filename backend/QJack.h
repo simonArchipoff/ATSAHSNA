@@ -11,6 +11,8 @@ class QJack :public QObject, public BackendJack {
 public:
     QJack(QObject*parent);
 signals:
+    void jack_started_s();
+    void jack_started_failed_s(QString);
     void jack_shutdown_s();
     void jack_info_shutdown_s(jack_status_t code, const char *reason);
     int jack_buffer_size_s(jack_nframes_t nframes);
@@ -25,6 +27,26 @@ signals:
     void levels(Levels l);
 
 protected:
+    virtual void jack_started()override{
+        emit jack_started_s();
+    }
+    virtual void jack_started_failed(JackStatus s) override {
+        QString result;
+        if (s & JackFailure)         result += "JackFailure ";
+        if (s & JackInvalidOption)   result += "JackInvalidOption ";
+        if (s & JackNameNotUnique)   result += "JackNameNotUnique ";
+        if (s & JackServerStarted)   result += "JackServerStarted ";
+        if (s & JackServerFailed)    result += "JackServerFailed ";
+        if (s & JackServerError)     result += "JackServerError ";
+        if (s & JackNoSuchClient)    result += "JackNoSuchClient ";
+        if (s & JackLoadFailure)     result += "JackLoadFailure ";
+        if (s & JackInitFailure)     result += "JackInitFailure ";
+        if (s & JackShmFailure)      result += "JackShmFailure ";
+        if (s & JackVersionError)    result += "JackVersionError ";
+        if (s & JackBackendError)    result += "JackBackendError ";
+        if (s & JackClientZombie)    result += "JackClientZombie ";
+        emit jack_started_failed_s(result);
+    }
     void updateLevel();
     virtual void jack_shutdown()override{
         ready = false;

@@ -36,7 +36,7 @@ public:
     BackendJack();
     virtual ~BackendJack();
 
-    void start();
+    void start_jack();
     uint numberInput() const override {
         return inputPorts.size();
     }
@@ -75,6 +75,9 @@ protected:
     //int 	jack_set_thread_init_callback (jack_client_t *client, JackThreadInitCallback thread_init_callback, void *arg) JACK_OPTIONAL_WEAK_EXPORT
     //static void jackThreadInitCallback(void *arg);
 
+
+    virtual void jack_started(){}
+    virtual void jack_started_failed(JackStatus){}
 
     virtual void jack_shutdown(){
         ready = false;

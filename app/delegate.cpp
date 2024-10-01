@@ -1,11 +1,9 @@
 #include "delegate.h"
 
-#include "Response.h"
-#include "backend.h"
+
 #include "delegate.moc"
 
 #include "mainwindow.h"
-#include "Harmonics.h"
 
 #include <faust/gui/QTUI.h>
 
@@ -93,11 +91,17 @@ QBackendJack::QBackendJack(QJackView * gui, QString name):backend(new QJack(this
 //    void jack_port_connect_s(jack_port_id_t a, jack_port_id_t b, int connect, QString nameb);
 
     connect(backend,&QJack::levels,jack_gui,&QJackView::updateLevels);
-    backend->start();
+
     connect(jack_gui,&QJackView::requestResponse,this,[this](auto p, auto c, auto i){
         this->backend->startResponse(p,c,i);
         });
+    connect(jack_gui, &QJackView::requestConnect, this, [this](auto s){
+        this->backend->start_jack();});
+    connect(backend,&QJack::jack_started_s,jack_gui,&QJackView::connected);
+    connect(backend, &QJack::jack_started_failed_s,jack_gui,&QJackView::connexion_failed);
+
     startTimer(100*1./30);
+    //backend->start();
 }
 QBackendJack::~QBackendJack(){
     delete backend;

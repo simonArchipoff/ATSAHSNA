@@ -22,7 +22,7 @@ BackendJack::BackendJack()
 }
 
 
-void BackendJack::start(){
+void BackendJack::start_jack(){
     jack_options_t options = JackNullOption;
     jack_status_t status;
     client = jack_client_open(APPNAME, options, &status, nullptr);
@@ -30,7 +30,7 @@ void BackendJack::start(){
         fprintf(stderr, "Unable to open jack client\n");
         fprintf (stderr, "jack_client_open() failed, "
                         "status = 0x%2.0x\n", status);
-        exit(1);
+        jack_started_failed(status);
     } else {
         jack_set_process_thread(client,audio_thread,this);
         jack_on_shutdown(client, jackShutdownCallback, this);
@@ -46,8 +46,13 @@ void BackendJack::start(){
 
     }
     ready = !jack_activate(client);
+    if(ready) jack_started();
     RTModuleHandler::setSampleRate(getSampleRate());
 }
+
+
+
+
 
 BackendJack::~BackendJack(){
     jack_client_close(client);

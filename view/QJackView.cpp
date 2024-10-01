@@ -23,6 +23,20 @@ QJackView::QJackView(QWidget * parent)
     ,portManager{new QJackPortManager{this}}
 {
     QFormLayout * l = new QFormLayout{this};
+    status = new QLabel{this};
+    status->setText(tr("disconnected"));
+    connectionButton = new QPushButton(tr("connect"),this);
+
+    auto serverName = new QLineEdit{this};
+    serverName->setPlaceholderText(tr("server name"));
+    serverName->setText(APPNAME);
+    l->addRow(connectionButton,serverName);
+    l->addRow(tr("status jack"),status);
+    connect(connectionButton,&QPushButton::clicked,this,[this,serverName](bool b){
+        auto s = serverName->text();
+        emit requestConnect(s);
+    });
+
     l->addRow(tr("sample rate"),sampleRate);
     l->addRow(tr("buffer size"),bufferSize);
     l->addRow(inputButton,inputName);
@@ -31,13 +45,15 @@ QJackView::QJackView(QWidget * parent)
     inputName->setText(tr("input"));
     outputName->setText(tr("output"));
 
-
     l->addRow(tr("gain"),gain);
     gain->setMaximum(20);
     gain->setMinimum(-40);
     gain->setValue(0);
 
     l->addRow(tr("ports"),portManager);
+
+
+
 
     auto r = new ParamResponseWidget(this);
     l->addRow(tr("response"),r);
@@ -71,6 +87,8 @@ QJackView::QJackView(QWidget * parent)
     //connect(b,&BackendJack::sample_rate_change,this,&QBackendJack::set_sample_rate);
 }
 
+
+
 void QJackView::set_sample_rate(uint n){
     QString str;
     str.setNum(n);
@@ -101,6 +119,17 @@ void QJackView::disconnectPort(jack_port_id_t a, jack_port_id_t b){
 void QJackView::updateLevels(Levels l){
     portManager->updateLevels(l);
     update();
+}
+
+void QJackView::connected(){
+    status->setText(tr("connected"));
+    connectionButton->setDisabled(true);
+}
+
+
+void QJackView::connexion_failed(QString s){
+    connectionButton->setDisabled(false);
+    status->setText(s);
 }
 
 

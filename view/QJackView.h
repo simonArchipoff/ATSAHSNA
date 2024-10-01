@@ -61,16 +61,19 @@ public:
     void disconnectPort(jack_port_id_t a, jack_port_id_t b);
     void updateLevels(Levels l);
 
+    void connected();
+    void connexion_failed(QString);
+
 signals:
     void requestNewInputPort(QString);
     void requestNewOutputPort(QString);
     void requestResponse(ParamResponse p, bool continuous, int integration=1);
     void requestHarmonics(ParamHarmonics p, bool continuous);
-
+    void requestConnect(QString name);
 
 protected:
-    QPushButton * inputButton, * outputButton;
-    QLabel * sampleRate, *bufferSize;
+    QPushButton * inputButton, * outputButton,*connectionButton;
+    QLabel * sampleRate, *bufferSize,*status;
     QLineEdit * inputName, *outputName;
     QDoubleSpinBox * gain;
     QJackPortManager * portManager;
