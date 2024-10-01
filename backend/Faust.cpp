@@ -144,7 +144,7 @@ bool BackendFaust::didSomethingChanged(){
     return false;
 }
 
-std::variant<const std::vector<ResultResponse>,std::monostate> BackendFaust::getResultResponse(){
+std::variant<const std::vector<ResultResponse>,ErrorBackend> BackendFaust::getResultResponse(){
     const std::lock_guard<std::mutex> g(this->lock);
     dspInstance->instanceClear();
     //reinit(this,getSampleRate());
@@ -157,11 +157,11 @@ std::variant<const std::vector<ResultResponse>,std::monostate> BackendFaust::get
         tmp.name = nameInstance + "_" +std::to_string(i++) ;
         res.push_back(tmp);
     }
-    return std::variant<const std::vector<ResultResponse>,std::monostate>(res);
+    return std::variant<const std::vector<ResultResponse>,ErrorBackend>(res);
 
 }
 
-std::variant<const std::vector<ResultHarmonics>,std::monostate>  BackendFaust::getResultHarmonics(){
+std::variant<const std::vector<ResultHarmonics>,ErrorBackend>  BackendFaust::getResultHarmonics(){
     const std::lock_guard<std::mutex> g(this->lock);
     //dspInstance->instanceClear();
     vector<ResultHarmonics> res;
@@ -175,7 +175,7 @@ std::variant<const std::vector<ResultHarmonics>,std::monostate>  BackendFaust::g
         r.name = nameInstance + "_" + std::to_string(i++);
         res.push_back(r);
     }
-    return std::variant<const std::vector<ResultHarmonics>,std::monostate>(res);
+    return std::variant<const std::vector<ResultHarmonics>,ErrorBackend>(res);
 }
 
 void BackendFaust::buildUserInterface(UI * ui){

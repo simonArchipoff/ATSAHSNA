@@ -99,6 +99,7 @@ QJackView * QBackendsView::addJack(){
     s->setWidgetResizable(true); 
     addTab(s,"jack"+QString::number(jacks.size()));
     jacks.push_back(f);
+    setCurrentIndex(count()-1);
     return f;
 }
 #endif

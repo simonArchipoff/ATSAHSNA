@@ -29,8 +29,8 @@ public:
 
 signals:
     void changed();
-    void resultResponse(std::variant<const std::vector<ResultResponse>,std::monostate>& response);
-    void resultHarmonics(std::variant< const std::vector<ResultHarmonics>,std::monostate>& harmonics);
+    void resultResponse(std::variant<const std::vector<ResultResponse>,   ErrorBackend>& response);
+    void resultHarmonics(std::variant< const std::vector<ResultHarmonics>,ErrorBackend>& harmonics);
 
 protected:
     void timerEvent(QTimerEvent * e) override;

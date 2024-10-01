@@ -10,11 +10,6 @@
 #include <jack/types.h>
 #include <jack/jack.h>
 #include <stdio.h>
-#include <variant>
-
-
-
-//#include <QtConcurrent/QtConcurrent>
 
 
 BackendJack::BackendJack()
@@ -22,10 +17,10 @@ BackendJack::BackendJack()
 }
 
 
-void BackendJack::start_jack(){
+void BackendJack::start_jack(string s){
     jack_options_t options = JackNullOption;
     jack_status_t status;
-    client = jack_client_open(APPNAME, options, &status, nullptr);
+    client = jack_client_open(s.c_str(), options, &status, nullptr);
     if(client == nullptr){
         fprintf(stderr, "Unable to open jack client\n");
         fprintf (stderr, "jack_client_open() failed, "
@@ -157,7 +152,7 @@ BackendJack::ResultHarmonicsVar BackendJack::getResultHarmonics(){
     if(RTModuleHandler::getResultHarmonics(r)){
         return ResultHarmonicsVar(r);
     } else {
-        return ResultHarmonicsVar(std::monostate());
+        return ResultHarmonicsVar(ErrorBackend(""));
     }
 }
 BackendJack::ResultResponseVar BackendJack::getResultResponse(){
@@ -165,6 +160,6 @@ BackendJack::ResultResponseVar BackendJack::getResultResponse(){
     if(RTModuleHandler::getResultResponse(r)){
         return ResultResponseVar(r);
     } else {
-        return ResultResponseVar(std::monostate());
+        return ResultResponseVar(ErrorBackend(""));
     }
 }

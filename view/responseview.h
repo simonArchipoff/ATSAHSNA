@@ -14,7 +14,7 @@ public:
     bool isBodeInit();
     bool isSpectrogramInit();
 
-    void setResults(std::variant<const std::vector<ResultResponse>, std::monostate> & r);
+    void setResults(std::variant<const std::vector<ResultResponse>, ErrorBackend> & r);
     void setResult(const ResultResponse &r);
     void removeResult(QString);
 

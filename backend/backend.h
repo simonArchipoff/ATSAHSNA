@@ -9,6 +9,14 @@
 
 using std::variant;
 
+
+class ErrorBackend {
+public:
+    std::string message;
+    ErrorBackend(const std::string& msg) : message(msg) {}
+};
+
+
 class Backend {
 public:
     virtual ~Backend() = default;

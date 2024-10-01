@@ -34,6 +34,9 @@ QJackView::QJackView(QWidget * parent)
     l->addRow(tr("status jack"),status);
     connect(connectionButton,&QPushButton::clicked,this,[this,serverName](bool b){
         auto s = serverName->text();
+        if(s.size() == 0)
+            s = APPNAME;
+        status->setText(tr("connexion pending"));
         emit requestConnect(s);
     });
 

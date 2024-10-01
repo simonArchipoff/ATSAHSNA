@@ -9,6 +9,7 @@
 
 #include <BodePlot.h>
 #include <qnamespace.h>
+#include <QtConcurrent/QtConcurrent>
 
 #ifdef ENABLE_JACK
 #include "QJack.h"
@@ -96,9 +97,10 @@ QBackendJack::QBackendJack(QJackView * gui, QString name):backend(new QJack(this
         this->backend->startResponse(p,c,i);
         });
     connect(jack_gui, &QJackView::requestConnect, this, [this](auto s){
-        this->backend->start_jack();});
-    connect(backend,&QJack::jack_started_s,jack_gui,&QJackView::connected);
-    connect(backend, &QJack::jack_started_failed_s,jack_gui,&QJackView::connexion_failed);
+        QtConcurrent::run([this,s](){this->backend->start_jack(s.toStdString());});
+    });
+    connect(backend, &QJack::jack_started_s,        jack_gui, &QJackView::connected);
+    connect(backend, &QJack::jack_started_failed_s, jack_gui, &QJackView::connexion_failed);
 
     startTimer(100*1./30);
     //backend->start();
@@ -113,10 +115,10 @@ struct overloaded : Ts... { using Ts::operator()...; };
 
 void QBackendJack::timerEvent(QTimerEvent * e){
     auto r = backend->getResultResponse();
-    if(!std::holds_alternative<std::monostate>(r))
+    if(!std::holds_alternative<ErrorBackend>(r))
         emit resultResponse(r);
     auto h = backend->getResultHarmonics();
-    if(!std::holds_alternative<std::monostate>(h))
+    if(!std::holds_alternative<ErrorBackend>(h))
         emit resultHarmonics(h);
 }
 
@@ -151,6 +153,7 @@ void delegate::addFaustBackend() {
     auto f = mw->backends->addFaust(name);
     auto fb = new QBackendFaust(f, name);
     faust.push_back(fb);
+
     connect(fb,&QBackendFaust::resultResponse, mw->response,&QResponseView::setResults);
     connect(fb,&QBackendFaust::resultHarmonics, mw->harmonic, &QHarmonicView::setResults);
     /*connect(fb, &QBackendFaust::resultHarmonics, h, &THDPlot::setResult,

@@ -8,8 +8,6 @@
 #include "spectrummonitor.h"
 
 
-#include <variant>
-#include <string.h>
 #include <iostream>
 
 #include <QtCore>
@@ -18,7 +16,6 @@
 
 using std::vector;
 using std::string;
-using std::monostate;
 
 
 
@@ -31,12 +28,14 @@ struct ParamJack {
 };
 
 
+
+
 class BackendJack : public Backend, public RTModuleHandler, public LevelMonitor {
 public:
     BackendJack();
     virtual ~BackendJack();
 
-    void start_jack();
+    void start_jack(string s);
     uint numberInput() const override {
         return inputPorts.size();
     }
@@ -62,10 +61,10 @@ public:
     double getOutputGain(){
         return outputGain;
     }
-    typedef variant<const vector<ResultResponse>, std::monostate>  ResultResponseVar ;
+    typedef variant<const vector<ResultResponse>, ErrorBackend>  ResultResponseVar ;
     ResultResponseVar getResultResponse();
 
-    typedef variant<const vector<ResultHarmonics>, std::monostate> ResultHarmonicsVar;
+    typedef variant<const vector<ResultHarmonics>, ErrorBackend> ResultHarmonicsVar;
     ResultHarmonicsVar getResultHarmonics();
 
 

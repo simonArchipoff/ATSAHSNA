@@ -42,7 +42,7 @@ class QHarmonicView : public QWidget {
 public:
     QHarmonicView(QWidget * parent=nullptr);
 
-    void setResults(const std::variant<const std::vector<ResultHarmonics>, std::monostate> &);
+    void setResults(const std::variant<const std::vector<ResultHarmonics>, ErrorBackend> &);
     void setResult(const ResultHarmonics &);
 
     void removeResult(QString);
