@@ -1,7 +1,5 @@
 
-
-add_library(view
-    qbackend.h
+set(VIEW_SOURCES     qbackend.h
     qbackend.cpp
 
     qmeasure.h
@@ -46,9 +44,18 @@ add_library(view
     QJackView.h
     QJackView.cpp
     vumetre.h
-    vumetre.cpp
-)
+    vumetre.cpp)
 
+add_library(view ${VIEW_SOURCES})
+
+set(VIEW_HEADERS)
+foreach(file ${VIEW_SOURCES})
+    if (file MATCHES "\\.(h|hpp)$")
+        list(APPEND VIEW_HEADERS ${file})
+    endif()
+endforeach()
+
+target_precompile_headers(view PUBLIC ${VIEW_HEADERS})
 if(ENABLE_JACK)
  #   add_library(view )
 endif()

@@ -2,7 +2,10 @@
 
 #include <QObject>
 #include <QWidget>
-#include <QTextEdit>
+
+#include <QTableWidget>
+
+
 #include "frequencyplot.h"
 #include "Harmonics.h"
 
@@ -20,13 +23,16 @@ public:
     }
 };
 
-class THDText : public QWidget {
+class THDText : public QTableWidget {
 public:
     THDText(QWidget * parent=nullptr);
+    void setResult(const ResultHarmonics & r, QString name, QColor c);
+    void removeResult(QString);
 
 protected:
-    //QLayout * layout_text;
-    //QMap<QString, QTextEdit *> m;
+    const int nb_harmonics = 20;
+    QTableWidget * table;
+    QMap<QString, int> m;
 };
 
 

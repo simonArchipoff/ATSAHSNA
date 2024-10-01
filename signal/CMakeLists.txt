@@ -6,21 +6,24 @@ pkg_search_module(FFTW REQUIRED fftw3 IMPORTED_TARGET)
 #set(HEADER_FAUST_QTUI_MOC ${CMAKE_CURRENT_BINARY_DIR}/moc_QTUI.cpp)
 
 #include(CMakePrintHelpers)
-set(SIGNAL_SOURCES
+set(SIGNAL_HEADERS
     FFT.h
-    FFT.cpp
     Analysis.h
-    Analysis.cpp
     Generation.h
-    Generation.cpp
     Harmonics.h
-    Harmonics.cpp
     Response.h
-    Response.cpp
     Spectrogram.h
+    FrequencyDomain.h
+)
+set(SIGNAL_SOURCES
+    FFT.cpp
+    Analysis.cpp
+    Generation.cpp
+    Harmonics.cpp
+    Response.cpp
     Spectrogram.cpp
     FrequencyDomain.cpp
-    FrequencyDomain.h
+    ${SIGNAL_HEADERS}
 )
 
 
@@ -28,6 +31,7 @@ set(SIGNAL_SOURCES
 #cmake_print_variables(BACKEND_SOURCES)
 
 add_library(signal ${SIGNAL_SOURCES})
+target_precompile_headers(signal PUBLIC ${SIGNAL_HEADERS})
 target_include_directories(signal PUBLIC fCWT ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(signal PUBLIC fftw3 fCWT)
 
