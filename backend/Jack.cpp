@@ -144,6 +144,33 @@ bool BackendJack::addOutputPort(std::string name,std::string connect){
     }
     return false;
 }
+static bool isError(BackendJack * j, ErrorBackend & e){
+    if(!j->isReady()){
+        e = ErrorBackend("not ready");
+        return true;
+    }
+    if(0 == j->numberInput()){
+        e = ErrorBackend("no input");
+        return true;
+    }
+    if(0 == j->numberOutput()){
+        e = ErrorBackend("no output");
+        return true;
+    }
+    return false;
+}
+
+variant<ErrorBackend, monostate> BackendJack::startResponse(ParamResponse p, bool continous, int integration){
+    ErrorBackend e;
+    if(isError(this,e)){
+        return variant<ErrorBackend,monostate>(e);
+    }
+    RTModuleHandler::startResponse(p,continous,integration);
+    return variant<ErrorBackend,monostate>(monostate());
+}
+
+
+
 
 
 
@@ -152,7 +179,7 @@ BackendJack::ResultHarmonicsVar BackendJack::getResultHarmonics(){
     if(RTModuleHandler::getResultHarmonics(r)){
         return ResultHarmonicsVar(r);
     } else {
-        return ResultHarmonicsVar(ErrorBackend(""));
+        return ResultHarmonicsVar(ErrorBackend());
     }
 }
 BackendJack::ResultResponseVar BackendJack::getResultResponse(){
@@ -160,6 +187,6 @@ BackendJack::ResultResponseVar BackendJack::getResultResponse(){
     if(RTModuleHandler::getResultResponse(r)){
         return ResultResponseVar(r);
     } else {
-        return ResultResponseVar(ErrorBackend(""));
+        return ResultResponseVar(ErrorBackend());
     }
 }

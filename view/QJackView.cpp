@@ -1,7 +1,6 @@
 #include "QJackView.h"
 #include "Response.h"
 #include "qboxlayout.h"
-#include <widget_chatgpt.h>
 #include <QDebug>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -22,6 +21,8 @@ QJackView::QJackView(QWidget * parent)
     ,gain{new QDoubleSpinBox{this}}
     ,portManager{new QJackPortManager{this}}
 {
+    inputButton->setDisabled(true);
+    outputButton->setDisabled(true);
     QFormLayout * l = new QFormLayout{this};
     status = new QLabel{this};
     status->setText(tr("disconnected"));
@@ -58,10 +59,10 @@ QJackView::QJackView(QWidget * parent)
 
 
 
-    auto r = new ParamResponseWidget(this);
-    l->addRow(tr("response"),r);
+    paramresponsewidget = new ParamResponseWidget(this);
+    l->addRow(tr("response"),paramresponsewidget);
 
-    connect(r,&ParamResponseWidget::paramResponseChanged,this,[this](const ParamResponse & p){
+    connect(paramresponsewidget,&ParamResponseWidget::paramResponseChanged,this,[this](const ParamResponse & p){
         emit requestResponse(p,false,10);
         });
     //connect(gain,QOverload<double>::of(&QDoubleSpinBox::valueChanged),this,[b](auto d){b->setOutputGain(d);});
@@ -127,6 +128,9 @@ void QJackView::updateLevels(Levels l){
 void QJackView::connected(){
     status->setText(tr("connected"));
     connectionButton->setDisabled(true);
+    inputButton->setDisabled(false);
+    outputButton->setDisabled(false);
+
 }
 
 
@@ -136,7 +140,14 @@ void QJackView::connexion_failed(QString s){
 }
 
 
-
+void QJackView::displayError(ErrorBackend e){
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Critical);
+    msgBox.setWindowTitle(tr("Error"));
+    msgBox.setText(QString(tr("Error jack:")) + QString(e.message.c_str()));
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.exec();
+}
 
 
 QJackPortView::QJackPortView(QWidget *parent) : QWidget(parent) {
@@ -214,6 +225,8 @@ void QJackPortManager::updateLevels(Levels l){
         }
     }
 }
+
+
 
 void QJackPortManager::connectPort(jack_port_id_t a, jack_port_id_t b,QString nameb){
     auto pa = getPort(a);

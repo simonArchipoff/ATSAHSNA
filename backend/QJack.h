@@ -10,7 +10,11 @@ class QJack :public QObject, public BackendJack {
     Q_OBJECT
 public:
     QJack(QObject*parent);
+
+    void startResponse(ParamResponse p, bool continuous, int integration);
+
 signals:
+    void jack_request_failed(ErrorBackend);
     void jack_started_s();
     void jack_started_failed_s(QString);
     void jack_shutdown_s();

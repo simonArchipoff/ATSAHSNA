@@ -34,7 +34,6 @@ public:
         benchmark.printResults();
     }
 
-    void startResponse();
     bool tryGetResponse(ResultResponse & response){
         ReceiverResult r;
         while(acq.tryGetResult(r)){

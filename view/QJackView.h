@@ -12,7 +12,7 @@
 #include <vumetre.h>
 #include <spectrummonitor.h>
 #include <qlogging.h>
-
+#include <widget_chatgpt.h>
 
 
 class QJackPortView : public QWidget{
@@ -43,6 +43,7 @@ public:
     QJackPortView * getPort(jack_port_id_t  port);
     void updateLevels(Levels l);
 
+
 private:
     QVBoxLayout *layout;
     QMap<jack_port_id_t, QJackPortView *> portMap;
@@ -60,6 +61,12 @@ public:
     void connectPort(jack_port_id_t a, jack_port_id_t b, QString namea, QString nameb);
     void disconnectPort(jack_port_id_t a, jack_port_id_t b);
     void updateLevels(Levels l);
+    void displayError(ErrorBackend e);
+
+    void click_connect_button(){
+        connectionButton->click();
+    }
+
 
     void connected();
     void connexion_failed(QString);
@@ -77,4 +84,5 @@ protected:
     QLineEdit * inputName, *outputName;
     QDoubleSpinBox * gain;
     QJackPortManager * portManager;
+    ParamResponseWidget * paramresponsewidget;
 };

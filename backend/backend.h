@@ -14,6 +14,7 @@ class ErrorBackend {
 public:
     std::string message;
     ErrorBackend(const std::string& msg) : message(msg) {}
+    ErrorBackend():ErrorBackend("unspecified error"){}
 };
 
 

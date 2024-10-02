@@ -101,9 +101,11 @@ QBackendJack::QBackendJack(QJackView * gui, QString name):backend(new QJack(this
     });
     connect(backend, &QJack::jack_started_s,        jack_gui, &QJackView::connected);
     connect(backend, &QJack::jack_started_failed_s, jack_gui, &QJackView::connexion_failed);
+    connect(backend,&QJack::jack_request_failed, jack_gui,    &QJackView::displayError);
 
     startTimer(100*1./30);
     //backend->start();
+    jack_gui->click_connect_button();
 }
 QBackendJack::~QBackendJack(){
     delete backend;

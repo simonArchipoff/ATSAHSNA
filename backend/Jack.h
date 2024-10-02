@@ -61,8 +61,15 @@ public:
     double getOutputGain(){
         return outputGain;
     }
+
+
+    variant<ErrorBackend,std::monostate> startResponse(ParamResponse p, bool continous, int integration);
+
+
     typedef variant<const vector<ResultResponse>, ErrorBackend>  ResultResponseVar ;
     ResultResponseVar getResultResponse();
+
+
 
     typedef variant<const vector<ResultHarmonics>, ErrorBackend> ResultHarmonicsVar;
     ResultHarmonicsVar getResultHarmonics();
