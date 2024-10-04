@@ -75,6 +75,8 @@ QBackendJack::QBackendJack(QJackView * gui, QString name):backend(new QJack(this
 
     connect(backend,&QJack::jack_samplerate_s,jack_gui,&QJackView::set_sample_rate);
     connect(backend,&QJack::jack_buffer_size_s,jack_gui,&QJackView::set_buffer_size);
+    connect(backend,&QJack::jack_xrun_s, jack_gui, &QJackView::xrun);
+    connect(backend,&QJack::jack_shutdown_s, jack_gui, &QJackView::shutdown);
 
     connect(backend,&QJack::jack_port_registration_s,this,[this](jack_port_id_t port, int i, QString name){
         if(i)

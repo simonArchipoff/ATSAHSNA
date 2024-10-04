@@ -20,8 +20,8 @@ public:
 class Receiver {
 public://this code look the signal in a window of twice it sice, this is sub optimal, the better would be, i think, signal size + buffer size
        // anyway, this is why this code has some "size*2" everywhere, inside DelayComputer as well, this should be made more explicit.
-    Receiver(const VCD & signal, int number_output, double threshold=0.8)
-        :pool(32,signal.size()), tmp(signal.size() * 2 - 1), ringBuffers(number_output),time_waited(0),dc(signal,signal.size()),threshold_level(threshold),size(signal.size()){
+    Receiver(const VCD & signal, int number_input, double threshold=0.8)
+        :pool(32,signal.size()), tmp(signal.size() * 2 - 1), ringBuffers(number_input),time_waited(0),dc(signal,signal.size()),threshold_level(threshold),size(signal.size()){
         for(auto &i : ringBuffers){
             i.reset(3*signal.size());
         }

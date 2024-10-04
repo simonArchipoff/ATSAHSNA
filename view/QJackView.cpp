@@ -16,6 +16,7 @@ QJackView::QJackView(QWidget * parent)
     ,outputButton{new QPushButton{tr("new output"),this}}
     ,sampleRate{new QLabel{this}}
     ,bufferSize{new QLabel{this}}
+    ,xruns_label{new QLabel{this}}
     ,inputName{new QLineEdit{this}}
     ,outputName{new QLineEdit{this}}
     ,gain{new QDoubleSpinBox{this}}
@@ -43,6 +44,8 @@ QJackView::QJackView(QWidget * parent)
 
     l->addRow(tr("sample rate"),sampleRate);
     l->addRow(tr("buffer size"),bufferSize);
+    xruns_label->setText("0");
+    l->addRow("xruns",xruns_label);
     l->addRow(inputButton,inputName);
     l->addRow(outputButton,outputName);
 
@@ -137,6 +140,13 @@ void QJackView::connected(){
 void QJackView::connexion_failed(QString s){
     connectionButton->setDisabled(false);
     status->setText(s);
+}
+
+void QJackView::xrun(){
+    xruns++;
+    QString str;
+    str.setNum(xruns);
+    xruns_label->setText(str);
 }
 
 

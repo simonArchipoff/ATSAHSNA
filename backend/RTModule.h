@@ -22,7 +22,7 @@ public:
 
 class RTModuleResponse : public RTModule {
 public:
-    RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number):acq(computeChirp(p,  sampleRate),SenderMode::All,2,4800,1,10000),
+    RTModuleResponse(uint sampleRate, ParamResponse p, int integration_number,uint number_inputs):acq(computeChirp(p,  sampleRate),SenderMode::All,2,4800,number_inputs,10000),
         benchmark("RTModuleResponse"){
         assert(sampleRate > 0);
         this->integration_number = integration_number;
@@ -39,13 +39,14 @@ public:
         while(acq.tryGetResult(r)){
             acc_raw_signal.add(r.signal);
             //acc_delay.add(static_cast<double>(r.time));
-             to_file("/tmp/r" + std::to_string(acc_raw_signal.size), r.signal);
+            // to_file("/tmp/r" + std::to_string(acc_raw_signal.size), r.signal);
             if(acc_raw_signal.size > 0){
                 auto o = acc_raw_signal.get();
 
                 VD od(o.begin(),o.end());
                 VD id(acq.getSignal().begin(), acq.getSignal().end());
                 response = computeResponse(paramResponse,id,od,sampleRate);
+                response.name = std::to_string(r.idx);
                 return true;
             }
         }
@@ -91,7 +92,7 @@ public:
         if(this->m_response){
             m_response.reset();
         }
-        m_response = std::make_shared<RTModuleResponse>(sampleRate, p, integration);
+        m_response = std::make_shared<RTModuleResponse>(sampleRate, p, integration,numberInputs);
         setModule(m_response);
     }
     void startHarmonics();
@@ -118,6 +119,9 @@ public:
 protected:
     void setSampleRate(uint sr){
         sampleRate = sr;
+    }
+    void setNumberInputs(uint n){
+        numberInputs = n;
     }
 
     void rt_process(const AudioIO<float> & inputs, AudioIO<float> & outputs){
@@ -150,4 +154,5 @@ private:
     }
     std::shared_ptr<RTModuleResponse> m_response;
     uint sampleRate = 0;
+    uint numberInputs = 0;
 };

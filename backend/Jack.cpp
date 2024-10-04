@@ -121,6 +121,7 @@ bool BackendJack::addInputPort(std::string name, std::string connect){
         if(inputPort){
             inputPorts.push_back(inputPort);
             auto r = jack_connect(client, connect.c_str(), n.c_str());
+            RTModuleHandler::setNumberInputs(numberInput());
             return !r;
         }
     }

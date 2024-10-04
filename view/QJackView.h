@@ -62,6 +62,12 @@ public:
     void disconnectPort(jack_port_id_t a, jack_port_id_t b);
     void updateLevels(Levels l);
     void displayError(ErrorBackend e);
+    void shutdown(){
+        xruns=0;
+        connexion_failed("shutdown");
+        bufferSize->setText("");
+        sampleRate->setText("");
+    }
 
     void click_connect_button(){
         connectionButton->click();
@@ -70,6 +76,7 @@ public:
 
     void connected();
     void connexion_failed(QString);
+    void xrun();
 
 signals:
     void requestNewInputPort(QString);
@@ -80,7 +87,8 @@ signals:
 
 protected:
     QPushButton * inputButton, * outputButton,*connectionButton;
-    QLabel * sampleRate, *bufferSize,*status;
+    QLabel * sampleRate, *bufferSize,*status,*xruns_label;
+    int xruns=0;
     QLineEdit * inputName, *outputName;
     QDoubleSpinBox * gain;
     QJackPortManager * portManager;

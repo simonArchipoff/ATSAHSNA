@@ -53,9 +53,11 @@ protected:
     }
     void updateLevel();
     virtual void jack_shutdown()override{
+        emit jack_shutdown_s();
         ready = false;
     }
     virtual void jack_info_shutdown(jack_status_t code, const char *reason) override {
+        emit jack_info_shutdown_s(code, reason);
         BackendJack::jack_info_shutdown(code,reason);
     }
     virtual int jack_buffer_size(jack_nframes_t nframes)override{
