@@ -97,6 +97,7 @@ public:
         fftwf_destroy_plan(plan);
     }
     void execute(const std::complex<float> * in,float * out){
+        FFTWScopedLocker l;
         fftwf_execute_dft_c2r(plan,const_cast<fftwf_complex*>(reinterpret_cast<const fftwf_complex *>(in)), reinterpret_cast<float *>(out));
     }
 

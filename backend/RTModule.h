@@ -56,9 +56,10 @@ public:
     void setIntegrationSize(int s=1);
 
     virtual void rt_process(const AudioIO<float> & inputs, AudioIO<float>& outputs) override {
-        benchmark.start();
+        //benchmark.start();
         acq.rt_process(inputs,outputs);
-        benchmark.stop();
+        //benchmark.stop();
+        //benchmark.printResults();
     }
     virtual void rt_after_process() override{}
 

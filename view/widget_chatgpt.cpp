@@ -13,8 +13,9 @@ ParamHarmonicsWidget::ParamHarmonicsWidget(QWidget *parent) : QWidget(parent)
     freqMaxSlider->setValue(20000);
 
     durationSlider = new QDoubleSpinBox( this);
-    durationSlider->setRange(1, 100);
-    durationSlider->setValue(10);
+    durationSlider->setRange(0.1, 10);
+    durationSlider->setSingleStep(0.1);
+    durationSlider->setValue(1);
 
     gainSlider = new QDoubleSpinBox( this);
     gainSlider->setRange(0, 100);
@@ -77,8 +78,9 @@ ParamResponseWidget::ParamResponseWidget(QWidget *parent) : QWidget(parent)
     freqMaxSlider->setValue(20000);
 
     durationSlider = new QDoubleSpinBox(this);
-    durationSlider->setRange(1, 100);
-    durationSlider->setValue(10);
+    durationSlider->setRange(0.1, 100);
+    durationSlider->setSingleStep(0.1);
+    durationSlider->setValue(1);
 
     signalSelector = new SignalTypeSelector(this);
 

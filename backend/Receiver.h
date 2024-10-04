@@ -20,7 +20,7 @@ public:
 class Receiver {
 public://this code look the signal in a window of twice it sice, this is sub optimal, the better would be, i think, signal size + buffer size
        // anyway, this is why this code has some "size*2" everywhere, inside DelayComputer as well, this should be made more explicit.
-    Receiver(const VCD & signal, int number_output, double threshold=0.2)
+    Receiver(const VCD & signal, int number_output, double threshold=0.8)
         :pool(32,signal.size()), tmp(signal.size() * 2 - 1), ringBuffers(number_output),time_waited(0),dc(signal,signal.size()),threshold_level(threshold),size(signal.size()){
         for(auto &i : ringBuffers){
             i.reset(3*signal.size());
@@ -58,7 +58,7 @@ public://this code look the signal in a window of twice it sice, this is sub opt
 
                 if(r.second > threshold_level && r.first >= 0){
                     auto time = r.first + time_waited - rb.available(); //r.first + time_waited - p.dc.getSize();
-                    std::cerr << r.first << std::endl;
+                    //std::cerr << r.first << std::endl;
                     rb.pop(size);
                     internalResult result;
                     result.data = pool.getVector();
@@ -72,10 +72,10 @@ public://this code look the signal in a window of twice it sice, this is sub opt
                         assert(r.first + i < tmp.size());
                         result.data[i] = tmp[r.first + i];
                     }
-#if 1
-                        static int fooa = 0;
+#if 0
+                    static int fooa = 0;
                     std::string path = "/tmp/s";
-                        to_file(path+std::to_string(fooa)+"_" + std::to_string(r.second) + "_" + std::to_string(r.first),tmp.data() + r.first, size);
+                    to_file(path+std::to_string(fooa)+"_" + std::to_string(r.second) + "_" + std::to_string(r.first),tmp.data() + r.first, size);
                     to_file(path+"foo"+std::to_string(fooa), rb.raw_read());
                     fooa++;
 #endif

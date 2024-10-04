@@ -1,13 +1,12 @@
 #pragma once
 
+
 #define FAUSTFLOAT double
-#include <cstdint>
 #include <cstring>
 
 #include <faust/dsp/llvm-dsp.h>
 #include <faust/gui/APIUI.h>
 #include <mutex>
-#include <variant>
 #include "backend.h"
 
 using namespace std;
@@ -28,8 +27,8 @@ public:
 
 private:
 
-    vector<double *> faustZones;
-    vector<double> ref;
+    vector<FAUSTFLOAT *> faustZones;
+    vector<FAUSTFLOAT> ref;
     bool firstTime = true;
 };
 

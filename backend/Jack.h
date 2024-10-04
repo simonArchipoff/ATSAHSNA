@@ -176,7 +176,7 @@ protected:
 
 
     virtual int jack_xrun(){
-        std::cerr << "xrun" << std::endl ;
+        //std::cerr << "xrun" << std::endl ;
         return 0;
     }
     static int jackXRunCallback(void * b){

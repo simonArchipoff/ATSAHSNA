@@ -1,5 +1,6 @@
 
 find_package(PkgConfig)
+
 pkg_search_module(FFTW REQUIRED fftw3 IMPORTED_TARGET)
 
 #set(HEADER_FAUST_QTUI ${FAUST_INCLUDE_DIR}/faust/gui/QTUI.h)
@@ -31,7 +32,7 @@ set(SIGNAL_SOURCES
 #cmake_print_variables(BACKEND_SOURCES)
 
 add_library(signal ${SIGNAL_SOURCES})
-target_precompile_headers(signal PUBLIC ${SIGNAL_HEADERS})
+#target_precompile_headers(signal PUBLIC ${SIGNAL_HEADERS})
 target_include_directories(signal PUBLIC fCWT ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(signal PUBLIC fftw3 fCWT)
 

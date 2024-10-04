@@ -4,15 +4,16 @@
 
 find_package(Faust REQUIRED)
 
-set(HEADER_FAUST_QTUI ${FAUST_INCLUDE_DIR}/faust/gui/QTUI.h ${FAUST_INCLUDE_DIR}/faust/gui/APIUI.h)
+set(HEADER_FAUST_QTUI ${FAUST_INCLUDE_DIR}/faust/gui/UI.h ${FAUST_INCLUDE_DIR}/faust/gui/QTUI.h ${FAUST_INCLUDE_DIR}/faust/gui/APIUI.h)
 #set(HEADER_FAUST_QTUI_MOC ${CMAKE_CURRENT_BINARY_DIR}/moc_QTUI.cpp)
 
 #include(CMakePrintHelpers)
 
 set(BACKEND_HEADERS
+    Faust.h
     ${HEADER_FAUST_QTUI}
     backend.h
-    Faust.h
+
 )
 
 
@@ -49,7 +50,7 @@ endif()
 
 
 add_library(backend ${BACKEND_SOURCES} ${BACKEND_HEADERS})
-target_precompile_headers(backend PUBLIC ${BACKEND_HEADERS})
+#target_precompile_headers(backend PUBLIC ${BACKEND_HEADERS})
 target_include_directories(backend PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(backend PUBLIC faust signal Qt6::Core Qt6::Widgets jack)
 

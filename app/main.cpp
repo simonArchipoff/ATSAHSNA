@@ -24,6 +24,6 @@ int main(int argc, char *argv[])
     delegate d(&mw);
     mw.show();
     d.addFaustBackend();
-
-    return a.exec();
+    auto r = a.exec();
+    return r;
 }

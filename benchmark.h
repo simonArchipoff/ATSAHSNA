@@ -24,7 +24,7 @@ public:
 
     void printResults() {
         if (timings.empty()) {
-            std::cout << "Aucune mesure n'a été effectuée." << std::endl;
+            //std::cout << "Aucune mesure n'a été effectuée." << std::endl;
             return;
         }
 

@@ -2,14 +2,10 @@
 
 #include <FFT.h>
 #include <assert.h>
-#include <algorithm>
 #include <fftw3.h>
-#include <numeric>
 #include <cmath>
 #include <cstring>
 
-#include <fstream>
-#include <iomanip>
 
 
 
