@@ -20,7 +20,7 @@ QFaustView::QFaustView(QWidget *parent)
     sr = new QLineEdit(this);
     layout->addWidget(sr,1);
     sr->setValidator(new QIntValidator(1,1000000,this));
-    sr->setText("44100");
+    sr->setText("48000");
 
     compile_button = new QPushButton(tr("valider"),this);
     layout->addWidget(compile_button,0);

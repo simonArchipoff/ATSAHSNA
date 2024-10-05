@@ -164,12 +164,16 @@ QJackPortView::QJackPortView(QWidget *parent) : QWidget(parent) {
     name = new QLabel(this);
     nameConnexion = new QLabel(this);
     vumeter = new VUMeter(this);
-
+    vumeter->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    vumeter->setFixedWidth(50);
+    vumeter->setFixedHeight(10);
     QHBoxLayout * hlayout = new QHBoxLayout(this);
     setLayout(hlayout);
+    hlayout->addWidget(vumeter);
+
     hlayout->addWidget(name);
     hlayout->addWidget(nameConnexion);
-    hlayout->addWidget(vumeter);
+
 }
 QJackPortView::~QJackPortView(){
 }

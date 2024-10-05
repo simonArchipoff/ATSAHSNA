@@ -149,7 +149,7 @@ std::variant<const std::vector<ResultResponse>,ErrorBackend> BackendFaust::getRe
     dspInstance->instanceClear();
     //reinit(this,getSampleRate());
     std::vector<ResultResponse> res;
-    auto in = impulse(paramResponse.freqMin, paramResponse.duration, getSampleRate());
+    auto in = impulse(paramResponse.freqMin, 2.0/paramResponse.freqMin, getSampleRate());
     auto out = acquisition(vector<VD>(numberInput(),in));
     int i=0;
     for(auto & o : out){
@@ -165,7 +165,7 @@ std::variant<const std::vector<ResultHarmonics>,ErrorBackend>  BackendFaust::get
     const std::lock_guard<std::mutex> g(this->lock);
     //dspInstance->instanceClear();
     vector<ResultHarmonics> res;
-    auto in = sinusoid(paramHarmonics.frequency, 10.0/paramHarmonics.freqMin, getSampleRate());
+    auto in = sinusoid(paramHarmonics.frequency, 2.0/paramHarmonics.freqMin, getSampleRate());
     auto out = acquisition(vector<VD>(numberInput(),in));
     //auto keep = getSampleRate() / paramHarmonics.freqMin;
     int i = 0;
