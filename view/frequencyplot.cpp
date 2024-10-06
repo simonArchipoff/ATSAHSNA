@@ -28,7 +28,8 @@ void simplifyCurve(const std::vector<double> &x, const std::vector<double> &y, c
     int index = 0;
     for (size_t i = 1; i < x.size() - 1; ++i) {
         double distance = perpendicularDistance(x[i], y[i], x.front(), y.front(), x.back(), y.back());
-        distance += perpendicularDistance(x[i], y1[i],x.front(),y1.front(), x.back(),y1.back());
+        if(x[i] > - 100)
+            distance += perpendicularDistance(x[i], y1[i],x.front(),y1.front(), x.back(),y1.back());
         if (distance > maxDistance) {
             index = i;
             maxDistance = distance;
@@ -113,7 +114,7 @@ void PlotAmplitudePhase::setCurve(const VD&f, const VD&a, const VD&p){
     auto qp = QVector<double>(p.begin(), p.end());
     amplitude->setData(qf,qa,true);
     phase->setData(qf,qp,true);
-    amplitude->rescaleAxes(false);
+    amplitude->rescaleAxes(true);
 }
 
 FrequencyPlot::FrequencyPlot(QWidget * parent):MyQCustomPlot(parent){

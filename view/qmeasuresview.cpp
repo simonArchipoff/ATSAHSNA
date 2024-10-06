@@ -73,8 +73,8 @@ QString QResultView::getName() const{
 QResultHarmonicsView::QResultHarmonicsView(QColor color, const ResultHarmonics &r, QWidget *parent)
     : QResultView(color,QString(r.name.c_str()),parent)
     ,result(r){
-    auto text = new QCheckBox(tr("text"), this);
-    layout->addWidget(text);
+    //auto text = new QCheckBox(tr("text"), this);
+    //layout->addWidget(text);
 }
 
 void QResultHarmonicsView::setSpectrogramDisplay(bool newSpectrogram_display){

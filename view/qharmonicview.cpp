@@ -62,12 +62,12 @@ void THDText::setResult(const ResultHarmonics &r, QString name, QColor c){
     }
 
     // Mettre à jour THD et THD+N
-    setItem(row, 1, new QTableWidgetItem(QString::number(r.thdRate * 100)));
-    setItem(row, 2, new QTableWidgetItem(QString::number(r.thdNoiseRate * 100)));
+    setItem(row, 1, new QTableWidgetItem(QString::number(r.thdRate * 100,'g',3)));
+    setItem(row, 2, new QTableWidgetItem(QString::number(r.thdNoiseRate * 100,'g',3)));
 
     // Mettre à jour les niveaux d'harmoniques
     for (uint i = 0; i < nb_harmonics&& i < r.harmonicsLevel.size(); ++i) {
-        setItem(row, 3 + i, new QTableWidgetItem(QString::number(20*log10(r.harmonicsLevel[i]))));
+        setItem(row, 3 + i, new QTableWidgetItem(QString::number(20*log10(r.harmonicsLevel[i]),'g',3)));
     }
 }
 
