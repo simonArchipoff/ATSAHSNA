@@ -30,12 +30,12 @@ QFaustView::QFaustView(QWidget *parent)
     errorLabel->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
     auto harmonics = new QCheckBox(tr("harmonic"));
     auto response = new QCheckBox(tr("response"));
-    layout->addWidget(harmonics);
+
     layout->addWidget(response);
+    layout->addWidget(harmonics);
 
-
-    connect(response ,&QCheckBox::stateChanged,this,&QFaustView::setResponse);
-    connect(harmonics,&QCheckBox::stateChanged,this,&QFaustView::setHarmonic);
+    connect(response ,&QCheckBox::stateChanged, this, &QFaustView::setResponse);
+    connect(harmonics,&QCheckBox::stateChanged, this, &QFaustView::setHarmonic);
 
     codeEdit->setText(
         "import(\"filters.lib\");\n" \

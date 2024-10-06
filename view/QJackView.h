@@ -14,7 +14,6 @@
 #include <qlogging.h>
 #include <widget_chatgpt.h>
 
-
 class QJackPortView : public QWidget{
     Q_OBJECT
 public:

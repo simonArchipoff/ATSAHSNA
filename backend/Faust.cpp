@@ -152,7 +152,7 @@ std::variant<const std::vector<ResultResponse>,ErrorBackend> BackendFaust::getRe
     dspInstance->instanceClear();
     //reinit(this,getSampleRate());
     std::vector<ResultResponse> res;
-    auto in = impulse(paramResponse.freqMin, 2.0/paramResponse.freqMin, getSampleRate());
+    auto in = impulse(paramResponse.freqMin, 1.0/paramResponse.freqMin, getSampleRate());
     auto out = acquisition(vector<VD>(numberInput(),in));
     int i=0;
     for(auto & o : out){
@@ -176,7 +176,7 @@ std::variant<const std::vector<ResultHarmonics>,ErrorBackend>  BackendFaust::get
     //auto keep = getSampleRate() / paramHarmonics.freqMin;
     int i = 0;
     for(auto & o : out){
-        remove_left(o.size() *0.8, o);
+        remove_left(o.size() *0.5, o);
         auto r = computeTHD(paramHarmonics,  o, getSampleRate());
         r.name = nameInstance + "_" + std::to_string(i++);
         res.push_back(r);

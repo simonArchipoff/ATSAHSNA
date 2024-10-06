@@ -17,7 +17,7 @@ double perpendicularDistance(double x, double y, double x1, double y1, double x2
 }
 
 // dodgy implementation of douglas peucker algorithm I made with my coding friend chat-gpt
-// it intend to reduce the number of points while preserving the shape of the curve. It doesn't work well
+// it intend to reduce the number of points while preserving the shape of the amplitude and phase. It doesn't work well
 void simplifyCurve(const std::vector<double> &x, const std::vector<double> &y, const vector<double>&y1, double epsilon,
                    std::vector<double> &xOut, std::vector<double> &yOut, std::vector<double> &y1Out) {
     if (x.size() < 2 || y.size() < 2) {
