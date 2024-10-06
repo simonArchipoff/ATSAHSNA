@@ -101,9 +101,9 @@ QHarmonicView::QHarmonicView(QWidget * parent)
 }
 
 void QHarmonicView::setResults(const std::variant<const std::vector<ResultHarmonics>, ErrorBackend> &r){
-    std::vector<ResultHarmonics> v = std::get<const std::vector<ResultHarmonics>>(r);
-    for(uint i = 0; i < v.size(); i++){
-        setResult(v[i]);
+    auto  v = std::get_if<const std::vector<ResultHarmonics>>(&r);
+    for(uint i = 0; v && i < v->size(); i++){
+        setResult((*v)[i]);
     }
     plot->replot();
 }

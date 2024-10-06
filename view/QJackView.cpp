@@ -133,7 +133,6 @@ void QJackView::connected(){
     connectionButton->setDisabled(true);
     inputButton->setDisabled(false);
     outputButton->setDisabled(false);
-
 }
 
 

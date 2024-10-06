@@ -145,6 +145,9 @@ bool BackendFaust::didSomethingChanged(){
 }
 
 std::variant<const std::vector<ResultResponse>,ErrorBackend> BackendFaust::getResultResponse(){
+    if(!dspInstance){
+        return std::variant<const std::vector<ResultResponse>,ErrorBackend>(ErrorBackend("backend not ready"));
+    }
     const std::lock_guard<std::mutex> g(this->lock);
     dspInstance->instanceClear();
     //reinit(this,getSampleRate());
@@ -163,6 +166,9 @@ std::variant<const std::vector<ResultResponse>,ErrorBackend> BackendFaust::getRe
 
 std::variant<const std::vector<ResultHarmonics>,ErrorBackend>  BackendFaust::getResultHarmonics(){
     const std::lock_guard<std::mutex> g(this->lock);
+    if(!dspInstance){
+        return std::variant<const std::vector<ResultHarmonics>,ErrorBackend>(ErrorBackend("backend not ready"));
+    }
     //dspInstance->instanceClear();
     vector<ResultHarmonics> res;
     auto in = sinusoid(paramHarmonics.frequency, 2.0/paramHarmonics.freqMin, getSampleRate());

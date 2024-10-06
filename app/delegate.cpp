@@ -35,16 +35,22 @@ QBackendFaust::~QBackendFaust(){
 }
 void QBackendFaust::timerEvent(QTimerEvent * e){
     if(backend->didSomethingChanged()){
-        auto response = backend->getResultResponse();
-        auto harmonics = backend->getResultHarmonics();
-        emit resultResponse(response);
-        emit resultHarmonics(harmonics);
+        compute();
     }
 }
 
 void QBackendFaust::connectGUI(){
     connect(faust_gui,&QFaustView::setFaustCode,
             this,&QBackendFaust::setCode);
+    connect(faust_gui,&QFaustView::setHarmonic,this,[this](bool b){
+        this->computeHarmonic=b;
+        this->compute();
+    });
+    connect(faust_gui,&QFaustView::setResponse,this,[this](bool b){
+        this->computeResponse=b;
+        this->compute();
+    });
+
 
 }
 
@@ -66,6 +72,17 @@ bool QBackendFaust::setCode(QString dspCode, uint sampleRate){
 
 bool QBackendFaust::isReady() const{
     return backend->isReady();
+}
+
+void QBackendFaust::compute(){
+    if(computeResponse){
+        auto response = backend->getResultResponse();
+        emit resultResponse(response);
+    }
+    if(computeHarmonic){
+        auto harmonics = backend->getResultHarmonics();
+        emit resultHarmonics(harmonics);
+    }
 }
 
 #ifdef ENABLE_JACK

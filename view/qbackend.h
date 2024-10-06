@@ -33,6 +33,8 @@ public:
 
 signals:
     void setFaustCode(QString code, uint sampleRate);
+    void setHarmonic(bool);
+    void setResponse(bool);
 
 public:
     QWidget * dspUi;

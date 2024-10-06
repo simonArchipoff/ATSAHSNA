@@ -26,6 +26,7 @@ public:
     string getErrorMessage(){
         return backend->getErrorMessage();
     }
+    void compute();
 
 signals:
     void changed();
@@ -37,6 +38,8 @@ protected:
     BackendFaust * backend;
 
     QFaustView * faust_gui;
+    bool computeHarmonic=false,
+         computeResponse=false;
 
 };
 #ifdef ENABLE_JACK

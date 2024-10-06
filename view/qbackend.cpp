@@ -1,6 +1,5 @@
 #include "qbackend.h"
 #include "qboxlayout.h"
-#include "qnamespace.h"
 #include "qpushbutton.h"
 
 #include <faust/gui/QTUI.h>
@@ -29,15 +28,26 @@ QFaustView::QFaustView(QWidget *parent)
     setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
     codeEdit->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
     errorLabel->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+    auto harmonics = new QCheckBox(tr("harmonic"));
+    auto response = new QCheckBox(tr("response"));
+    layout->addWidget(harmonics);
+    layout->addWidget(response);
+
+
+    connect(response ,&QCheckBox::stateChanged,this,&QFaustView::setResponse);
+    connect(harmonics,&QCheckBox::stateChanged,this,&QFaustView::setHarmonic);
 
     codeEdit->setText(
         "import(\"filters.lib\");\n" \
         "fc = hslider(\"frequency\",100,100,20000,1);\n" \
         "q = hslider(\"quality\",1,0.1,10,0.1);\n" \
         "process=fi.resonlp(fc,q,1);\n");
+
+
     connect(compile_button,&QPushButton::clicked,this, &QFaustView::compile);
     connect(codeEdit,&QTextEdit::textChanged, this, [this](){compile_button->setDisabled(false);});
     connect(sr,&QLineEdit::textChanged, this, [this](){compile_button->setDisabled(false);});
+
 }
 
 void QFaustView::compile(){
