@@ -3,7 +3,7 @@
 #include <cmath>
 #include <FFT.h>
 #include <iterator>
-#include <numeric>
+//#include <numeric>
 #include <complex>
 
 #define BIG_VECTOR_SIZE 2048

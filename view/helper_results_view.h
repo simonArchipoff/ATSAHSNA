@@ -26,4 +26,3 @@ private:
     QVBoxLayout * layout;
     QWidget * configureWidget;
 };
-

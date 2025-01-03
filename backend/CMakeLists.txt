@@ -13,6 +13,7 @@ set(BACKEND_HEADERS
     Faust.h
     ${HEADER_FAUST_QTUI}
     backend.h
+    filedatasound.h
 
 )
 
@@ -36,12 +37,14 @@ list(APPEND BACKEND_HEADERS
     Receiver.h
     AudioIO.h
     concurrentqueue.h
+
 )
 list(APPEND BACKEND_SOURCES
     Jack.cpp
     QJack.cpp
     spectrummonitor.cpp
     RingBuffer.cpp
+    filedatasound.cpp
 )
 list(APPEND backend_LIB_DEPENDS jack)
 endif()
@@ -49,10 +52,11 @@ endif()
 
 
 
-add_library(backend ${BACKEND_SOURCES} ${BACKEND_HEADERS})
+add_library(backend ${BACKEND_SOURCES} ${BACKEND_HEADERS}
+)
 #target_precompile_headers(backend PUBLIC ${BACKEND_HEADERS})
 target_include_directories(backend PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(backend PUBLIC faust signal Qt6::Core Qt6::Widgets jack)
+target_link_libraries(backend PUBLIC faust signal Qt6::Core Qt6::Widgets Qt6::Multimedia jack)
 
 
 
