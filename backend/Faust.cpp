@@ -152,7 +152,8 @@ std::variant<const std::vector<ResultResponse>,ErrorBackend> BackendFaust::getRe
     dspInstance->instanceClear();
     //reinit(this,getSampleRate());
     std::vector<ResultResponse> res;
-    auto in = impulse(paramResponse.freqMin, 1.0/paramResponse.freqMin, getSampleRate());
+    auto in = impulse(paramResponse.freqMin, 1.0 // /paramResponse.freqMin
+                      , getSampleRate());
     auto out = acquisition(vector<VD>(numberInput(),in));
     int i=0;
     for(auto & o : out){

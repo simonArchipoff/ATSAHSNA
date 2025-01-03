@@ -63,6 +63,7 @@ bool QBackendFaust::setCode(QString dspCode, uint sampleRate){
         faust_gui->setDSPUI(ui);
         backend->init(sampleRate);
         startTimer(100*1./30);
+        this->compute();
         return true;
     }
     faust_gui->setErrorMessage(QString(backend->getErrorMessage().c_str()));

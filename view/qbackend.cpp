@@ -47,7 +47,6 @@ QFaustView::QFaustView(QWidget *parent)
     connect(compile_button,&QPushButton::clicked,this, &QFaustView::compile);
     connect(codeEdit,&QTextEdit::textChanged, this, [this](){compile_button->setDisabled(false);});
     connect(sr,&QLineEdit::textChanged, this, [this](){compile_button->setDisabled(false);});
-
 }
 
 void QFaustView::compile(){

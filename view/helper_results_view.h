@@ -15,15 +15,12 @@ public:
     ResultBase(QString name, QWidget * parent);
 
 
-    void setConfigureWidget(QWidget * w){
-        configureWidget = w;
-        //configureWidget->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
-    }
+    void setConfigureWidget(QWidget * w);
 
 
 protected:
     void addWidget(QWidget * w);
-
+    QPushButton * button;
 private:
     void popWindow(bool b);
     QVBoxLayout * layout;

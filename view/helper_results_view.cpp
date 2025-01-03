@@ -54,12 +54,19 @@ ResultBase::ResultBase(QString name, QWidget *parent):QWidget(parent),layout(new
     auto * label = new QLabel(name,this);
     hlayout->addWidget(label);
     hlayout->addStretch();
-    auto * b = new QPushButton("☰",this);
+    button = new QPushButton("☰",this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
-    hlayout->addWidget(b);
-    b->setCheckable(true);
-    connect(b,&QPushButton::clicked,this,&ResultBase::popWindow);
+    hlayout->addWidget(button);
+    button->setCheckable(true);
+    button->setVisible(false);
+    connect(button,&QPushButton::clicked,this,&ResultBase::popWindow);
+}
+
+void ResultBase::setConfigureWidget(QWidget *w){
+    configureWidget = w;
+    button->setVisible(true);
+    //configureWidget->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
 }
 
 void ResultBase::addWidget(QWidget *w){
