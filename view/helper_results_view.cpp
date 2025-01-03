@@ -59,13 +59,13 @@ ResultBase::ResultBase(QString name, QWidget *parent):QWidget(parent),layout(new
     layout->setSpacing(0);
     hlayout->addWidget(button);
     button->setCheckable(true);
-    button->setVisible(false);
+    button->setDisabled(true);
     connect(button,&QPushButton::clicked,this,&ResultBase::popWindow);
 }
 
 void ResultBase::setConfigureWidget(QWidget *w){
     configureWidget = w;
-    button->setVisible(true);
+    button->setDisabled(false);
     //configureWidget->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
 }
 

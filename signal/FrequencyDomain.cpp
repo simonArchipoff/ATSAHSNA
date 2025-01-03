@@ -220,8 +220,8 @@ VCD computeDFT(const VD &input){
 VD FDF::frequencyDomainTotemporal() const {
     VD o;
     rfft(response, o, this->response.size());
-    for(auto & i : o)
-        i *= response.size();
+    //for(auto & i : o)
+    //    i *= response.size();
     return o;
 }
 

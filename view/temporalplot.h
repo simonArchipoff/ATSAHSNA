@@ -8,18 +8,25 @@
 
 class PlotTemporal{
 public:
-    PlotTemporal(QColor color,QCPGraph * values):
+    enum ResponseType {Impulse,Step};
+    PlotTemporal(QColor color,QCPGraph * values, ResponseType type):
         color(color)
         ,values(values){
     }
     void setCurve(const FDF & f);
+    void plotData();
     QColor color;
     QCPGraph * values;
+    ResponseType type;
+    FDF response;
+
 };
 
+class TemporalPlotMenu;
 class TemporalPlot : public ResultBase{
     Q_OBJECT
 public:
+
     TemporalPlot(QWidget * parent=nullptr);
     ~TemporalPlot();
     void setPlot(const FDF & f, QString name, QColor color);
@@ -36,8 +43,21 @@ protected:
     RoundRobinColor color_round_robin;
     QCPAxis *temporalAxis;
     QCPAxis *amplitudeAxis;
-
 private:
     MyQCustomPlot * plot;
+    TemporalPlotMenu * menu;
+private:
+    void changeResponseType(PlotTemporal::ResponseType t);
+
 };
 
+
+class TemporalPlotMenu : public QWidget{
+    Q_OBJECT
+public:
+    TemporalPlotMenu();
+signals:
+    void responseTypeChanged(enum PlotTemporal::ResponseType);
+public:
+    PlotTemporal::ResponseType responsetype = PlotTemporal::Impulse;
+};

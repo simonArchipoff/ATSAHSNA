@@ -9,7 +9,7 @@ It's licenced under GPLv3.
 
 What's already implemented:
 - two backend (faust and jackd)
-- impulse response
+- impulse/step response
 - harmonic spectrum, THD computation (THD, THD+N, SNR)
 - waterfall measures
     - using continuous wavelet

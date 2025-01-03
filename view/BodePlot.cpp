@@ -11,6 +11,8 @@ BodePlot::BodePlot(QWidget*parent):ResultBase(tr("Bode Plot"),parent),fp(new Fre
     setConfigureWidget(m);
     connect(m, &BodePlotMenu::displayPhase, fp, &FrequencyPlot::displayPhase);
 }
+
+
 void BodePlot::setResult(const ResultResponse & r, QString name, QColor c){
     fp->setPlot(r.response, name, c);
 }
