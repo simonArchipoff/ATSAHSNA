@@ -25,6 +25,7 @@ public:
         b = new BackendFaust(std::string("foo"));
         b->setCode("import(\"filters.lib\");\nprocess = @(342);",48000);
         RTModuleHandler::setSampleRate(48000);
+        RTModuleHandler::setNumberInputs(1);
     }
     ~TestRTModuleBackend(){
         delete b;
@@ -58,12 +59,12 @@ public:
 };
 
 TEST_CASE("RTModuleHandler") {
-    {
     TestRTModuleBackend rtm;
     ParamResponse p;
     p.duration=0.01;
     p.freqMin = 20;
     p.freqMax = 20000;
+
     rtm.startResponse(p,1,2);
 
     rtm.run();
@@ -75,18 +76,15 @@ TEST_CASE("RTModuleHandler") {
     auto e = rtm.getResultResponse(r5);
     REQUIRE((a && b && !(c || d || e)));
 
-     rtm.startResponse(p,1,2);
+    rtm.startResponse(p,1,2);
     rtm.run();
 
-     a = rtm.getResultResponse(r1);
-     b = rtm.getResultResponse(r2);
-     c = rtm.getResultResponse(r3);
-     d = rtm.getResultResponse(r4);
-     e = rtm.getResultResponse(r5);
-        REQUIRE((a && b && !(c || d || e)));
+    a = rtm.getResultResponse(r1);
+    b = rtm.getResultResponse(r2);
+    c = rtm.getResultResponse(r3);
+    d = rtm.getResultResponse(r4);
+    e = rtm.getResultResponse(r5);
+    REQUIRE((a && b && !(c || d || e)));
 
-
-
-    }
     REQUIRE(true);
 }

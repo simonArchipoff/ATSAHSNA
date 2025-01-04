@@ -3,30 +3,37 @@
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <cstdlib>
 #include "RingBuffer.h"
-#include <stdexcept>
-#include <string>
+
 #include <vector>
 #include <Faust.h>
 #include <Sender.h>
-#if 0
+#include <QString>
+#include <QCoreApplication>
+
+
+
+#if 1
 TEST_CASE("Ring buffer") {
     RingBuffer<int> rb(8);
 
 
     rb.write({1,2,3,4,5});
     REQUIRE(rb.available() == 5);
-    auto foo = rb.read(3);
+    std::vector<int> v;
+    v.resize(3.0);
+    rb.read(3,v.data());
 
-    REQUIRE(foo[0] == 1);
-    REQUIRE(foo[1] == 2);
-    REQUIRE(foo[2] == 3);
+    REQUIRE(v[0] == 1);
+    REQUIRE(v[1] == 2);
+    REQUIRE(v[2] == 3);
 
     rb.pop(3);
     REQUIRE(rb.available() == 2);
     rb.write({6,7,8,9});
     REQUIRE(rb.available() == 6);
-    auto bar = rb.read(rb.available());
-    REQUIRE(bar == std::vector({4,5,6,7,8,9}));
+    v.resize(rb.available());
+    rb.read(rb.available(),v.data());
+    REQUIRE(v == std::vector({4,5,6,7,8,9}));
     rb.write({10,11});
     REQUIRE(rb.available() == 8);
 
@@ -34,7 +41,7 @@ TEST_CASE("Ring buffer") {
 #endif
 //tests made by chatGPT (and fixed by me)
 
-#if 0
+#if 1
 TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
     SECTION("Default Constructor") {
         RingBuffer<int> rb;
@@ -62,7 +69,9 @@ TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
         REQUIRE(rb.available() == 3);
         REQUIRE(rb.freespace() == 2);
 
-        std::vector<int> readData = rb.read(2);
+        std::vector<int> readData;
+        readData.resize(2);
+        rb.read(2,readData.data());
         REQUIRE(readData == std::vector<int>({1, 2}));
         REQUIRE(rb.available() == 3);
         REQUIRE(rb.freespace() == 2);
@@ -71,7 +80,8 @@ TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
         REQUIRE(rb.available() == 5);
         REQUIRE(rb.freespace() == 0);
 
-        readData = rb.read(4);
+        readData.resize(4);
+        rb.read(4,readData.data());
         REQUIRE(readData == std::vector<int>({1, 2, 3,4}));
         REQUIRE(rb.available() == 5);
         REQUIRE(rb.freespace() == 0);
@@ -87,7 +97,9 @@ TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
         REQUIRE(rb.available() == 3);
         REQUIRE(rb.freespace() == 2);
 
-        std::vector<int> readData = rb.read(2);
+        std::vector<int> readData;
+        readData.resize(2);
+        rb.read(2,readData.data());
         REQUIRE(readData == std::vector<int>({3, 4}));
         REQUIRE(rb.available() == 3);
         REQUIRE(rb.freespace() == 2);
@@ -120,7 +132,8 @@ TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
 
 
             uint sread = std::rand()%fifo.available();
-            v = fifo.read(sread);
+            v.resize(sread);
+            fifo.read(sread,v.data());
             for(uint i = 0; i < sread; i++){
                 REQUIRE(v[i] == (iread++));
             }
@@ -164,7 +177,9 @@ TEST_CASE("Acquisition") {
 
 
         rb.write(in);
-        auto out = rb.read(frames);
+        std::vector<double> out;
+        out.resize(frames);
+        rb.read(frames,out.data());
         rb.pop(frames);
         auto r = b.rt_process(out, in);
 
@@ -186,24 +201,23 @@ TEST_CASE("Acquisition") {
 }
 #endif
 
-#if 0
+#if 1
 TEST_CASE("Test de Sender") {
-    VF signal = {1.0, 2.0, 3.0, 4.0,6.0,7.0,8.0,9.0,10.,11.,12.,13.,14.,15,16.};
+    VF signal = {1.0, 2.0, 3.0, 4.0};
     int number = 33;
-    int timeoff = 1;
+    int timeoff = 2;
     Sender sender(signal, SenderMode::All, number, timeoff);
 
     SECTION("Test de rt_send") {
 
-        float output[number * (timeoff + signal.size())];
-
-        memset(output,42,sizeof(output));
+        vector<float> output;
+        output.resize(number * (timeoff + signal.size()), 42);
 
         int nb_frames = 5;
-        int nb_call = (sizeof(output)/sizeof(output[0])) / nb_frames;
+        int nb_call = output.size() / nb_frames;
 
         for(int i = 0; i < nb_call; i++){
-            float * t = output + i * nb_frames;
+            float * t = output.data() + i * nb_frames;
             AudioIO<float> o(nb_frames,1,&t);
             sender.rt_output(o);
         }
@@ -240,7 +254,10 @@ TEST_CASE("Test de Sender") {
     }
 }
 #endif
-#if 0
+
+
+#include <RTModule.h>
+
 
 class FaustWithRTModule : public BackendFaust, public RTModuleHandler{
 public:
@@ -256,9 +273,23 @@ public:
             input.resize(size);
         }
         auto r = BackendFaust::acquisition(std::vector<VD>({input}));
-        vector<VD> foo({input});
-        RTModuleHandler::rt_process(vector<VD>(r),foo);
-        input = foo[0];
+
+
+        vector<float> inv(size),outv(size);
+
+        AudioIO<float> in,out;
+        in.addChannel(size,inv.data());
+        out.addChannel(size,outv.data());
+
+        for(int i = 0; i < size; i++){
+            inv[i] = r[0][i];
+        }
+
+        RTModuleHandler::rt_process(in,out);
+        for(int i = 0; i < size; i++){
+            input[i] = outv[i];
+        }
+
         RTModuleHandler::rt_after_process();
     }
 
@@ -268,7 +299,7 @@ public:
 
 };
 
-
+#if 0
 
 TEST_CASE("Test RTModuleHandler 1"){
     const int sr = 20;

@@ -5,6 +5,8 @@
 #include <mutex>
 #include <Generation.h>
 #include <variant>
+#include <list>
+#include <faust/gui/GUI.h>
 #include "../helpers.h"
 
 using namespace std;
@@ -26,6 +28,7 @@ inline bool file_exists (const std::string& name) {
 }
 
 BackendFaust * make_faust_backend(ParamFaust p){
+
     BackendFaust * f = new BackendFaust(p.name);
     f->setCode(p.file_or_code,p.sample_rate);
     if(f->isReady()){
@@ -212,3 +215,5 @@ bool DetectChange::isSomethingChanged(){
     return changed;
 }
 
+
+std::list<GUI*> GUI::fGuiList;

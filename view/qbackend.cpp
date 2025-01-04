@@ -6,7 +6,6 @@
 #include <QScrollArea>
 
 
-std::list<GUI*> GUI::fGuiList;
 QFaustView::QFaustView(QWidget *parent)
     : QWidget{parent}
     ,dspUi{nullptr}
