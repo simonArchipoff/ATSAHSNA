@@ -141,7 +141,7 @@ vector<VD> BackendFaust::acquisition(const vector<VD> &in){
 
 bool BackendFaust::didSomethingChanged(){
     if(dspInstance){
-        reinit(this,1);
+        reinit(this,1); //trigger update params
         return detectChange.isSomethingChanged();
     }
     return false;
@@ -153,7 +153,6 @@ std::variant<const std::vector<ResultResponse>,ErrorBackend> BackendFaust::getRe
     }
     const std::lock_guard<std::mutex> g(this->lock);
     dspInstance->instanceClear();
-    //reinit(this,getSampleRate());
     std::vector<ResultResponse> res;
     auto in = impulse(paramResponse.freqMin, 1.0 // /paramResponse.freqMin
                       , getSampleRate());

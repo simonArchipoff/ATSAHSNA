@@ -5,7 +5,8 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 #include <QFileDialog>
-
+#include <QApplication>
+#include <QPalette>
 //#include "task.h"
 #include "qbackend.h"
 

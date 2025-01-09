@@ -7,8 +7,7 @@ MyQCustomPlot::MyQCustomPlot(QWidget *parent)
     : QCustomPlot(parent){
 
     auto p = QApplication::palette();
-    qDebug() << p;
-    auto backgroundColor = p.color(QPalette::Window);
+    auto backgroundColor = p.color(QPalette::Base);
     auto textColor = p.color(QPalette::Text);
     //auto f = p.color(QPalette::ColorRole::AlternateBase);
 
