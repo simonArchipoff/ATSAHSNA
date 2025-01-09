@@ -19,7 +19,8 @@ FFTWScopedLocker::~FFTWScopedLocker(){
 class FFTWLockPthread:FFTWScopedLocker{
 public:
     FFTWLockPthread(){
-        fftwf_plan_with_nthreads(omp_get_max_threads());
+        auto n = omp_get_max_threads();
+        fftwf_plan_with_nthreads(n);
     }
     ~FFTWLockPthread(){
         fftwf_plan_with_nthreads(1);
@@ -30,8 +31,8 @@ VCD fft(const VD & input){
     VCD out(input.size());
     fftw_plan p;
     {
-            FFTWLockPthread l;
-            p = fftw_plan_dft_r2c_1d(input.size(), const_cast<double *>(input.data()), (fftw_complex*)out.data(), FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        FFTWLockPthread l;
+        p = fftw_plan_dft_r2c_1d(input.size(), const_cast<double *>(input.data()), (fftw_complex*)out.data(), FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
     }
     fftw_execute(p);
     fftw_destroy_plan(p);

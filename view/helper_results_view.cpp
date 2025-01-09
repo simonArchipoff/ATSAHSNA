@@ -6,9 +6,10 @@
 MyQCustomPlot::MyQCustomPlot(QWidget *parent)
     : QCustomPlot(parent){
 
-    auto p = QApplication::palette("QWidget");
-    auto backgroundColor = p.color(QPalette::ColorRole::Base);
-    auto textColor = p.color(QPalette::ColorRole::Text);
+    auto p = QApplication::palette();
+    qDebug() << p;
+    auto backgroundColor = p.color(QPalette::Window);
+    auto textColor = p.color(QPalette::Text);
     //auto f = p.color(QPalette::ColorRole::AlternateBase);
 
 
@@ -44,6 +45,7 @@ MyQCustomPlot::MyQCustomPlot(QWidget *parent)
     axisRectGradient.setColorAt(1, QColor(30, 30, 30));
 */
     axisRect()->setBackground(backgroundColor);
+    setBackground(backgroundColor);
     rescaleAxes();
 }
 
