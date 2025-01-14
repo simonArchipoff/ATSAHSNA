@@ -1,12 +1,31 @@
 #include "frequencyplot.h"
 
 
+#include <vector>
+
+
+
+void removeInfElements(std::vector<double>& A, std::vector<double>& B, std::vector<double>& C) {
+    auto isNegInf = [&](size_t i) { return A[i] == -std::numeric_limits<double>::infinity(); };
+
+    std::vector<size_t> indices;
+    for (size_t i = 0; i < A.size(); ++i) {
+        if (isNegInf(i)) {
+            indices.push_back(i);
+        }
+    }
+
+    // Suppression en partant de la fin pour éviter les décalages
+    for (auto it = indices.rbegin(); it != indices.rend(); ++it) {
+        A.erase(A.begin() + *it);
+        B.erase(B.begin() + *it);
+        C.erase(C.begin() + *it);
+    }
+}
 
 
 PlotAmplitudePhase::PlotAmplitudePhase(QString name, QColor c,QCPGraph * amplitude, QCPGraph * phase):amplitude(amplitude),phase(phase),color(c),name(name){
 }
-
-
 
 double perpendicularDistance(double x, double y, double x1, double y1, double x2, double y2) {
     double dx = x2 - x1;
@@ -92,11 +111,11 @@ void PlotAmplitudePhase::setCurve(const FDF&f){
     }
 #endif
 
-
     fr.erase(fr.begin());
     fa.erase(fa.begin());
     fp.erase(fp.begin());
 
+    removeInfElements(fa,fr,fp);
 
     simplifyCurve(fr,fa,fp,0.1,frd, fad, fpd);
 
