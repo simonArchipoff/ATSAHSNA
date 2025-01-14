@@ -1,5 +1,41 @@
 #include "temporalplot.h"
 
+
+
+
+template <typename T, int N>
+T ecart_type(T* begin) {
+    // Calcul de la somme
+    T somme = 0;
+    for (int i = 0; i < N; ++i) {
+        somme += begin[i];
+    }
+
+    // Calcul de la moyenne
+    T moyenne = somme / N;
+
+    // Calcul de l'écart-type
+    T variance = 0;
+    for (int i = 0; i < N; ++i) {
+        variance += std::pow(begin[i] - moyenne, 2);
+    }
+    T ecart_type = std::sqrt(variance / N);
+
+    return  ecart_type;
+}
+
+template<typename T, int N>
+std::vector<T> block_ecart_type(QVector<T> & t){
+    std::vector<T> res;
+    res.resize(t.size() / N);
+    for(int i = 0; i < res.size(); i++){
+        res[i] = ecart_type<T,N>(t.data() + i*N);
+    }
+    return res;
+}
+
+
+
 void PlotTemporal::setCurve(const FDF&f){
     response=f;
 }
@@ -19,8 +55,28 @@ void PlotTemporal::plotData(){
         qt[i] = (1.0*i) / response.getSampleRate();
         qa[i] /= (qt.size()) ;
     }
+    const int N = 256;
+    auto r = block_ecart_type<double,N>(qa);
+    double max = *std::max_element(r.begin(),r.end());
+    int tMin = -1;
+    int tMax = 0;
+    for(int i = 0; i < r.size(); i++){
+        if(tMin== -1){
+            if(r[i] > max/100){
+                tMin=i*N;
+            }
+        }
+        if(r[i] > max/100){
+            tMax = i*N;
+        }
+    }
+    timeRange.first = (tMin+0.0)/response.getSampleRate();
+    timeRange.second = ((tMax+N) - 1.0)/response.getSampleRate();
+
+    amplitudeRange.first = *std::min_element(qa.begin() + tMin , qa.begin() + tMax + N - 1);
+    amplitudeRange.second = *std::max_element(qa.begin() + tMin , qa.begin() + tMax + N - 1);
+
     values->setData(qt,qa,true);
-    values->rescaleAxes(false);
 }
 
 
@@ -32,7 +88,9 @@ TemporalPlot::TemporalPlot(QWidget * parent):ResultBase(tr("temporal plot"),pare
     setConfigureWidget(menu = new TemporalPlotMenu());
     connect(menu,&TemporalPlotMenu::responseTypeChanged, this, &TemporalPlot::changeResponseType );
     temporalAxis->setLabel(tr("time (s)"));
+    temporalAxis->setRange(0,0.1);
     amplitudeAxis->setLabel(tr("Amplitude"));
+    amplitudeAxis->setRange(-1,1);
     addWidget(plot);
 }
 TemporalPlot::~TemporalPlot(){
@@ -68,6 +126,39 @@ void TemporalPlot::updatePlot(const FDF&v , QString name){
     assert(p);
     p->setCurve(v);
     p->plotData();
+}
+
+void TemporalPlot::replot(){
+    double tMin,tMax,aMin,aMax;
+    tMin = aMin = std::numeric_limits<double>::max();
+    tMax = aMax = std::numeric_limits<double>::min();
+    bool b = false;
+    for(auto it = plots.cbegin(); it != plots.cend(); ++it){
+        b = true;
+        auto a = it.value()->amplitudeRange;
+        auto t = it.value()->timeRange;
+        if(t.first < tMin){
+            tMin = t.first;
+        }
+        if(t.second > tMax){
+            tMax=t.second;
+        }
+
+        if(a.first < aMin){
+            aMin = a.first;
+        }
+        if(a.second > aMax){
+            aMax=a.second;
+        }
+
+    }
+    if(b){
+        temporalAxis->setRange(tMin,tMax);
+        amplitudeAxis->setRange(aMin,aMax);
+    }
+
+
+    plot->replot();
 }
 
 void TemporalPlot::removeResult(QString name){

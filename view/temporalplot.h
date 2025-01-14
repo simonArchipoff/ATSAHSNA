@@ -11,7 +11,10 @@ public:
     enum ResponseType {Impulse,Step};
     PlotTemporal(QColor color,QCPGraph * values, ResponseType type):
         color(color)
-        ,values(values){
+        ,values(values)
+        ,amplitudeRange(-1,1)
+        ,timeRange(0,1){
+        values->rescaleAxes(true);
     }
     void setCurve(const FDF & f);
     void plotData();
@@ -19,7 +22,8 @@ public:
     QCPGraph * values;
     ResponseType type;
     FDF response;
-
+    std::pair<double,double> amplitudeRange;
+    std::pair<double,double> timeRange;
 };
 
 class TemporalPlotMenu;
@@ -34,9 +38,7 @@ public:
     void updatePlot(const ResultResponse&v, QString name){
         updatePlot(v.response, name);
     }
-    void replot(){
-        plot->replot();
-    }
+    void replot();
     void removeResult(QString);
 protected:
     QMap<QString,PlotTemporal *> plots;
