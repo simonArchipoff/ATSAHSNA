@@ -130,9 +130,9 @@ void PlotTemporal::plotData(){
 
     amplitudeRange.first = *std::min_element(qa.begin() + tMin , qa.begin() + tMax + N - 1);
     amplitudeRange.second = *std::max_element(qa.begin() + tMin , qa.begin() + tMax + N - 1);
+
     auto epsilon = std::min(std::abs(amplitudeRange.first),std::abs(amplitudeRange.second)) / 1e12;
     QVector<double> qts,qas;
-
     douglasPeucker(qa,qt, epsilon, qas,qts);
     values->setData(qts,qas,true);
 }

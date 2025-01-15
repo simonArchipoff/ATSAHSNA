@@ -74,6 +74,11 @@ class delegate : public QObject
 public:
 
     delegate(MainWindow * mw);
+    ~delegate(){
+        for(auto & i : faust){
+            delete i;
+        }
+    }
 
     void addFaustBackend();
     void addFaustBackendWithFile(QString path);

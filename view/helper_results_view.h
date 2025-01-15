@@ -13,6 +13,11 @@ class ResultBase : public QWidget{
     Q_OBJECT
 public:
     ResultBase(QString name, QWidget * parent);
+    ~ResultBase(){
+        if(configureWidget){
+            delete configureWidget;
+        }
+    }
 
 
     void setConfigureWidget(QWidget * w);

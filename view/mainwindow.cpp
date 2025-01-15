@@ -109,8 +109,10 @@ void MainWindow::measure(Backend * b, ParamSpectrogram p){
 
 
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow(){
+    delete backends;
+    delete response;
+    delete harmonic;
 }
 
 void MainWindow::createMenus()
