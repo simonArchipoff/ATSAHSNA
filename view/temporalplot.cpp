@@ -3,6 +3,61 @@
 
 
 
+inline double perpendicularDistance(double x, double y, double x1, double y1, double x2, double y2) {
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+
+    if (dx == 0 && dy == 0) {
+        return sqrt(pow(x - x1, 2) + pow(y - y1, 2));
+    }
+
+    double num = abs(dy * x - dx * y + x2 * y1 - y2 * x1);
+    double den = sqrt(dx * dx + dy * dy);
+    return num / den;
+}
+
+void douglasPeucker(const QVector<double>& x_values, const QVector<double>& y_values, double epsilon,
+                    QVector<double>& x_result, QVector<double>& y_result) {
+    int size = x_values.size();
+    if (size < 2) {
+        x_result = x_values;
+        y_result = y_values;
+        return;
+    }
+
+    double maxDist = 0.0;
+    int index = 0;
+
+    for (int i = 1; i < size - 1; ++i) {
+        double dist = perpendicularDistance(x_values[i], y_values[i], x_values[0], y_values[0], x_values[size - 1], y_values[size - 1]);
+        if (dist > maxDist) {
+            maxDist = dist;
+            index = i;
+        }
+    }
+
+    if (maxDist > epsilon) {
+        QVector<double> x_left = x_values.mid(0, index + 1);
+        QVector<double> y_left = y_values.mid(0, index + 1);
+        QVector<double> x_right = x_values.mid(index);
+        QVector<double> y_right = y_values.mid(index);
+
+        QVector<double> x_res1, y_res1, x_res2, y_res2;
+        douglasPeucker(x_left, y_left, epsilon, x_res1, y_res1);
+        douglasPeucker(x_right, y_right, epsilon, x_res2, y_res2);
+
+        x_result = x_res1;
+        y_result = y_res1;
+        x_result.removeLast();
+        y_result.removeLast();
+        x_result.append(x_res2);
+        y_result.append(y_res2);
+    } else {
+        x_result = { x_values[0], x_values[size - 1] };
+        y_result = { y_values[0], y_values[size - 1] };
+    }
+}
+
 template <typename T, int N>
 T ecart_type(T* begin) {
     // Calcul de la somme
@@ -75,8 +130,11 @@ void PlotTemporal::plotData(){
 
     amplitudeRange.first = *std::min_element(qa.begin() + tMin , qa.begin() + tMax + N - 1);
     amplitudeRange.second = *std::max_element(qa.begin() + tMin , qa.begin() + tMax + N - 1);
+    auto epsilon = std::min(std::abs(amplitudeRange.first),std::abs(amplitudeRange.second)) / 1e12;
+    QVector<double> qts,qas;
 
-    values->setData(qt,qa,true);
+    douglasPeucker(qa,qt, epsilon, qas,qts);
+    values->setData(qts,qas,true);
 }
 
 

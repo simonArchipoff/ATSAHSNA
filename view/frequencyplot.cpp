@@ -10,7 +10,7 @@
 PlotAmplitudePhase::PlotAmplitudePhase(QString name, QColor c,QCPGraph * amplitude, QCPGraph * phase):amplitude(amplitude),phase(phase),color(c),name(name){
 }
 
-double perpendicularDistance(double x, double y, double x1, double y1, double x2, double y2) {
+inline double perpendicularDistance(double x, double y, double x1, double y1, double x2, double y2) {
     double dx = x2 - x1;
     double dy = y2 - y1;
     double d = std::sqrt(dx * dx + dy * dy);
