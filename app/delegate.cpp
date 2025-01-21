@@ -25,6 +25,12 @@ delegate::delegate(MainWindow * m):mw{m}
     connect(m,&MainWindow::AddFaustBackendRequested,this, &delegate::addFaustBackendWithFile);
 }
 
+delegate::~delegate(){
+    for(auto & i : faust){
+        delete i;
+    }
+}
+
 QBackendFaust::QBackendFaust(QFaustView * gui, QString name):QObject{},faust_gui{gui}{
     backend = new BackendFaust(name.toStdString());
     connectGUI();
