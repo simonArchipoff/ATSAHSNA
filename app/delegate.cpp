@@ -16,6 +16,8 @@
 #include "QJackView.h"
 #endif
 
+#include <soundfile.h>
+
 delegate::delegate(MainWindow * m):mw{m}
 {
 #ifdef ENABLE_JACK
@@ -229,3 +231,29 @@ create_faust_qt(QString dspCode, int sampleRate, QWidget * parent){
     return dsp_or_error{s};
 }
 */
+
+QSoundFile::QSoundFile(){
+    soundfile = new soundFile;
+}
+
+QSoundFile::~QSoundFile(){
+    if(soundfile)
+        delete soundfile;
+}
+
+void QSoundFile::setWindow(int start, int nb){
+    soundfile->setWindow(start,nb);
+}
+
+void QSoundFile::openFile(QString path){
+    soundfile->setFile(path.toStdString());
+    if(soundfile->isReady()){
+        emit newFileOpen(soundfile->numberChannels(), soundfile->numberFrames(), soundfile->getSampleRate());
+    } else {
+        emit fileFailed(QString::fromStdString(soundfile->error()));
+    }
+}
+
+void QSoundFile::setInput(int i){
+    soundfile->setInput(i);
+}

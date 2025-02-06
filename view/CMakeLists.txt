@@ -44,7 +44,11 @@ set(VIEW_SOURCES     qbackend.h
     QJackView.h
     QJackView.cpp
     vumetre.h
-    vumetre.cpp)
+    vumetre.cpp
+
+    qsoundfilewidget.h
+    qsoundfilewidget.cpp
+)
 
 add_library(view ${VIEW_SOURCES})
 

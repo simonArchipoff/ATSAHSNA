@@ -61,6 +61,32 @@ protected:
 };
 #endif
 
+class soundFile;
+
+class QSoundFile :  public QObject {
+    Q_OBJECT
+public:
+    QSoundFile();
+    ~QSoundFile();
+
+    void setWindow(int start, int nb);
+    void openFile(QString path);
+
+    void setInput(int i);
+
+    void requestResponse();
+    void requestHarmonics();
+
+signals:
+    void newFileOpen(int number_channels, int number_frames, int sample_rate);
+    void fileFailed(QString s);
+    void resultResponse(std::variant<const std::vector<ResultResponse>,   ErrorBackend>& response);
+    void resultHarmonics(std::variant< const std::vector<ResultHarmonics>,ErrorBackend>& harmonics);
+
+private:
+    soundFile * soundfile;
+};
+
 
 //typedef std::variant<faust_backend *, QString> dsp_or_error;
 
@@ -68,8 +94,7 @@ protected:
 //create_faust_qt(QString dspCode, int sampleRate, QWidget * parent=nullptr);
 
 
-class delegate : public QObject
-{
+class delegate : public QObject{
     Q_OBJECT
 public:
 

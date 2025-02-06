@@ -2,8 +2,7 @@
 add_library(app
     delegate.cpp
     delegate.h
-    MeasureStore.h
-    MeasureStore.cpp)
+)
 
 find_package(Qt6 REQUIRED COMPONENTS Concurrent)
 target_link_libraries(app PUBLIC  Qt6::Core Qt6::Widgets Qt6::Concurrent  backend view)
