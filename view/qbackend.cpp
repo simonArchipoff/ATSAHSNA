@@ -111,3 +111,15 @@ QJackView * QBackendsView::addJack(){
     return f;
 }
 #endif
+
+
+QSoundFileWidget *QBackendsView::addSoundFile(){
+    auto f = new QSoundFileWidget;
+    auto *s = new QScrollArea;
+    s->setWidget(f);
+    s->setWidgetResizable(true);
+    addTab(s,"audio" + QString::number(soundfiles.size()));
+    soundfiles.push_back(f);
+    setCurrentIndex(count() - 1);
+    return f;
+}

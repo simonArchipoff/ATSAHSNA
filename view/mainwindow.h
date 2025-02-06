@@ -32,7 +32,7 @@ public:
 
     void onAddFaustBackendRequested();
     void onAddJackBackendRequested();
-
+    void onAddSoundFileRequested();
     void openFile();
 
 public:
@@ -44,6 +44,7 @@ signals:
     void addFaustBackendRequested();
     void AddFaustBackendRequested(QString file);
     void addJackBackendRequested();
+    void addSoundFileRequested();
 };
 
 

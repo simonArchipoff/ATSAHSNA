@@ -127,6 +127,10 @@ void MainWindow::createMenus()
   QAction* addJackAction = backendMenu->addAction("Add Jack");
   connect(addJackAction, &QAction::triggered, this, &MainWindow::onAddJackBackendRequested);
 #endif
+
+  QAction * addSoundFileAction = backendMenu->addAction("Add Audio file");
+  connect(addSoundFileAction, &QAction::triggered,this, &MainWindow::onAddSoundFileRequested);
+
   menuBar()->addMenu(backendMenu);
 
   QMenu* analyseMenu = new QMenu(tr("Response"), this);
@@ -172,6 +176,10 @@ void MainWindow::onAddFaustBackendRequested(){
 
 void MainWindow::onAddJackBackendRequested(){
   emit addJackBackendRequested();
+}
+
+void MainWindow::onAddSoundFileRequested(){
+    emit addSoundFileRequested();
 }
 
 void MainWindow::openFile(){

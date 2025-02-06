@@ -19,6 +19,8 @@
 #include <Faust.h>
 #include <faust/gui/QTUI.h>
 
+#include <qsoundfilewidget.h>
+
 
 class QFaustView : public QWidget{
     Q_OBJECT
@@ -58,7 +60,10 @@ public:
     std::vector<QJackView *>  jacks;
 #endif
 
+    QSoundFileWidget *addSoundFile();
+
 protected:
     QVector<QFaustView *> fausts;
+    QVector<QSoundFileWidget *> soundfiles;
 
 };

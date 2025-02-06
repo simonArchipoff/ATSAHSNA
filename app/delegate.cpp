@@ -25,6 +25,7 @@ delegate::delegate(MainWindow * m):mw{m}
 #endif
     connect(m,&MainWindow::addFaustBackendRequested,this, &delegate::addFaustBackend);
     connect(m,&MainWindow::AddFaustBackendRequested,this, &delegate::addFaustBackendWithFile);
+    connect(m,&MainWindow::addSoundFileRequested, this, &delegate::addSoundFileBackend);
 }
 
 delegate::~delegate(){
@@ -200,6 +201,13 @@ void delegate::addFaustBackendWithFile(QString path) {
     f->setFile(path);
     /*connect(fb, &QBackendFaust::resultHarmonics, h, &THDPlot::setResult,
             Qt::UniqueConnection);*/
+}
+
+void delegate::addSoundFileBackend(){
+    QString name = "audio" + QString::number(soundfile.size());
+    auto f = mw->backends->addSoundFile();
+    auto fb = new QSoundFile;
+    soundfile.push_back(fb);
 }
 
 void delegate::addResponseDisplay(){

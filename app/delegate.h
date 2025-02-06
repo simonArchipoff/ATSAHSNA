@@ -104,6 +104,10 @@ public:
     void addFaustBackend();
     void addFaustBackendWithFile(QString path);
 
+    void addSoundFileBackend();
+    QVector<QSoundFile *> soundfile;
+
+
     void addResponseDisplay();
     void addHarmonicsDisplay();
     void addSpectrogramDisplay();
