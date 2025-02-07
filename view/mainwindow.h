@@ -41,10 +41,9 @@ signals:
     void addHarmonicsWidgetRequested();
     void addSpectrogramWidgetRequested();
 
-    void addFaustBackendRequested();
-    void AddFaustBackendRequested(QString file);
+    void addFaustBackendRequested(QString file="");
     void addJackBackendRequested();
-    void addSoundFileRequested();
+    void addSoundFileRequested(QString file="");
 };
 
 

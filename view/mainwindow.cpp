@@ -14,6 +14,8 @@
 
 
 
+
+
 MainWindow::MainWindow(QWidget *parent)
     :QMainWindow{parent}
     ,backends{new QBackendsView(this)}
@@ -182,13 +184,24 @@ void MainWindow::onAddSoundFileRequested(){
     emit addSoundFileRequested();
 }
 
+
+bool isAudioFile(const QString &filePath) {
+    QMimeDatabase db;
+    QMimeType type = db.mimeTypeForFile(filePath);
+    return type.name().startsWith("audio/");
+}
+
+
+
 void MainWindow::openFile(){
   auto path = QFileDialog::getOpenFileName(this
                                         , tr("Open File")
                                         ,""
-                                       ,tr("Faust program (*.dsp)"));
+                                       ,"*");
   if(path.endsWith(".dsp")){
-      emit AddFaustBackendRequested(path);
+      emit addFaustBackendRequested(path);
+  }else if(isAudioFile(path)){
+      emit addSoundFileRequested(path);
   }
 }
 

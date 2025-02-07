@@ -6,7 +6,8 @@
 #include <QVBoxLayout>
 #include <QFileDialog>
 #include <QCheckBox>
-#include <QSpinBox>
+#include <QSlider>
+#include <QFormLayout>
 #include <QHBoxLayout>
 #include <vector>
 
@@ -32,14 +33,20 @@ private:
     void setWindow();
     void updateChannelSelection(int channels);
     void toggleChannel(int channel, bool checked);
+    void updateSliderLabel(QSlider *slider, QLabel *label, int sampleRate);
+    void ensureValidWindow();
 
     QPushButton *openFileButton;
     QLabel *infoLabel;
     QLabel *sampleRateLabel;
     QLabel *durationLabel;
-    QSpinBox *startFrameBox;
-    QSpinBox *numFramesBox;
+    QSlider *startFrameSlider;
+    QSlider *numFramesSlider;
+    QLabel *startFrameValueLabel;
+    QLabel *numFramesValueLabel;
     QPushButton *setWindowButton;
-    QVBoxLayout *channelsLayout;
     std::vector<QCheckBox*> channelCheckBoxes;
+    int currentSampleRate = 0;
+    int totalFrames = 0;
 };
+

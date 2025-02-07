@@ -44,16 +44,24 @@ uint soundFile::numberFrames() const{
     return fileHandle->frames();
 }
 
-void soundFile::setInput(uint i){
+void soundFile::setInput(int i){
     assert(i < numberChannels());
     channels_output.erase(i);
     channels_input.insert(i);
+}
+
+void soundFile::unsetInput(int i){
+    assert(i < numberChannels());
+    channels_output.insert(i);
+    channels_input.erase(i);
 }
 
 std::string soundFile::error(){
     std::string s(fileHandle->strError());
     return s;
 }
+
+
 
 void soundFile::setWindow(int start, int number){
     assert(fileHandle && start + number < fileHandle->frames());

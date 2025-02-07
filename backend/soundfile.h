@@ -20,7 +20,8 @@ public:
     uint numberFrames() const ;
     std::string error();
 
-    void setInput(uint);
+    void setInput(int);
+    void unsetInput(int);
     void setWindow(int start, int number);
 
     variant<const vector<ResultHarmonics>, ErrorBackend> getResultHarmonics();

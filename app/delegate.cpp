@@ -24,7 +24,6 @@ delegate::delegate(MainWindow * m):mw{m}
     connect(m,&MainWindow::addJackBackendRequested,this, &delegate::addJackBackend);
 #endif
     connect(m,&MainWindow::addFaustBackendRequested,this, &delegate::addFaustBackend);
-    connect(m,&MainWindow::AddFaustBackendRequested,this, &delegate::addFaustBackendWithFile);
     connect(m,&MainWindow::addSoundFileRequested, this, &delegate::addSoundFileBackend);
 }
 
@@ -179,35 +178,35 @@ protected:
 */
 
 
-void delegate::addFaustBackend() {
-    QString name = "faust" + QString::number(faust.size());
-    auto f = mw->backends->addFaust(name);
-    auto fb = new QBackendFaust(f, name);
-    faust.push_back(fb);
 
-    connect(fb,&QBackendFaust::resultResponse, mw->response,&QResponseView::setResults);
-    connect(fb,&QBackendFaust::resultHarmonics, mw->harmonic, &QHarmonicView::setResults);
-    /*connect(fb, &QBackendFaust::resultHarmonics, h, &THDPlot::setResult,
-            Qt::UniqueConnection);*/
-}
-
-void delegate::addFaustBackendWithFile(QString path) {
+void delegate::addFaustBackend(QString path) {
     QString name = "faust" + QString::number(faust.size());
     auto f = mw->backends->addFaust(name);
     auto fb = new QBackendFaust(f, name);
     faust.push_back(fb);
     connect(fb,&QBackendFaust::resultResponse, mw->response,&QResponseView::setResults);
     connect(fb,&QBackendFaust::resultHarmonics, mw->harmonic, &QHarmonicView::setResults);
-    f->setFile(path);
+    if(path!=""){
+        f->setFile(path);
+    }
     /*connect(fb, &QBackendFaust::resultHarmonics, h, &THDPlot::setResult,
             Qt::UniqueConnection);*/
 }
 
-void delegate::addSoundFileBackend(){
+void delegate::addSoundFileBackend(QString path){
     QString name = "audio" + QString::number(soundfile.size());
     auto f = mw->backends->addSoundFile();
     auto fb = new QSoundFile;
     soundfile.push_back(fb);
+    connect(f,  &QSoundFileWidget::openFileRequested, fb, &QSoundFile::openFile);
+    connect(fb, &QSoundFile::newFileOpen, f, &QSoundFileWidget::handleNewFileOpen);
+    connect(fb, &QSoundFile::fileFailed, f, &QSoundFileWidget::handleFileFailed);
+    connect(f,  &QSoundFileWidget::setInputChannelRequested, fb, &QSoundFile::setInput);
+    connect(f,  &QSoundFileWidget::unsetInputChannelRequested, fb, &QSoundFile::unsetInput);
+    connect(f,  &QSoundFileWidget::setWindowRequested, fb, &QSoundFile::setWindow);
+    if(path != ""){
+        fb->openFile(path);
+    }
 }
 
 void delegate::addResponseDisplay(){
@@ -264,4 +263,8 @@ void QSoundFile::openFile(QString path){
 
 void QSoundFile::setInput(int i){
     soundfile->setInput(i);
+}
+
+void QSoundFile::unsetInput(int i){
+    soundfile->unsetInput(i);
 }

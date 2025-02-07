@@ -73,6 +73,7 @@ public:
     void openFile(QString path);
 
     void setInput(int i);
+    void unsetInput(int i);
 
     void requestResponse();
     void requestHarmonics();
@@ -101,10 +102,9 @@ public:
     delegate(MainWindow * mw);
     ~delegate();
 
-    void addFaustBackend();
-    void addFaustBackendWithFile(QString path);
+    void addFaustBackend(QString path="");
 
-    void addSoundFileBackend();
+    void addSoundFileBackend(QString path="");
     QVector<QSoundFile *> soundfile;
 
 
