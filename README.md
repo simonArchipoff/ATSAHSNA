@@ -8,7 +8,7 @@ It's licenced under GPLv3.
 
 
 What's already implemented:
-- two backend (faust and jackd)
+- tree backend (faust, jackd, and soundfile)
 - impulse/step response
 - harmonic spectrum, THD computation (THD, THD+N, SNR)
 - waterfall measures
@@ -27,7 +27,7 @@ Regarding IO and data acquisition :
   - mixing soundcards (for instance to test the input of one against the output of an other)
 - simpler code (I am tâtonning)
 - introduce arbitrary correction from input (like the inverse of a microphone response)
-- more backends (C, C++, Python, soundfile, something more standard like pulseaudio) 
+- more backends (C, C++, Python, something more standard like pulseaudio) 
 - some tests for more trust in the computations.
 
 
@@ -48,5 +48,6 @@ Dependancy:
 * moodycamel lockfree queue (already in the repository)
 * QCustomPlot (via cmake fetch)
 * Catch2 (via cmake fetch
+* sndfiles
 
 When I started this project, I didn't knew that one : https://github.com/mincequi/qLouder, you should check it out as well
