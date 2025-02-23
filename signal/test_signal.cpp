@@ -90,7 +90,32 @@ TEST_CASE("computeTHD square") {
     p.freqMin = 1;
     p.frequency = 1;
     ResultHarmonics thd = computeTHD(p,v,t);
-    REQUIRE(std::abs(thd.thdRate - 48.34) < 0.01);
+    REQUIRE(std::abs(100.*thd.thdRate - 48.34) < 0.01);
+}
+
+
+TEST_CASE("computeTHD sin") {
+    VD v = sinusoid(1000,1,40000);
+    ParamHarmonics p;
+    p.freqMax =20000;
+    p.freqMin = 1;
+    p.frequency = 1000;
+    double level_noise = 0.001;
+    ResultHarmonics thd = computeTHD(p,v,40000);
+    REQUIRE(thd.thdRate < 0.00001);
+    for(int i = 0; i < v.size(); i++){
+        v[i] = level_noise * (((2.0 * rand())/RAND_MAX) - 1);
+    }
+    auto f = rms_r(v.begin(),v.end());
+    auto e_noise = level_noise / sqrt(3);
+    REQUIRE(std::abs(f - e_noise) < 1e-6);
+    v = sinusoid(1000,1,40000);
+    for(int i = 0; i < v.size(); i++){
+        v[i] += level_noise * (((2.0 * rand())/RAND_MAX) - 1);
+    }
+    double thdntheoric = e_noise / (1/sqrt(2));
+    thd = computeTHD(p,v,40000);
+    REQUIRE(std::abs(thd.thdNoiseRate - thdntheoric)  < 1e-6);
 }
 
 

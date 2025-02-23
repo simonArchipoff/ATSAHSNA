@@ -45,6 +45,7 @@ private:
     QLabel *startFrameValueLabel;
     QLabel *numFramesValueLabel;
     QPushButton *setWindowButton;
+    QVBoxLayout *channelLayout;
     std::vector<QCheckBox*> channelCheckBoxes;
     int currentSampleRate = 0;
     int totalFrames = 0;

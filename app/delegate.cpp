@@ -204,6 +204,7 @@ void delegate::addSoundFileBackend(QString path){
     connect(f,  &QSoundFileWidget::setInputChannelRequested, fb, &QSoundFile::setInput);
     connect(f,  &QSoundFileWidget::unsetInputChannelRequested, fb, &QSoundFile::unsetInput);
     connect(f,  &QSoundFileWidget::setWindowRequested, fb, &QSoundFile::setWindow);
+    connect(fb, &QSoundFile::resultHarmonics, mw->harmonic, &QHarmonicView::setResults);
     if(path != ""){
         fb->openFile(path);
     }
@@ -250,6 +251,7 @@ QSoundFile::~QSoundFile(){
 
 void QSoundFile::setWindow(int start, int nb){
     soundfile->setWindow(start,nb);
+    emit resultHarmonics(soundfile->getResultHarmonics());
 }
 
 void QSoundFile::openFile(QString path){

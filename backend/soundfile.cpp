@@ -64,13 +64,21 @@ std::string soundFile::error(){
 
 
 void soundFile::setWindow(int start, int number){
-    assert(fileHandle && start + number < fileHandle->frames());
+    assert(fileHandle && start + number <= fileHandle->frames());
     start_frame = start;
     nb_frames = number;
 }
 
 variant<const vector<ResultHarmonics>, ErrorBackend> soundFile::getResultHarmonics(){
-    return ErrorBackend();
+    auto f = getFrames();
+    std::vector<ResultHarmonics> res;
+    int i = 0;
+    for(auto o : f.outputs){
+        auto r = computeTHD(paramHarmonics,  o, getSampleRate());
+        res.push_back(r);
+        r.name = std::to_string(i++);
+    }
+    return std::variant<const std::vector<ResultHarmonics>,ErrorBackend>(res);
 }
 
 variant<const vector<ResultResponse>, ErrorBackend> soundFile::getResultResponse(){
@@ -86,7 +94,7 @@ soundFile::Data soundFile::getFrames(){
         assert(start_frame < fileHandle->frames());
         f = fileHandle->frames() - start_frame;
     } else {
-        assert(start_frame + nb_frames < fileHandle->frames());
+        assert(start_frame + nb_frames <= fileHandle->frames());
         f = nb_frames;
     }
 
@@ -107,10 +115,10 @@ soundFile::Data soundFile::getFrames(){
     const vector<int> vect_output(channels_output.cbegin(),channels_output.cend());
 
     for(int i = 0; i < f; i++){
-        for(auto idx = 0; i < vect_input.size(); idx++){
+        for(auto idx = 0; idx < vect_input.size(); idx++){
             d.inputs[idx][i] = tmp[i+vect_input[idx]];
         }
-        for(auto idx = 0 ; i < vect_output.size(); idx++){
+        for(auto idx = 0 ; idx < vect_output.size(); idx++){
             d.outputs[idx][i] = tmp[i + vect_output[idx]];
         }
     }

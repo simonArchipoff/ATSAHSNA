@@ -45,6 +45,8 @@ void QSoundFileWidget::setupUI() {
     formLayout->addRow("Number of Frames:", numFramesSlider);
     formLayout->addRow("Number of Frames Value:", numFramesValueLabel);
     formLayout->addRow("Set Window:", setWindowButton);
+    channelLayout = new QVBoxLayout();
+    formLayout->addRow("Input Channels",channelLayout);
 
     mainLayout->addLayout(formLayout);
 }
@@ -58,15 +60,18 @@ void QSoundFileWidget::openFile() {
 
 void QSoundFileWidget::handleNewFileOpen(int channels, int frames, int sampleRate) {
     infoLabel->setText("File Loaded Successfully");
-    sampleRateLabel->setText(QString("Sample Rate: %1").arg(sampleRate));
-    durationLabel->setText(QString("Duration: %1 sec").arg(frames / float(sampleRate)));
+    sampleRateLabel->setText(QString("%1").arg(sampleRate));
+    durationLabel->setText(QString("%1 sec").arg(frames / float(sampleRate)));
 
     currentSampleRate = sampleRate;
     totalFrames = frames;
-
+    updateChannelSelection(channels);
+    startFrameSlider->setRange(0,totalFrames-1);
+    numFramesSlider->setRange(1,totalFrames);
     updateSliderLabel(startFrameSlider, startFrameValueLabel, currentSampleRate);
     updateSliderLabel(numFramesSlider, numFramesValueLabel, currentSampleRate);
     ensureValidWindow();
+
 }
 
 void QSoundFileWidget::handleFileFailed(QString error) {
@@ -75,6 +80,30 @@ void QSoundFileWidget::handleFileFailed(QString error) {
 
 void QSoundFileWidget::setWindow() {
     emit setWindowRequested(startFrameSlider->value(), numFramesSlider->value());
+}
+
+void QSoundFileWidget::updateChannelSelection(int channels) {
+    qDeleteAll(channelCheckBoxes);
+    channelCheckBoxes.clear();
+    channelLayout->update();
+
+    for (int i = 0; i < channels; ++i) {
+        QCheckBox *checkBox = new QCheckBox(QString("Channel %1").arg(i + 1), this);
+        channelLayout->addWidget(checkBox);
+        channelCheckBoxes.push_back(checkBox);
+
+        connect(checkBox, &QCheckBox::toggled, this, [=](bool checked) {
+            toggleChannel(i, checked);
+        });
+    }
+}
+
+void QSoundFileWidget::toggleChannel(int channel, bool checked){
+    if(checked){
+        emit setInputChannelRequested(channel);
+    } else {
+        emit unsetInputChannelRequested(channel);
+    }
 }
 
 void QSoundFileWidget::updateSliderLabel(QSlider *slider, QLabel *label, int sampleRate) {

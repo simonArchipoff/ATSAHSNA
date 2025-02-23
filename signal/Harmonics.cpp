@@ -99,9 +99,8 @@ vector<slice> find_harmonics(const vector<double> &v, int smax){
 */
 struct SignalNoiseHarmonics{
 public:
-    SignalNoiseHarmonics(const vector<double> &v, uint smin, uint smax){
-        auto f = std::distance(v.begin(),std::max_element(v.begin()+smin,v.begin()+smax));
-        SignalNoiseHarmonics(v,f,smin,smax);
+    SignalNoiseHarmonics(const vector<double> &v, uint smin, uint smax):SignalNoiseHarmonics(v, std::distance(v.begin(),std::max_element(v.begin()+smin,v.begin()+smax)),smin,smax)
+    {
     }
     SignalNoiseHarmonics(const vector<double> &v, uint fundamental,uint smin,uint smax){
         assert(smin <= fundamental && fundamental <= smax);
@@ -141,10 +140,10 @@ public:
     }
 
     double thd(){
-        return 100.  * h / s ;
+        return  h / s ;
     }
     double thdn(){
-        return 100. * sqrt(h * h + n * n) / s ;
+        return  sqrt(h * h + n * n) / s;
     }
     double snr(){
         return 20 * log10(s / n);
