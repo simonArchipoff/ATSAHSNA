@@ -29,3 +29,6 @@ ResultResponse computeResponse(ParamResponse p,
                                const VD & in,
                                const VD & out,
                                uint sampleRate);
+ResultResponse computeResponse(ParamResponse p,
+                               const VD&out,
+                               uint sampleRate);

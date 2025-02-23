@@ -82,6 +82,7 @@ struct APF {
 FDF compute_TF_FFT(const vector<APF> v, uint sampleRate);
 
 FDF compute_TF_FFT(const VD  &input, const VD  &output, uint sampleRate);
+FDF compute_TF_FFT(const VD  &output, uint sampleRate);
 FDF compute_TF_FFT(const VCD &input, const VCD &output, uint sampleRate);
 FDF compute_TF_FFT(const VCD &output, uint sampleRate);
 VCD computeDFT(const VD &input);

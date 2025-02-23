@@ -9,6 +9,10 @@ ResultResponse computeResponse(ParamResponse p,
     return {.response = compute_TF_FFT(in,out,sampleRate)
             ,.params = p};
 }
+ResultResponse computeResponse(ParamResponse p, const VD&out, uint sampleRate){
+    return {.response = compute_TF_FFT(out,sampleRate)
+            ,.params = p};
+}
 
 
 VCD computeChirp(ParamResponse p, uint sampleRate){

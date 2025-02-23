@@ -177,6 +177,16 @@ FDF compute_TF_FFT(const vector<double> &input, const vector<double> &output, ui
 }
 
 
+FDF compute_TF_FFT(const vector<double> &output, uint sampleRate){
+
+    VCD out(output.size());
+    for(int i = 0; i < out.size(); i++){
+        out[i] = complex<double>(output[i],0);
+    }
+    return compute_TF_FFT(out,sampleRate);
+}
+
+
 FDF compute_TF_FFT(const VCD &input, const VCD &output, uint sampleRate){
     assert(input.size() == output.size());
 

@@ -82,7 +82,27 @@ variant<const vector<ResultHarmonics>, ErrorBackend> soundFile::getResultHarmoni
 }
 
 variant<const vector<ResultResponse>, ErrorBackend> soundFile::getResultResponse(){
-    return ErrorBackend();
+
+    auto data = getFrames();
+    std::vector<ResultResponse> res;
+
+    int i = 0;
+    for(const auto & o : data.outputs){
+        if(data.inputs.empty()){
+            auto tmp = computeResponse(paramResponse,o,getSampleRate());
+            tmp.name =  "file_" + std::to_string(i++) ;
+            res.push_back(tmp);
+        }else{
+            for(const auto & in : data.inputs){
+                auto tmp = computeResponse(paramResponse,in,o,getSampleRate());
+                tmp.name =  "file_" + std::to_string(i++) ;
+                res.push_back(tmp);
+            }
+        }
+//        auto tmp =  computeResponse(paramResponse,in, o, getSampleRate());
+
+    }
+    return std::variant<const std::vector<ResultResponse>,ErrorBackend>(res);
 }
 
 soundFile::Data soundFile::getFrames(){

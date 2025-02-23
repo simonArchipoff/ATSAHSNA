@@ -81,8 +81,8 @@ public:
 signals:
     void newFileOpen(int number_channels, int number_frames, int sample_rate);
     void fileFailed(QString s);
-    void resultResponse(const std::variant<const std::vector<ResultResponse>,   ErrorBackend>& response);
-    void resultHarmonics(const std::variant< const std::vector<ResultHarmonics>,ErrorBackend>& harmonics);
+    void resultResponse(  std::variant<const std::vector<ResultResponse>,   ErrorBackend>& response);
+    void resultHarmonics( std::variant<const std::vector<ResultHarmonics>, ErrorBackend>& harmonics);
 
 private:
     soundFile * soundfile;
