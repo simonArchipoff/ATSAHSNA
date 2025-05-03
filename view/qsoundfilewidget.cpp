@@ -121,8 +121,8 @@ void QSoundFileWidget::ensureValidWindow() {
         numFramesSlider->setValue(numFrames);
     }
 
-    if (numFrames < 1) {
-        numFrames = 1;
+    if (numFrames < 3) {
+        numFrames = 3;
         numFramesSlider->setValue(numFrames);
     }
 
