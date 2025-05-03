@@ -10,7 +10,7 @@ add_compile_options(-fsanitize=address)
 add_link_options(-fsanitize=address)
 endif()
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets LinguistTools Multimedia)
+find_package(Qt6  REQUIRED COMPONENTS Core Widgets LinguistTools )
 
 qt_standard_project_setup()
 
@@ -67,7 +67,6 @@ FetchContent_MakeAvailable(QCustomPlot)
 
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-find_package(QT NAMES Qt6 COMPONENTS Core Widgets  LinguistTools REQUIRED)
 
 
 include(CMakePrintHelpers)
