@@ -10,6 +10,7 @@ add_compile_options(-fsanitize=address)
 add_link_options(-fsanitize=address)
 endif()
 
+
 find_package(Qt6  REQUIRED COMPONENTS Core Widgets LinguistTools )
 
 qt_standard_project_setup()
@@ -55,13 +56,27 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
+#FetchContent_Declare(
+#  qcustomplot
+#  GIT_REPOSITORY https://gitlab.com/ecme2/QCustomPlot.git
+#  GIT_TAG v2.1.1
+#)
 FetchContent_Declare(
-  QCustomPlot
-  GIT_REPOSITORY https://github.com/legerch/QCustomPlot-library
-  GIT_TAG 2.1.1.1
+  qcustomplot
+  URL https://www.qcustomplot.com/release/2.1.1/QCustomPlot-source.tar.gz
 )
 
-FetchContent_MakeAvailable(QCustomPlot)
+FetchContent_MakeAvailable(qcustomplot)
+add_library(qcustomplot STATIC
+    ${qcustomplot_SOURCE_DIR}/qcustomplot.cpp
+)
+
+target_include_directories(qcustomplot PUBLIC
+    ${qcustomplot_SOURCE_DIR}
+)
+
+find_package(Qt6 REQUIRED COMPONENTS PrintSupport)
+target_link_libraries(qcustomplot PUBLIC Qt6::Core Qt6::Widgets Qt6::PrintSupport)
 
 #find_package(Catch2 2 REQUIRED)
 
@@ -82,6 +97,7 @@ add_subdirectory(backend)
 add_subdirectory(signal)
 add_subdirectory(view)
 add_subdirectory(app)
+
 
 add_executable(tests test_helpers.cpp signal/test_signal.cpp backend/test_backend.cpp backend/test_rtmodule.cpp
     benchmark.h )
