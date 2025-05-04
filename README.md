@@ -2,6 +2,12 @@
 
 This project aims to be a free/libre software to perform accoustical measures.
 
+![spectrogram](doc/spectrogram.png)
+
+![impulse response](doc/impulse.png)
+ 
+![harmonics analysis](doc/harmonics.png)
+ 
 It's licenced under GPLv3.
 
 /!\ For now it's under heavy development, you can play with it but please dont build something with it yet.

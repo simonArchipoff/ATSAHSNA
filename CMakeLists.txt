@@ -46,21 +46,9 @@ FetchContent_Declare(
   GIT_TAG        v3.3.2 # or a later release
 )
 
-FetchContent_Declare(
-    KFR
-    GIT_REPOSITORY https://github.com/kfrlib/kfr.git
-    GIT_TAG 6.0.0
-)
-
-#FetchContent_MakeAvailable(KFR)
-
 FetchContent_MakeAvailable(Catch2)
 
-#FetchContent_Declare(
-#  qcustomplot
-#  GIT_REPOSITORY https://gitlab.com/ecme2/QCustomPlot.git
-#  GIT_TAG v2.1.1
-#)
+
 FetchContent_Declare(
   qcustomplot
   URL https://www.qcustomplot.com/release/2.1.1/QCustomPlot-source.tar.gz
@@ -128,16 +116,5 @@ set(PROJECT_SOURCES
 
 
 
-#target_link_libraries(ATSAHSNA PRIVATE Qt::Core fCWT backend signal view)
-
-#install(TARGETS ATSAHSNA
-#    BUNDLE DESTINATION .
-#    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-#)
-
-#if(QT_VERSION_MAJOR EQUAL 6)
-#    qt_finalize_executable(ATSAHSNA)
-#endif()
 
 
