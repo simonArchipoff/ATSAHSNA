@@ -47,7 +47,7 @@ Dependancy:
 * Jack
 * moodycamel lockfree queue (already in the repository)
 * QCustomPlot (via cmake fetch)
-* Catch2 (via cmake fetch
+* Catch2 (via cmake fetch)
 * sndfiles
 
 When I started this project, I didn't knew that one : https://github.com/mincequi/qLouder, you should check it out as well
