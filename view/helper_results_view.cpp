@@ -48,7 +48,7 @@ MyQCustomPlot::MyQCustomPlot(QWidget *parent)
     rescaleAxes();
 }
 
-ResultBase::ResultBase(QString name, QWidget *parent):QWidget(parent),layout(new QVBoxLayout){
+ResultBase::ResultBase(QString name, QWidget *parent):QWidget(parent),layout(new QVBoxLayout),configureWidget(nullptr){
     setLayout(layout);
     QHBoxLayout * hlayout = new QHBoxLayout;
     layout->addLayout(hlayout);

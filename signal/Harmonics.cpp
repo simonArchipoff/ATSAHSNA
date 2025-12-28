@@ -160,7 +160,7 @@ public:
 ResultHarmonics computeTHD(const ParamHarmonics p, const VD& signal, int sampleRate){
 
     assert( p.freqMin <= p.frequency && p.frequency <= p.freqMax);
-    assert(signal.size() > 1);
+    assert(signal.size() > 0);
     double duration = static_cast<double>(signal.size()) / sampleRate;
 
     VCD signalfft = computeDFT(signal);
@@ -177,6 +177,7 @@ ResultHarmonics computeTHD(const ParamHarmonics p, const VD& signal, int sampleR
     }
     uint imax = p.frequency * duration;
     assert(imax < amplitude.size());
+    assert(imax > 0);
     imax = std::distance(amplitude.begin(),std::max_element(amplitude.begin()+imax-1,amplitude.begin()+imax+1));
 
     assert(imax > 0);

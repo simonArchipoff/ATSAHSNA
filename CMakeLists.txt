@@ -45,23 +45,25 @@ FetchContent_Declare(
   GIT_TAG        v3.3.2 # or a later release
 )
 
-FetchContent_Declare(
-    KFR
-    GIT_REPOSITORY https://github.com/kfrlib/kfr.git
-    GIT_TAG 6.0.0
-)
-
-#FetchContent_MakeAvailable(KFR)
-
 FetchContent_MakeAvailable(Catch2)
 
+
 FetchContent_Declare(
-  QCustomPlot
-  GIT_REPOSITORY https://github.com/legerch/QCustomPlot-library
-  GIT_TAG 2.1.1.1
+  qcustomplot
+  URL https://www.qcustomplot.com/release/2.1.1/QCustomPlot-source.tar.gz
 )
 
-FetchContent_MakeAvailable(QCustomPlot)
+FetchContent_MakeAvailable(qcustomplot)
+add_library(qcustomplot STATIC
+    ${qcustomplot_SOURCE_DIR}/qcustomplot.cpp
+)
+
+target_include_directories(qcustomplot PUBLIC
+    ${qcustomplot_SOURCE_DIR}
+)
+
+find_package(Qt6 REQUIRED COMPONENTS PrintSupport)
+target_link_libraries(qcustomplot PUBLIC Qt6::Core Qt6::Widgets Qt6::PrintSupport)
 
 #find_package(Catch2 2 REQUIRED)
 
@@ -82,6 +84,7 @@ add_subdirectory(backend)
 add_subdirectory(signal)
 add_subdirectory(view)
 add_subdirectory(app)
+
 
 add_executable(tests test_helpers.cpp signal/test_signal.cpp backend/test_backend.cpp backend/test_rtmodule.cpp
     benchmark.h )
@@ -112,16 +115,5 @@ set(PROJECT_SOURCES
 
 
 
-#target_link_libraries(ATSAHSNA PRIVATE Qt::Core fCWT backend signal view)
-
-#install(TARGETS ATSAHSNA
-#    BUNDLE DESTINATION .
-#    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-#)
-
-#if(QT_VERSION_MAJOR EQUAL 6)
-#    qt_finalize_executable(ATSAHSNA)
-#endif()
 
 
