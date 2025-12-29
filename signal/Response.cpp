@@ -3,19 +3,19 @@
 
 
 ResultResponse computeResponse(ParamResponse p,
-                               const VD & in,
-                               const VD & out,
+                               const VF & in,
+                               const VF & out,
                                uint sampleRate){
     return {.response = compute_TF_FFT(in,out,sampleRate)
             ,.params = p};
 }
-ResultResponse computeResponse(ParamResponse p, const VD&out, uint sampleRate){
+ResultResponse computeResponse(ParamResponse p, const VF&out, uint sampleRate){
     return {.response = compute_TF_FFT(out,sampleRate)
             ,.params = p};
 }
 
 
-VCD computeChirp(ParamResponse p, uint sampleRate){
+VCF computeChirp(ParamResponse p, uint sampleRate){
     assert(sampleRate > 0);
     double dur = 1./p.freqMin;
     assert(dur > 0);

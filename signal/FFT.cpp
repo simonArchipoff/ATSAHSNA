@@ -1,86 +1,123 @@
 #include "FFT.h"
 #include <cassert>
-#include <mutex>
-#include <omp.h>
-using std::mutex;
-
-static mutex plan_mutex;
 
 
-FFTWScopedLocker::FFTWScopedLocker(){
-    plan_mutex.lock();
-}
 
-FFTWScopedLocker::~FFTWScopedLocker(){
-    plan_mutex.unlock();
-}
+#include <vector>
+#include <complex>
+#include <cassert>
+#include <kiss_fft.h>
+#include <kiss_fftr.h>
 
+using VF  = std::vector<float>;
+using VCF = std::vector<std::complex<float>>;
 
-class FFTWLockPthread:FFTWScopedLocker{
-public:
-    FFTWLockPthread(){
-        auto n = omp_get_max_threads();
-        fftwf_plan_with_nthreads(n);
-    }
-    ~FFTWLockPthread(){
-        fftwf_plan_with_nthreads(1);
-    }
-};
-
-VCD fft(const VD & input){
-    VCD out(input.size());
-    fftw_plan p;
-    {
-        FFTWLockPthread l;
-        p = fftw_plan_dft_r2c_1d(input.size(), const_cast<double *>(input.data()), (fftw_complex*)out.data(), FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
-    }
-    fftw_execute(p);
-    fftw_destroy_plan(p);
-    return out;
-}
-VCD fft(const VCD & input){
-    VCD out(input.size());
-    fftw_plan p;
-    {
-        FFTWLockPthread l;
-        p = fftw_plan_dft_1d(input.size(), (fftw_complex*) const_cast<complex<double>*>(input.data()), (fftw_complex*)out.data(),FFTW_FORWARD, FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
-    }
-    fftw_execute(p);
-    fftw_destroy_plan(p);
-    return out;
-}
-
-VCD fft(const VD&  input, int size){
-    VD ci(input);
+VCF fft(const VF&  input, int size){
+    VF ci(input);
     ci.resize(size,0);
     return fft(ci);
 }
-VCD fft(const VCD& input, int size){
-    VCD ci(input);
+VCF fft(const VCF& input, int size){
+    VCF ci(input);
     ci.resize(size,0);
     return fft(ci);
 }
 
-void rfft(const VCD & input, VD & out, int size){
-    out.resize(size);
-    fftw_plan p;
-    {
-        FFTWLockPthread l;
-        p = fftw_plan_dft_c2r_1d(size,(fftw_complex*) const_cast<complex<double>*>(input.data()), out.data(), FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
-    }
+VCF fft(const VF& input)
+{
+    const int N = (int)input.size();
+    const int No =  N/2 + 1;
+    assert(N > 0);
 
-    fftw_execute(p);
-    fftw_destroy_plan(p);
+    kiss_fftr_cfg cfg = kiss_fftr_alloc(N, 0, nullptr, nullptr);
+
+    std::vector<kiss_fft_cpx> out(No);
+
+
+
+    kiss_fftr(cfg, input.data(), out.data());
+    kiss_fft_free(cfg);
+
+    VCF result(No);
+    for (int i = 0; i < No; ++i)
+        result[i] = { out[i].r, out[i].i };
+
+    return result;
 }
 
+// FFT complexe -> complexe
+VCF fft(const VCF& input)
+{
+    const int N = (int)input.size();
+    assert(N > 0);
 
-void rfft(const VCD & input, VCD & out){
-    out.resize(input.size());
-    fftw_plan p;
+    kiss_fft_cfg cfg = kiss_fft_alloc(N, 0, nullptr, nullptr);
+
+    std::vector<kiss_fft_cpx> in(N), out(N);
+
+    for (int i = 0; i < N; ++i)
     {
-        FFTWLockPthread l;
-        p = fftw_plan_dft_1d(input.size(),(fftw_complex*) const_cast<complex<double>*>(input.data()), (fftw_complex*)out.data(), FFTW_BACKWARD, FFTW_ESTIMATE|FFTW_PRESERVE_INPUT);
+        in[i].r = input[i].real();
+        in[i].i = input[i].imag();
     }
-    fftw_execute(p);
-    fftw_destroy_plan(p);
+
+    kiss_fft(cfg, in.data(), out.data());
+    kiss_fft_free(cfg);
+
+    VCF result(N);
+    for (int i = 0; i < N; ++i)
+        result[i] = { out[i].r, out[i].i };
+
+    return result;
+}
+
+/* ============================================================
+   FFT inverse (rfft = IFFT)
+   ============================================================ */
+
+// IFFT complexe -> réel
+void rfft(const VCF& input, VF& output, int size)
+{
+    const int N = size / 2 + 1;
+    const int No = size;
+    assert(N > 0);
+    assert((int)input.size() >= N);
+
+    kiss_fftr_cfg cfg = kiss_fftr_alloc(N, 1, nullptr, nullptr);
+
+    std::vector<kiss_fft_cpx> in(N);
+    VF out(No);
+
+    kiss_fftri(cfg, in.data(), out.data());
+    kiss_fftr_free(cfg);
+
+    const float invN = 1.0f / N;
+    for (int i = 0; i < No; ++i)
+        out[i] = out[i] * invN;   // partie réelle
+}
+
+// IFFT complexe -> complexe
+void rfft(const VCF& input, VCF& output)
+{
+    const int N = (int)input.size();
+    assert(N > 0);
+
+    kiss_fft_cfg cfg = kiss_fft_alloc(N, 1, nullptr, nullptr);
+
+    std::vector<kiss_fft_cpx> in(N), out(N);
+
+    for (int i = 0; i < N; ++i)
+    {
+        in[i].r = input[i].real();
+        in[i].i = input[i].imag();
+    }
+
+    kiss_fft(cfg, in.data(), out.data());
+    free(cfg);
+
+    output.resize(N);
+
+    const float invN = 1.0f / N;
+    for (int i = 0; i < N; ++i)
+        output[i] = { out[i].r * invN, out[i].i * invN };
 }

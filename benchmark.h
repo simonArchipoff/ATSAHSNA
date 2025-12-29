@@ -6,7 +6,7 @@
 
 class Benchmark {
 private:
-    std::vector<double> timings;
+    std::VF timings;
     std::string methodName;
 
 public:

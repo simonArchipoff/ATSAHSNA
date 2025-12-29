@@ -17,7 +17,7 @@ class FDF
 public:
     FDF(){}
     //FDF(const FDF&) = default;
-    FDF(const vector<complex<double>> &v, uint sampleRate):response(v),
+    FDF(const VCF &v, uint sampleRate):response(v),
         sampleRate(sampleRate),
         f1(sampleRate / ((double) response.size())){}
     //DTF(const DTF&&) = default;
@@ -29,17 +29,17 @@ public:
     FDF neutralAdd() const ;
     FDF neutralMult() const;
 
-    const VCD & getResponse() const;
+    const VCF & getResponse() const;
 
     void setSampleRate(uint sr);
     uint getSampleRate() const;
 
-    VD getAmplitude() const;
-    VD getAmplitude20log10() const;
-    VD getPhase() const;
-    VD getFrequency() const;
+    VF getAmplitude() const;
+    VF getAmplitude20log10() const;
+    VF getPhase() const;
+    VF getFrequency() const;
 
-    //std::tuple<VD,VD,VD> getDecimatedAmplitude20log10PhaseFrequency(int step) const;
+    //std::tuple<VF,VF,VF> getDecimatedAmplitude20log10PhaseFrequency(int step) const;
 
     double getMaxAmplitude() const;
     double getMinAmplitude() const;
@@ -47,11 +47,11 @@ public:
     double getMinAmplitude20log10() const;
 
     //inverse transform :
-    VD frequencyDomainTotemporal() const;
-    VD frequencyDomainToStepTemporal() const;
+    VF frequencyDomainTotemporal() const;
+    VF frequencyDomainToStepTemporal() const;
     FDF reduce(uint factor) const;
 protected:
-    VCD response;
+    VCF response;
     uint sampleRate;
     double f1;
 };
@@ -62,16 +62,16 @@ public:
     FDFLOG(const FDFLOG &) = default;
     FDFLOG(const FDF&,uint base = 10);
 
-    VD getAmplitude() const;
-    VD getAmplitude20log10() const;
-    VD getPhase() const;
-    VD getFrequency() const;
+    VF getAmplitude() const;
+    VF getAmplitude20log10() const;
+    VF getPhase() const;
+    VF getFrequency() const;
 
     void trimLF(double f);
     void trimHF(double f);
 
 protected:
-    VD amplitude,phase,frequency;
+    VF amplitude,phase,frequency;
 };
 
 struct APF {
@@ -81,11 +81,11 @@ struct APF {
 
 FDF compute_TF_FFT(const vector<APF> v, uint sampleRate);
 
-FDF compute_TF_FFT(const VD  &input, const VD  &output, uint sampleRate);
-FDF compute_TF_FFT(const VD  &output, uint sampleRate);
-FDF compute_TF_FFT(const VCD &input, const VCD &output, uint sampleRate);
-FDF compute_TF_FFT(const VCD &output, uint sampleRate);
-VCD computeDFT(const VD &input);
+FDF compute_TF_FFT(const VF  &input, const VF  &output, uint sampleRate);
+FDF compute_TF_FFT(const VF  &output, uint sampleRate);
+FDF compute_TF_FFT(const VCF &input, const VCF &output, uint sampleRate);
+FDF compute_TF_FFT(const VCF &output, uint sampleRate);
+VCF computeDFT(const VF &input);
 
 
 

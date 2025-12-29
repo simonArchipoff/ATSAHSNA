@@ -2,7 +2,6 @@
 
 #include <FFT.h>
 #include <assert.h>
-#include <fftw3.h>
 #include <cmath>
 #include <cstring>
 
@@ -11,7 +10,7 @@
 
 
 
-inline double window_sample(const enum window_type t, double s){
+inline float window_sample(const enum window_type t, double s){
     double a0 = 0.53836;
     double a1 = 0.46164; // hamming parameters
     switch(t){
@@ -31,8 +30,8 @@ inline double window_sample(const enum window_type t, double s){
 }
 
 
-VD window(uint size, window_type t){
-    VD w(size,1.0);
+VF window(uint size, window_type t){
+    VF w(size,1.0);
     switch(t){
     case BOXCAR:
         return w;
@@ -49,13 +48,13 @@ VD window(uint size, window_type t){
     }
 }
 
-template<typename VD>
-VD reverse(const VD&v){
+template<typename VF>
+VF reverse(const VF&v){
     return std::vector(v.rbegin(),v.rend());
 }
 
-VCD reverse_and_conj(const VCD & v){
-    VCD r = reverse(v);
+VCF reverse_and_conj(const VCF & v){
+    VCF r = reverse(v);
     for(auto &i : r){
         i = std::conj(i);
     }
@@ -63,15 +62,15 @@ VCD reverse_and_conj(const VCD & v){
 }
 
 
-VD correlation_fft(const VD&a, const VD&b){
+VF correlation_fft(const VF&a, const VF&b){
     return convolution_fft(a,reverse(b));
 }
 
 template<typename T>
 T _convolution_fft(const T&a,const T&b){
     uint lenght = a.size() + b.size() - 1;
-    VCD af=fft(a,lenght);
-    VCD bf=fft(b,lenght);
+    VCF af=fft(a,lenght);
+    VCF bf=fft(b,lenght);
     assert(af.size() == bf.size());
     for(uint i = 0; i < af.size(); i++){
         af[i] = af[i]*bf[i];
@@ -83,14 +82,14 @@ T _convolution_fft(const T&a,const T&b){
     }
     return out;
 }
-VD convolution_fft(const VD&a, const VD&b){
-    return _convolution_fft<VD>(a,b);
+VF convolution_fft(const VF&a, const VF&b){
+    return _convolution_fft<VF>(a,b);
 }
 
 
 
 
-void find_maximums(const VD & in, vector<int> & idx, vector<double> & maxs, double minimum_max){
+void find_maximums(const VF & in, vector<int> & idx, vector<float> & maxs, double minimum_max){
     idx.resize(0);
     maxs.resize(0);
     if(in.size() > 1 && in[0] > in[1] && in[0] > minimum_max){ //is first element a maximum?
@@ -110,11 +109,8 @@ void find_maximums(const VD & in, vector<int> & idx, vector<double> & maxs, doub
 }
 
 
-
-
-
-VD try_make_phase_continuous(const VD &v){
-    vector<double> res = VD{v};
+VF try_make_phase_continuous(const VF &v){
+    vector<float> res = VF{v};
     for(uint i = 1; i < v.size() ; i++){
         auto prev = res[i-1];
         int k = static_cast<int>(std::round((prev-v[i])/360.));

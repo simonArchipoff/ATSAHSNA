@@ -15,15 +15,15 @@ struct ResultHarmonics {
     double thdRate;
     double snr;
     //  double sinad;
-    vector<double> harmonicsLevel;
-    //vector<double> harmonicsPhases;
+    VF harmonicsLevel;
+    //VF harmonicsPhases;
     ParamHarmonics params;
     std::string name;
 };
 
-VD optimal_window(const VD & signal, double frequency, uint sampleRate);
+VF optimal_window(const VF & signal, double frequency, uint sampleRate);
 
-ResultHarmonics computeTHD(const ParamHarmonics p, const VD&, int sampleRate);
+ResultHarmonics computeTHD(const ParamHarmonics p, const VF&, int sampleRate);
 
 
 

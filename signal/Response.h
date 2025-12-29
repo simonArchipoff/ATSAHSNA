@@ -23,12 +23,12 @@ struct ResultResponse {
     std::string name;
 };
 
-VCD computeChirp(ParamResponse p, uint sampleRate);
+VCF computeChirp(ParamResponse p, uint sampleRate);
 
 ResultResponse computeResponse(ParamResponse p,
-                               const VD & in,
-                               const VD & out,
+                               const VF & in,
+                               const VF & out,
                                uint sampleRate);
 ResultResponse computeResponse(ParamResponse p,
-                               const VD&out,
+                               const VF&out,
                                uint sampleRate);

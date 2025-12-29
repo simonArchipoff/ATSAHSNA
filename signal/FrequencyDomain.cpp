@@ -3,7 +3,6 @@
 #include <cmath>
 #include <FFT.h>
 #include <iterator>
-//#include <numeric>
 #include <complex>
 
 #define BIG_VECTOR_SIZE 2048
@@ -11,7 +10,7 @@ FDF FDF::operator+(const FDF &a) const{
     assert(this->sampleRate == a.sampleRate);
     FDF res(*this);
     assert(response.size() == a.response.size());
-#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
+//#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
     for(uint i = 0; i < response.size(); i++){
         res.response[i] += a.response[i];
     }
@@ -22,7 +21,7 @@ FDF FDF::operator-(const FDF &a) const {
     assert(this->sampleRate == a.sampleRate);
     FDF res(*this);
     assert(response.size() == a.response.size());
-#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
+//#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
     for(uint i = 0; i < response.size(); i++){
         res.response[i] -= a.response[i];
     }
@@ -33,7 +32,7 @@ FDF FDF::operator/(const FDF &a) const {
     assert(this->sampleRate == a.sampleRate);
     FDF res(*this);
     assert(response.size() == a.response.size());
-#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
+//#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
     for(uint i = 0; i < response.size(); i++){
         res.response[i] /= a.response[i];
     }
@@ -57,7 +56,7 @@ FDF FDF::neutralMult() const {
     }
     return res;
 }
-const vector<complex<double>> & FDF::getResponse() const {
+const VCF & FDF::getResponse() const {
     return response;
 }
 
@@ -68,26 +67,26 @@ uint FDF::getSampleRate() const{
     return sampleRate;
 }
 
-vector <double> FDF::getAmplitude() const {
-    vector<double> res(response.size()/2);
+VF FDF::getAmplitude() const {
+    VF res(response.size()/2);
     for(uint i = 1; i < res.size(); i++){
         res[i] = abs(response[i]);
     }
     return res;
 }
 
-vector <double> FDF::getAmplitude20log10() const {
-    vector<double> res = getAmplitude();
-#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
+VF FDF::getAmplitude20log10() const {
+    VF res = getAmplitude();
+//#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
     for(uint i = 0; i < res.size(); i++){
         res[i] = 20 * log10(res[i]);
     }
     return res;
 }
 
-vector <double> FDF::getPhase() const {
-    vector<double> res(response.size()/2);
-#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
+VF FDF::getPhase() const {
+    VF res(response.size()/2);
+//#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
     for(uint i = 1; i < res.size(); i++){
         res[i] = atan2(response[i].imag(), response[i].real()) * 180/(M_PI);
     }
@@ -96,9 +95,9 @@ vector <double> FDF::getPhase() const {
 
 
 
-vector <double> FDF::getFrequency() const {
-    vector<double> res(response.size()/2);
-#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
+VF FDF::getFrequency() const {
+    VF res(response.size()/2);
+//#pragma omp parallel for if(response.size() > BIG_VECTOR_SIZE)
     for(uint i = 1; i < res.size(); i++){
         res[i] = i * f1;
         if(i > 1)
@@ -164,10 +163,10 @@ FDF FDF::reduce(uint factor) const {
 
 
 
-FDF compute_TF_FFT(const vector<double> &input, const vector<double> &output, uint sampleRate){
+FDF compute_TF_FFT(const VF &input, const VF &output, uint sampleRate){
     assert(input.size() == output.size());
-    VCD in(input.size());
-    VCD out(output.size());
+    VCF in(input.size());
+    VCF out(output.size());
 #pragma omp parallel for if(input.size() > 1024)
     for(uint i = 0; i < input.size(); i++){
         in[i] = complex<double>(input[i],0);
@@ -177,17 +176,17 @@ FDF compute_TF_FFT(const vector<double> &input, const vector<double> &output, ui
 }
 
 
-FDF compute_TF_FFT(const vector<double> &output, uint sampleRate){
+FDF compute_TF_FFT(const VF &output, uint sampleRate){
 
-    VCD out(output.size());
-    for(int i = 0; i < out.size(); i++){
+    VCF out(output.size());
+    for(uint i = 0; i < out.size(); i++){
         out[i] = complex<double>(output[i],0);
     }
     return compute_TF_FFT(out,sampleRate);
 }
 
 
-FDF compute_TF_FFT(const VCD &input, const VCD &output, uint sampleRate){
+FDF compute_TF_FFT(const VCF &input, const VCF &output, uint sampleRate){
     assert(input.size() == output.size());
 
     auto dtf_input = compute_TF_FFT(input,sampleRate);
@@ -198,8 +197,8 @@ FDF compute_TF_FFT(const VCD &input, const VCD &output, uint sampleRate){
 
 
 
-FDF compute_TF_FFT(const VCD &v, uint sampleRate) {
-    VCD out_fft = fft(v);
+FDF compute_TF_FFT(const VCF &v, uint sampleRate) {
+    VCF out_fft = fft(v);
     for(uint i = 0; i < v.size(); i++){
         out_fft[i] /= v.size();
     }
@@ -209,8 +208,8 @@ FDF compute_TF_FFT(const VCD &v, uint sampleRate) {
 }
 
 
-VCD vdToVCD(const VD &input){
-    VCD output(input.size());
+VCF VFToVCF(const VF &input){
+    VCF output(input.size());
     for(uint i = 0; i < input.size(); i++){
         output[i] = complex<double>(input[i],0);
     }
@@ -218,8 +217,8 @@ VCD vdToVCD(const VD &input){
 }
 
 
-VCD computeDFT(const VD &input){
-    VCD coutput = fft(input);
+VCF computeDFT(const VF &input){
+    VCF coutput = fft(input);
     for(uint i = 0; i < coutput.size(); i++){
         coutput[i] /= coutput.size()/2;
     }
@@ -227,17 +226,17 @@ VCD computeDFT(const VD &input){
 }
 
 
-VD FDF::frequencyDomainTotemporal() const {
-    VD o;
+VF FDF::frequencyDomainTotemporal() const {
+    VF o;
     rfft(response, o, this->response.size());
     //for(auto & i : o)
     //    i *= response.size();
     return o;
 }
 
-VD FDF::frequencyDomainToStepTemporal() const{
-    const VD tmp = frequencyDomainTotemporal();
-    VD o;
+VF FDF::frequencyDomainToStepTemporal() const{
+    const VF tmp = frequencyDomainTotemporal();
+    VF o;
     o.resize(tmp.size(),0.0);
     for(uint i = 0; i < tmp.size(); i++){
         for(uint j = 0; j + i < o.size(); j++){
@@ -291,7 +290,7 @@ APF lin_interpolate(const vector<APF> & v, double f){
 FDF compute_TF_FFT(const vector<APF> & v, uint sampleRate){
     double fcase = v.begin()->frequency;
     int duration = sampleRate / fcase;
-    VCD s(duration);
+    VCF s(duration);
     for(uint idx = 0; idx < s.size(); idx++){
         auto r = lin_interpolate(v,fcase * idx);
         complex<double> i{0.0,1.0};
@@ -336,22 +335,22 @@ FDFLOG::FDFLOG(const FDF& input, uint base){
 }
 
 
-VD FDFLOG::getAmplitude() const{
-    VD v(amplitude);
+VF FDFLOG::getAmplitude() const{
+    VF v(amplitude);
     return v;
 }
-VD FDFLOG::getAmplitude20log10() const{
+VF FDFLOG::getAmplitude20log10() const{
     auto v = getAmplitude();
     for(auto &i : v)
         i = 20*log10(i);
     return v;
 }
-VD FDFLOG::getPhase() const{
-    VD phase{this->phase};
+VF FDFLOG::getPhase() const{
+    VF phase{this->phase};
     return phase;
 }
-VD FDFLOG::getFrequency() const{
-    VD f{frequency};
+VF FDFLOG::getFrequency() const{
+    VF f{frequency};
     return f;
 }
 
@@ -360,7 +359,7 @@ void FDFLOG::trimLF(double f){
     auto idx = std::distance(frequency.begin(),
                              std::find_if(frequency.begin(),frequency.end(),[f](double s){return s > f;} )
                            );
-    for(VD *v : { &frequency, &amplitude, &phase}){
+    for(VF *v : { &frequency, &amplitude, &phase}){
         std::rotate(v->begin(), v->begin() + idx, v->end());
         v->resize(v->size() - idx);
     }
@@ -369,7 +368,7 @@ void FDFLOG::trimLF(double f){
 void FDFLOG::trimHF(double f){
     auto idx = std::distance(frequency.begin(),
                              std::find_if(frequency.begin(),frequency.end(),[f](double s){return s > f;}));
-    for(VD *v : { &frequency, &amplitude, &phase}){
+    for(VF *v : { &frequency, &amplitude, &phase}){
         v->resize(idx);
     }
 }

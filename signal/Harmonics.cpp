@@ -50,7 +50,7 @@ struct slice {
     uint end;
     double level;
 };
-slice get_harmonic(const uint f, const vector<double>&v){
+slice get_harmonic(const uint f, const vector<float>&v){
     assert(f < v.size());
     struct slice s;
 
@@ -84,7 +84,7 @@ slice get_harmonic(const uint f, const vector<double>&v){
     return s;
 }
 
-vector<slice> find_harmonics(const vector<double> & v,uint fundamental,int smax){
+vector<slice> find_harmonics(const vector<float> & v,uint fundamental,int smax){
     vector<slice> res;
     for(auto i = 1; i*fundamental < std::min<uint>(v.size(),smax+1); i++){
         res.push_back(get_harmonic(i*fundamental,v));
@@ -92,17 +92,17 @@ vector<slice> find_harmonics(const vector<double> & v,uint fundamental,int smax)
     return res;
 }
 /*
-vector<slice> find_harmonics(const vector<double> &v, int smax){
+vector<slice> find_harmonics(const VF &v, int smax){
   auto f = std::distance(v.begin(),std::max_element(v.begin(),v.end()));
   return find_harmonics(v,f,smax);
 }
 */
 struct SignalNoiseHarmonics{
 public:
-    SignalNoiseHarmonics(const vector<double> &v, uint smin, uint smax):SignalNoiseHarmonics(v, std::distance(v.begin(),std::max_element(v.begin()+smin,v.begin()+smax)),smin,smax)
+    SignalNoiseHarmonics(const vector<float> &v, uint smin, uint smax):SignalNoiseHarmonics(v, std::distance(v.begin(),std::max_element(v.begin()+smin,v.begin()+smax)),smin,smax)
     {
     }
-    SignalNoiseHarmonics(const vector<double> &v, uint fundamental,uint smin,uint smax){
+    SignalNoiseHarmonics(const vector<float> &v, uint fundamental,uint smin,uint smax){
         assert(smin <= fundamental && fundamental <= smax);
         s = n = h = 0;
         KahanSum ks;
@@ -157,19 +157,19 @@ public:
 
 
 
-ResultHarmonics computeTHD(const ParamHarmonics p, const VD& signal, int sampleRate){
+ResultHarmonics computeTHD(const ParamHarmonics p, const VF& signal, int sampleRate){
 
     assert( p.freqMin <= p.frequency && p.frequency <= p.freqMax);
     assert(signal.size() > 0);
     double duration = static_cast<double>(signal.size()) / sampleRate;
 
-    VCD signalfft = computeDFT(signal);
+    VCF signalfft = computeDFT(signal);
     signalfft[0] = 0;//remove offset
     uint smin = p.freqMin * duration;
     uint smax = std::min<uint>(p.freqMax * duration, signal.size()/2);
 
 
-    VD amplitude;
+    VF amplitude;
     amplitude.resize(signalfft.size()/2);
 #pragma omp parallel for if(amplitude.size() > 1024)
     for(uint i = 0; i < amplitude.size(); i++){
@@ -201,7 +201,7 @@ ResultHarmonics computeTHD(const ParamHarmonics p, const VD& signal, int sampleR
   qDebug() << "h" << snh.h;
 #endif
     // the important part
-    vector<double> h_level;
+    VF h_level;
     for(auto & i : slices)
         h_level.push_back(i.level);
 
@@ -222,7 +222,7 @@ ResultHarmonics computeTHD(const ParamHarmonics p, const VD& signal, int sampleR
 
 
 
-VD optimal_window(const VD & signal, double frequency, uint sampleRate){
+VF optimal_window(const VF & signal, double frequency, uint sampleRate){
     auto p = sinusoid(frequency,1/frequency,sampleRate);
 
     //TODO: optimise that, we dont need the full correlation, only where it is relevant in the begining and the end.
@@ -236,7 +236,7 @@ VD optimal_window(const VD & signal, double frequency, uint sampleRate){
         }
     }
     assert(idx_max.size() >= 2);
-    VD s(signal);
+    VF s(signal);
     remove_left(*idx_max.begin(), s);
     auto d = signal.size() - *idx_max.rbegin()-p.size();
     remove_right(d , s);
@@ -246,7 +246,7 @@ VD optimal_window(const VD & signal, double frequency, uint sampleRate){
 
 
 //https://dsp.stackexchange.com/questions/41291/calculating-the-phase-shift-between-two-signals-based-on-samples
-double phaseShift(const VD &a, const VD &b){
+double phaseShift(const VF &a, const VF &b){
     assert(a.size() == b.size());
     //compute norms and dot product of the vectors
     double na = 0,nb=0, dp=0;

@@ -43,8 +43,8 @@ public:
             if(acc_raw_signal.size > 0){
                 auto o = acc_raw_signal.get();
 
-                VD od(o.begin(),o.end());
-                VD id(acq.getSignal().begin(), acq.getSignal().end());
+                VF od(o.begin(),o.end());
+                VF id(acq.getSignal().begin(), acq.getSignal().end());
                 response = computeResponse(paramResponse,id,od,sampleRate);
                 response.name = std::to_string(r.idx);
                 return true;
@@ -65,7 +65,7 @@ public:
     virtual void rt_after_process() override{}
 
 private:
-    //    VCD chirp;
+    //    VCF chirp;
     Acquisition acq;
     uint sampleRate;
     ParamResponse paramResponse;

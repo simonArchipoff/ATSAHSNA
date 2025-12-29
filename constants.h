@@ -11,9 +11,9 @@
 using std::vector;
 using std::complex;
 
-typedef vector<complex<double>> VCD;
+//typedef vector<complex<double>> VCF;
 typedef vector<complex<float>>  VCF;
-typedef vector<double> VD;
+//typedef VF VF;
 typedef vector<float>  VF;
 
 

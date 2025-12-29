@@ -155,16 +155,16 @@ TEST_CASE("RingBuffer - Basic Operations", "[RingBuffer]") {
 TEST_CASE("Acquisition") {
     int delay=45;
     RingBuffer<double> rb(10000);
-    rb.write(VD(delay));
+    rb.write(VF(delay));
     const uint sr = 3000;
     const uint frames = 256;
     auto foo = chirp_complex(10,1000,0.5,sr);
-    //VCD foo = {1,2,3,4,0,0,0,0,0,0,0};
+    //VCF foo = {1,2,3,4,0,0,0,0,0,0,0};
     Acquisition b(foo,SenderMode::All,1,0,1,100);
 
     //b.start();
 
-    VD in(frames);
+    VF in(frames);
     int res_delay = -1;
     for(uint i = 0; i < 10000; i += frames){
 
@@ -177,7 +177,7 @@ TEST_CASE("Acquisition") {
 
 
         rb.write(in);
-        std::vector<double> out;
+        std::VF out;
         out.resize(frames);
         rb.read(frames,out.data());
         rb.pop(frames);
@@ -272,7 +272,7 @@ public:
         if(input.empty()){
             input.resize(size);
         }
-        auto r = BackendFaust::acquisition(std::vector<VD>({input}));
+        auto r = BackendFaust::acquisition(std::vector<VF>({input}));
 
 
         vector<float> inv(size),outv(size);
@@ -295,7 +295,7 @@ public:
 
 public:
     int size;
-    VD input;
+    VF input;
 
 };
 

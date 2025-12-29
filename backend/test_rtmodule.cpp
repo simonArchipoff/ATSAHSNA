@@ -43,12 +43,12 @@ public:
         for(int x = 0; x <48000*5 / SIZE ; x++){
 
             rt_process(in,out);
-            vector<double> ind;
+            VF ind;
             ind.resize(SIZE);
             for(int i = 0; i < SIZE; i++){
                 ind[i] = out[0][i];
             }
-            auto outd = b->acquisition(vector<VD>({ind}));
+            auto outd = b->acquisition(vector<VF>({ind}));
 
             for(int i = 0; i < SIZE; i++){
                 in[0][i] = outd[0][i];

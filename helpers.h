@@ -26,8 +26,8 @@ void remove_right(uint n, vector<T> & in){
 }
 
 template<typename T>
-vector<complex<T>> array_VD_to_VCD(const vector<T> & input){
-    VCD out(input.size());
+vector<complex<T>> array_VF_to_VCF(const vector<T> & input){
+    VCF out(input.size());
     for(uint i = 0; i < input.size(); i++){
         out[i] = complex<T>(input[i],0);
     }
@@ -45,8 +45,8 @@ vector<T> array_complex_to_real(const vector<complex<U>> & s){
 }
 
 __attribute__((unused))
-static VD array_VCD_to_VD(const VCD & input){
-    VD out(input.size());
+static VF array_VCF_to_VF(const VCF & input){
+    VF out(input.size());
     for(uint i = 0; i < input.size(); i++){
         out[i] = input[i].real();
     }
